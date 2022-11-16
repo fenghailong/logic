@@ -1,0 +1,164 @@
+<template>
+  <div class="hp-mall-resource">
+    <ad unit-id="adunit-b66e514798680c9a" ad-type="video" ad-theme="white"></ad>
+    <van-search
+      value="{{ value }}"
+      shape="round"
+      background="#4fc08d"
+      placeholder="搜索资料"
+      @search="onSearch"
+    />
+    <div class="hp-mall-resource-list">
+      <div class="hp-mall-resource-item" v-for="list" @click="toDetail" data-id="{{item._id}}">
+        <div class="hp-mall-resource-item-image"><image src="../assets/images/folder.png"></image></div>
+        <div class="hp-mall-resource-item-message">
+          <div class="hp-mall-resource-item-name">{{item.pinyin}}</div>
+          <div class="hp-mall-resource-item-footer">
+            <div class="hp-mall-resource-item-type">
+              <van-tag type="success">{{item.type}}</van-tag>
+            </div>
+            <div class="hp-mall-resource-item-time">时间：{{item.updateDate}}</div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:15px;text-align:center;color:grey" wx:if="{{list.length > limit}}">
+        <div wx:if="{{!isEndOfList}}">正在加载数据...</div>
+        <div wx:else>----END----</div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import eventHub from '../common/eventHub';
+  import api from '../utils/api'
+  // import testMixin from '../mixins/test'
+
+  wepy.page({
+    config: {
+      navigationBarTitleText: 'test'
+    },
+
+    hooks: {
+
+    },
+    mixins: [],
+
+    data: {
+      isEndOfList: false,
+      list: [],
+      limit: 20, //每次拉取数量
+      value: '',
+    },
+
+    computed: {
+
+    },
+    async onLoad() {
+      this.getData()
+    },
+
+    onShareAppMessage () {
+      return {
+        title: '得影-你的资料搜索好帮手',
+        path: '/pages/resource'
+      }
+    },
+
+    methods: {
+      getData() {
+        wx.showLoading({title: '加载中'})
+        const db = wx.cloud.database()
+        db.collection('movie')
+          .orderBy('_id','desc')
+          .skip(this.list.length)
+          .limit(this.limit)
+          .get()
+          .then(res => {
+            console.log(res);
+            this.list = [...this.list, ...res.data]; //合并数据
+            this.isEndOfList = res.data.length < this.limit ? true : false; //判断是否结束
+            wx.hideLoading()
+          })
+      },
+      toDetail(e) {
+        let id = e.currentTarget.dataset.id;
+        wx.navigateTo({
+            url: `/pages/resourcedetail?id=${id}`
+        })
+      },
+      onSearch(e) {
+        let value = e.$wx.detail;
+        wx.navigateTo({
+            url: `/pages/resourcesearch?value=${value}`
+        })
+      }
+    },
+
+    onReachBottom() {
+      !this.isEndOfList && this.getData()
+    }
+  });
+</script>
+<config>
+{
+    navigationBarTitleText: '得影',
+    usingComponents: {
+      "van-button": "../components/vant/button/index",
+      "van-search": "../components/vant/search/index",
+      "van-image": "../components/vant/image/index",
+      "van-tag": "../components/vant/tag/index",
+      "van-loading": "../components/vant/loading/index",
+    }
+}
+</config>
+
+<style lang="scss">
+@import "../scss/output.scss";
+  @include b(resource){
+    @include e(list){
+      padding: 0 10px;
+    }
+    @include e(item){
+      display: flex;
+      align-items: center;
+      padding: 5px 0;
+      border-bottom: 1px solid #ccc;
+    }
+    @include e(item-image){
+      width: 50px;
+      height: 50px;
+      image{
+        width: 100%;
+        height: 100%;
+      }
+    }
+    @include e(item-message){
+      margin-left: 10px;
+    }
+    @include e(item-name){
+      margin-bottom: 5px;
+    }
+
+    @include e(item-footer){
+      display: flex;
+      align-items: center;
+      font-size: 12px;
+    }
+    @include e(item-type){
+      margin-right: 20px;
+    }
+  }
+</style>
+<wxs module="m1" lang="babel">
+const getTime = (time) => {
+  let date = getDate(time);
+  let hour = date.getHours();
+  let mins = date.getMinutes();
+  let sec = date.getSeconds();
+  let milli = date.getMilliseconds();
+  return `${hour}:${mins}:${sec}.${milli}`;
+}
+module.exports.getTime = getTime;
+</wxs>

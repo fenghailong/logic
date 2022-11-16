@@ -1,0 +1,253 @@
+<template>
+  <div class="hp-mall-resourcedetail">
+    <div class="hp-mall-resourcedetail-item">
+      <van-icon class="hp-mall-resourcedetail-item-icon" name="question-o" />
+      <span class="hp-mall-resourcedetail-item-text">文件信息</span>
+      <span class="hp-mall-resourcedetail-item-pinyin">{{detail.pinyin}}</span>
+    </div>
+    <div class="hp-mall-resourcedetail-item">
+      <van-icon class="hp-mall-resourcedetail-item-icon" name="underway-o" />
+      <span class="hp-mall-resourcedetail-item-text">分享日期</span>
+      <span class="hp-mall-resourcedetail-item-pinyin">{{detail.updateDate}}</span>
+    </div>
+    <ad unit-id="adunit-17c50556455b427f"></ad>
+    <div class="hp-mall-resourcedetail-item">
+      <van-icon class="hp-mall-resourcedetail-item-icon" name="video-o" />
+      <span class="hp-mall-resourcedetail-item-text">资源类型</span>
+      <span class="hp-mall-resourcedetail-item-pinyin">{{detail.type}}</span>
+    </div>
+    <div class="hp-mall-resourcedetail-item">
+      <van-icon class="hp-mall-resourcedetail-item-icon" name="vip-card-o" />
+      <span class="hp-mall-resourcedetail-item-text">使用方法</span>
+      <span class="hp-mall-resourcedetail-item-pinyin">></span>
+    </div>
+    <div class="hp-mall-resourcedetail-button">
+      <div style="margin-bottom:10px;font-size:12px;text-align:center">获取资料链接需要观看视频获取积分</div>
+      <van-button type="primary" @click.stop="openLinkPopup()" block>观看视频获取链接</van-button>
+    </div>
+    <van-popup
+      show="{{ showLinkPopup }}"
+      round
+      position="bottom"
+      custom-style="height: 30%"
+      @click="closeLinkPopup()"
+    >
+      <div class="hp-mall-resourcedetail-linkpopup">
+        <div class="hp-mall-resourcedetail-linkpopup-title">口令</div>
+        <div class="hp-mall-resourcedetail-linkpopup-link">{{detail.link}}</div>
+        <div class="hp-mall-resourcedetail-linkpopup-botton">
+          <van-button class="hp-mall-resourcedetail-linkpopup-botton-left" @click.stop="copyLink()" block type="primary" size="normal">复制口令</van-button>
+        </div>
+      </div>
+    </van-popup>
+  </div>
+</template>
+
+<script>
+  import wepy from '@wepy/core'
+  import eventHub from '../common/eventHub';
+  import loginMixin from '../utils/common/login'
+  import requestMixin from '../utils/request'
+  import api from '../utils/api'
+  // import testMixin from '../mixins/test'
+  let rewardedVideoAd = null
+  wepy.page({
+    config: {
+      navigationBarTitleText: 'test'
+    },
+
+    hooks: {
+
+    },
+    mixins: [loginMixin, requestMixin],
+
+    data: {
+      showLinkPopup: false,
+      detail: {},
+      id: '',
+    },
+
+    computed: {
+
+    },
+    async onLoad(options) {
+      this.id = options.id;
+      this.getDetail();
+      if(wx.createRewardedVideoAd){
+        rewardedVideoAd = wx.createRewardedVideoAd({ adUnitId: 'adunit-05f0f4e7b5745357' })
+        rewardedVideoAd.onLoad(() => {
+          console.log('onLoad event emit')
+        })
+        rewardedVideoAd.onError((err) => {
+          console.log('onError event emit', err)
+        })
+        rewardedVideoAd.onClose((res) => {
+          if (res && res.isEnded) {
+            this.showLinkPopup = true
+          } else {
+            this.showLinkPopup = false
+          }
+        })
+      }
+    },
+
+    onShareAppMessage (res) {
+      return {
+        title: '得影-你的资料搜索好帮手',
+        path: `/pages/resourcedetail?id=${this.id}`
+      }
+    },
+
+    methods: {
+      getDetail() {
+        wx.showLoading({title: '加载中'})
+        const db = wx.cloud.database()
+        console.log(this.id)
+        db.collection('movie')
+          .doc(this.id)
+          .get()
+          .then(res => {
+            this.detail = res.data
+            this.detail.shotlink = this.detail.link.substring(27,this.detail.link.length-9)
+            this.detail.pwd = this.detail.link.substring(this.detail.link.length-4)
+            wx.hideLoading()
+          })
+      },
+      openLinkPopup(){
+        if (rewardedVideoAd) {
+          rewardedVideoAd.show().catch(() => {
+            // 失败重试
+            rewardedVideoAd.load()
+              .then(() => rewardedVideoAd.show())
+              .catch(err => {
+                this.showLinkPopup = true
+                console.log('激励视频 广告显示失败')
+              })
+          })
+        } else {
+          this.showLinkPopup = true
+        }
+      },
+      closeLinkPopup(){
+        this.showLinkPopup = false
+      },
+      copyLink(){
+        wx.setClipboardData({
+          data: this.detail.link,
+          success (res) {
+            wx.getClipboardData({
+              success (res) {
+                console.log('复制成功') // data
+              }
+            })
+          }
+        })
+      },
+    }
+  });
+</script>
+<config>
+{
+    navigationBarTitleText: '得影',
+    navigationBarBackgroundColor: '#fafafa',
+    usingComponents: {
+      "van-button": "../components/vant/button/index",
+      "van-search": "../components/vant/search/index",
+      "van-image": "../components/vant/image/index",
+      "van-tag": "../components/vant/tag/index",
+      "van-icon": "../components/vant/icon/index",
+      "van-popup": "../components/vant/popup/index",
+      "van-loading": "../components/vant/loading/index",
+    }
+}
+</config>
+
+<style lang="scss">
+@import "../scss/output.scss";
+  page{
+    background-color: #fafafa;
+  }
+  @include b(resourcedetail){
+    background-color: #fafafa;;
+    @include e(item){
+      background-color: #fff;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+    @include e(item-icon){
+      font-size: 16px;
+      margin-right: 10px;
+    }
+    @include e(item-text){
+      font-size: 14px;
+    }
+    @include e(item-pinyin){
+      flex: 1;
+      text-align: right;
+      color: #ccc;
+    }
+    @include e(button){
+      width: 60%;
+      margin: 0 auto;
+      margin-top: 40px;
+    }
+    @include e(footer){
+      position: fixed;
+      bottom: 10px;
+      right: 0;
+      left: 0;
+      white-space:normal;
+      word-break:break-all;
+      overflow:hidden;
+      padding: 5px;
+      width: 90%;
+      margin: 0 auto;
+      font-size:12px;
+      border-radius: 5px;
+    }
+    @include e(linkpopup){
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px;
+    }
+    @include e(linkpopup-title){
+      padding: 10px 0;
+    }
+    @include e(linkpopup-link){
+      white-space:normal;
+      word-break:break-all;
+      overflow:hidden;
+      padding: 5px;
+      font-size:12px;
+      background-color: #ccc;
+      border-radius: 5px;
+    }
+    @include e(linkpopup-botton){
+      display: flex;
+      align-items: center;
+      margin-top: 20px;
+    }
+    @include e(linkpopup-botton-left){
+      margin-right: 20px;
+      width: 100px;
+    }
+    @include e(linkpopup-botton-right){
+      margin-right: 20px;
+      width: 100px;
+    }
+  }
+</style>
+<wxs module="m1" lang="babel">
+const getTime = (time) => {
+  let date = getDate(time);
+  let hour = date.getHours();
+  let mins = date.getMinutes();
+  let sec = date.getSeconds();
+  let milli = date.getMilliseconds();
+  return `${hour}:${mins}:${sec}.${milli}`;
+}
+module.exports.getTime = getTime;
+</wxs>

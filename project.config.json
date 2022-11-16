@@ -1,0 +1,71 @@
+{
+  "description": "A WePY project",
+  "setting": {
+    "urlCheck": false,
+    "es6": false,
+    "enhance": true,
+    "postcss": false,
+    "preloadBackgroundData": false,
+    "minified": false,
+    "newFeature": true,
+    "coverView": true,
+    "autoAudits": false,
+    "showShadowRootInWxmlPanel": true,
+    "scopeDataCheck": false,
+    "checkInvalidKey": true,
+    "checkSiteMap": true,
+    "uploadWithSourceMap": true,
+    "useMultiFrameRuntime": true,
+    "useApiHook": true,
+    "useApiHostProcess": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    },
+    "useIsolateContext": false,
+    "userConfirmedBundleSwitch": false,
+    "packNpmManually": false,
+    "packNpmRelationList": [],
+    "minifyWXSS": true,
+    "disableUseStrict": false,
+    "minifyWXML": true,
+    "showES6CompileOption": false,
+    "useCompilerPlugins": false
+  },
+  "compileType": "miniprogram",
+  "appid": "wx7c73f91c2cd7a522",
+  "projectname": "movie",
+  "miniprogramRoot": "weapp/",
+  "cloudfunctionRoot": "cloudfunctions/",
+  "simulatorType": "wechat",
+  "simulatorPluginLibVersion": {},
+  "condition": {
+    "miniprogram": {
+      "list": [
+        {
+          "name": "pages/resource",
+          "pathName": "pages/resource",
+          "query": "",
+          "scene": null
+        },
+        {
+          "name": "pages/resourcesearch",
+          "pathName": "pages/resourcesearch",
+          "query": "",
+          "scene": null
+        }
+      ]
+    }
+  },
+  "libVersion": "2.27.2",
+  "srcMiniprogramRoot": "weapp/",
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "editorSetting": {
+    "tabIndent": "insertSpaces",
+    "tabSize": 2
+  }
+}
