@@ -3,87 +3,83 @@
     margin: 0;
     font-size: 12px;
   }
-  .topic-info {
-    margin-top: 5px;
-  }
-  .topic-title {
-    white-space: normal;
-    font-size: 14px;
-  }
-  .avatar {
-    padding: 4px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    width: 50px;
-    height: 50px;
-  }
-  .reply-count {
-    background-color: #d8d8d8;
-    float: right;
-  }
-  /*分类*/
-  .weui-flex {
-    align-items: center;
-  }
-  .weui-cells {
-    margin-top: 0;
-    opacity: 0;
-    transition: .3s;
-    &:before, &:after {
-      display: none;
+  .page {
+    background-color: #eee;
+    .logic-index-box {
+      padding: 0 10px;
     }
-    &_show {
-      opacity: 1;
+    .logic-index-box-hot {
+      margin: 10px 0;
+      padding: 10px;
+      background-color: #FFFFFF;
+      border-radius: 5px;
+      .logic-index-box-hot-title {
+        font-size: 16px;
+        font-weight: middle;
+        padding: 0 10px;
+      }
+      .logic-index-box-hot-content {
+        margin-top: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+      }
+      .logic-index-box-hot-content-item {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        padding: 5px 20px;
+        background-color: #2fcebe;
+        margin-bottom: 10px;
+        font-size: 14px;
+        color: #FFFFFF;
+        border-radius: 10px;
+        text {
+          font-size: 12px;
+        }
+      }
     }
-  }
-  .weui-cell {
-    &:before {
-      right: 15px;
-    }
-  }
-  .category-list__item {
-    margin: 10px 0;
-    background-color: #FFFFFF;
-    border-radius: 2px;
-    overflow: hidden;
-    &:first-child {
-      margin-top: 0;
-    }
-  }
-  .category-list__item_selected {
-    background-color: #eeeeee;
-  }
-  .category-list__img {
-    width: 30px;
-    height: 30px;
   }
 
-  .category-list__item-hd {
-    padding: 20px;
-    transition: opacity .3s;
-    &_show {
-      opacity: .4;
-    }
-  }
-  .category-list__item-bd {
-    height: 0;
-    overflow: hidden;
-    &_show {
-      height: auto;
-    }
-  }
 </style>
 <template>
   <div class="page">
-    <!-- <topic-list :topics="topics" :no-more-data ="noMoreData"></topic-list> -->
+    <van-search value="{{ value }}" shape="round" background="#387ffb" placeholder="请输入搜索词语"/>
+    <van-notice-bar scrollable left-icon="volume-o" text="逻辑填空1.0正式上线" />
+    <div class="logic-index-box">
+      <div class="logic-index-box-hot">
+        <div class="logic-index-box-hot-title">热门词库</div>
+        <div class="logic-index-box-hot-content">
+          <div class="logic-index-box-hot-content-item">
+            <div>国考高频成语</div>
+            <text>564 词</text>
+          </div>
+          <div class="logic-index-box-hot-content-item">
+            <div>国考高频实词</div>
+            <text>789 词</text>
+          </div>
+          <div class="logic-index-box-hot-content-item" style="background-color:#fb9b6c">
+            <div>公考高频成语</div>
+            <text>326 词</text>
+          </div>
+          <div class="logic-index-box-hot-content-item" style="background-color:#fb9b6c">
+            <div>公考高频实词</div>
+            <text>1112 词</text>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <config>
   {
-    navigationBarTitleText: '公务圈',
+    navigationBarTitleText: '逻辑填空',
     enablePullDownRefresh: true,
     usingComponents: {
-     "topic-list": "~@/components/topic-list"
+      "van-search": "../../libs/vant/search/index",
+      "van-notice-bar": "../../libs/vant/notice-bar/index",
+      "van-tag": "../../libs/vant/tag/index",
     }
   }
 </config>
@@ -125,9 +121,9 @@
       ...mapGetters([ 'unreadCount' ])
     },
     async onLoad() {
-      await this.$store.dispatch('login')
+      // await this.$store.dispatch('login')
 
-      this.loadTopics()
+      // this.loadTopics()
       // this.loadCategories()
       eventHub.$on('topic-deleted', (topic) => {
         this.currentPage = 1

@@ -59,10 +59,10 @@ wepy.app({
 <config>
 {
     pages: [
-      'pages/topics/index',
-      'pages/topics/create',
-      'pages/topics/show',
-      'pages/topics/user-index',
+      'pages/index/index',
+      'pages/index/create',
+      'pages/index/show',
+      'pages/index/user-index',
       'pages/users/me',
       'pages/users/show',
       'pages/users/edit',
@@ -81,12 +81,12 @@ wepy.app({
     },
     tabBar: {
       list: [{
-        pagePath: 'pages/topics/index',
+        pagePath: 'pages/index/index',
         text: '首页',
         iconPath: 'assets/images/index.png',
         selectedIconPath: 'assets/images/index-selected.png'
       },{
-        pagePath: 'pages/topics/create',
+        pagePath: 'pages/index/create',
         text: '发布',
         iconPath: 'assets/images/commit.png',
         selectedIconPath: 'assets/images/commit-selected.png'
