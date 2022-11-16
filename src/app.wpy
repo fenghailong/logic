@@ -1,25 +1,21 @@
-<style lang="scss">
-@import "./scss/output.scss";
-@include b(container){
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  box-sizing: border-box;
-}
+<style lang="less">
+  @import (css) './assets/style/app.wxss';
+  .page{
+    background-color: #FFFFFF;
+  }
 </style>
 
 <script>
-import wepy from '@wepy/core';
-import eventHub from './common/eventHub';
+  import wepy from '@wepy/core'
+  import eventHub from './common/eventHub'
+  import vuex from '@wepy/x'
+  import promisify from '@wepy/use-promisify'
+
+  wepy.use(vuex);
+  wepy.use(promisify);
 
 wepy.app({
-  hooks: {
-  },
-  globalData: {
-
-  },
+  store: require('./store').default,
   async onLaunch() {
     if (!wx.cloud) {
       console.error('请使用 2.2.3 或以上的基础库以使用云能力')
@@ -29,42 +25,79 @@ wepy.app({
         //   env 参数决定接下来小程序发起的云开发调用（wx.cloud.xxx）会默认请求到哪个云环境的资源
         //   此处请填入环境 ID, 环境 ID 可打开云控制台查看
         //   如不填则使用默认环境（第一个创建的环境）
-        // env: 'my-env-id',
+        // env: 'gwybbs-0gkv8q1q39862d8c',
         traceUser: true,
       })
     }
+    this.$store = this.$options.store;
+    // this.updateUnreadCount()
+
+    // setInterval(() => {
+    //   this.updateUnreadCount()
+    // }, 60000)
   },
 
   methods: {
-      // 'pages/index',
-    //       "tabBar": {
-    //   "list": [{
-    //     "pagePath": "pages/index",
-    //     "iconPath": "static/index.png",
-    //     "selectedIconPath": "static/index-active.png",
-    //     "text": "票房"
-    //   },{
-    //     "pagePath": "pages/resource",
-    //     "iconPath": "static/resource.png",
-    //     "selectedIconPath": "static/resource-active.png",
-    //     "text": "文件"
-    //   }]
-    // },
+    async updateUnreadCount() {
+      await this.$store.dispatch('updateUnreadCount')
+    },
+    // can(targetPerm) {
+    //   if (!this.$store.getters.isLoggedIn) {
+    //     return false
+    //   }
+
+    //   // 判断权限中是否有目标权限
+    //   if (this.$store.getters.perms.find(perm => perm.name === targetPerm)) {
+    //     return true
+    //   }
+
+    //   return false
+    // }
   }
 });
 </script>
 <config>
 {
     pages: [
-      'pages/resource',
-      'pages/resourcedetail',
-      'pages/resourcesearch',
+      'pages/topics/index',
+      'pages/topics/create',
+      'pages/topics/show',
+      'pages/topics/user-index',
+      'pages/users/me',
+      'pages/users/show',
+      'pages/users/edit',
+      'pages/auth/login',
+      'pages/auth/register',
+      'pages/replies/index',
+      'pages/replies/user-index',
+      'pages/replies/create',
+      'pages/notifications/index'
     ],
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
-      navigationBarTitleText: 'WeChat',
+      navigationBarTitleText: 'LaraBBS',
       navigationBarTextStyle: 'black'
+    },
+    tabBar: {
+      list: [{
+        pagePath: 'pages/topics/index',
+        text: '首页',
+        iconPath: 'assets/images/index.png',
+        selectedIconPath: 'assets/images/index-selected.png'
+      },{
+        pagePath: 'pages/topics/create',
+        text: '发布',
+        iconPath: 'assets/images/commit.png',
+        selectedIconPath: 'assets/images/commit-selected.png'
+      },{
+        pagePath: 'pages/users/me',
+        text: '我的',
+        iconPath: 'assets/images/user.png',
+        selectedIconPath: 'assets/images/user-selected.png'
+      }],
+      color: '#707070',
+      selectedColor: '#1296db'
     }
 }
 </config>

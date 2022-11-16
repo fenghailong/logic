@@ -1,0 +1,193 @@
+<style lang="less">
+  .weui-media-box__info__meta {
+    margin: 0;
+    font-size: 12px;
+  }
+  .topic-info {
+    margin-top: 5px;
+  }
+  .topic-title {
+    white-space: normal;
+    font-size: 14px;
+  }
+  .avatar {
+    padding: 4px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 50px;
+    height: 50px;
+  }
+  .reply-count {
+    background-color: #d8d8d8;
+    float: right;
+  }
+  /*分类*/
+  .weui-flex {
+    align-items: center;
+  }
+  .weui-cells {
+    margin-top: 0;
+    opacity: 0;
+    transition: .3s;
+    &:before, &:after {
+      display: none;
+    }
+    &_show {
+      opacity: 1;
+    }
+  }
+  .weui-cell {
+    &:before {
+      right: 15px;
+    }
+  }
+  .category-list__item {
+    margin: 10px 0;
+    background-color: #FFFFFF;
+    border-radius: 2px;
+    overflow: hidden;
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+  .category-list__item_selected {
+    background-color: #eeeeee;
+  }
+  .category-list__img {
+    width: 30px;
+    height: 30px;
+  }
+
+  .category-list__item-hd {
+    padding: 20px;
+    transition: opacity .3s;
+    &_show {
+      opacity: .4;
+    }
+  }
+  .category-list__item-bd {
+    height: 0;
+    overflow: hidden;
+    &_show {
+      height: auto;
+    }
+  }
+</style>
+<template>
+  <div class="page">
+    <!-- <topic-list :topics="topics" :no-more-data ="noMoreData"></topic-list> -->
+  </div>
+</template>
+<config>
+  {
+    navigationBarTitleText: '公务圈',
+    enablePullDownRefresh: true,
+    usingComponents: {
+     "topic-list": "~@/components/topic-list"
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import { getTopics, getCategories } from '@/api/topic'
+  import eventHub from '@/common/eventHub'
+  import store from '@/store'
+  import { mapGetters } from '@wepy/x'
+  import syncBadge from '@/mixins/sync-badge'
+
+  wepy.page({
+    store,
+    mixins: [ syncBadge ],
+
+    data: {
+      // 分类数据
+      // categories: [],
+      // 当前的分类
+      // currentCategory: {},
+      // 是否显示分类
+      // categoryOpen: false,
+      // 话题数据
+      topics: [],
+      // 当前分页
+      currentPage: 1,
+      // 是否还有更多数据
+      noMoreData: false,
+      // 是否在加载中
+      isLoading: false
+    },
+    computed: {
+      // currentCategoryId() {
+      //   return this.currentCategory.id || null
+      // },
+      // currentCategoryName() {
+      //   return this.currentCategory.name || '话题'
+      // },
+      ...mapGetters([ 'unreadCount' ])
+    },
+    async onLoad() {
+      await this.$store.dispatch('login')
+
+      this.loadTopics()
+      // this.loadCategories()
+      eventHub.$on('topic-deleted', (topic) => {
+        this.currentPage = 1
+        this.noMoreData = false
+        this.loadTopics(true)
+      })
+
+      eventHub.$on('topic-created', () => {
+        this.currentPage = 1
+        this.noMoreData = false
+        this.loadTopics(true)
+      });
+    },
+    async onPullDownRefresh() {
+      this.currentPage = 1
+      this.noMoreData = false
+      await this.loadTopics(true)
+      wx.stopPullDownRefresh()
+    },
+    async onReachBottom () {
+      // 如果没有更多内容，直接返回
+      if (this.noMoreData) {
+        return
+      }
+      // this.isLoading = true
+      this.currentPage += 1
+      await this.loadTopics()
+      // this.isLoading = false
+    },
+    methods: {
+
+      // 获取话题数据
+      async loadTopics(reset = false) {
+        let params = {
+          currentPage: this.currentPage,
+          pageCount: 10
+        }
+        wx.showLoading({title: '加载中'})
+        // 请求话题列表接口
+        const topicsResponse = await getTopics(params)
+        // 将数据合并到 this.topics
+        this.topics = reset ? topicsResponse.result.data : this.topics.concat(topicsResponse.result.data)
+        wx.hideLoading()
+        // // 根据分页设置是否还有更多数据
+        if (topicsResponse.result.data.length === 0) {
+          this.noMoreData = true
+        }
+      },
+      // categoryToggle() {
+      //   this.categoryOpen = !this.categoryOpen
+      // },
+      // async changeCategory (category = {}) {
+      //   this.currentCategory = category
+      //   this.categoryOpen = false
+      //   this.page = 1
+
+      //   // 设置 reset 为 true
+      //   this.loadTopics(true)
+      // }
+    }
+
+  })
+</script>

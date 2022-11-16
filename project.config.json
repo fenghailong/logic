@@ -1,5 +1,5 @@
 {
-  "description": "A WePY project",
+  "description": "bbs",
   "setting": {
     "urlCheck": false,
     "es6": false,
@@ -7,14 +7,18 @@
     "postcss": false,
     "preloadBackgroundData": false,
     "minified": false,
-    "newFeature": true,
+    "newFeature": false,
     "coverView": true,
+    "nodeModules": false,
     "autoAudits": false,
     "showShadowRootInWxmlPanel": true,
     "scopeDataCheck": false,
+    "uglifyFileName": false,
     "checkInvalidKey": true,
     "checkSiteMap": true,
     "uploadWithSourceMap": true,
+    "compileHotReLoad": true,
+    "lazyloadPlaceholderEnable": false,
     "useMultiFrameRuntime": true,
     "useApiHook": true,
     "useApiHostProcess": true,
@@ -23,7 +27,7 @@
       "disablePlugins": [],
       "outputPath": ""
     },
-    "useIsolateContext": false,
+    "useIsolateContext": true,
     "userConfirmedBundleSwitch": false,
     "packNpmManually": false,
     "packNpmRelationList": [],
@@ -35,35 +39,19 @@
   },
   "compileType": "miniprogram",
   "appid": "wx7c73f91c2cd7a522",
-  "projectname": "movie",
+  "projectname": "larabbs",
   "miniprogramRoot": "weapp/",
   "cloudfunctionRoot": "cloudfunctions/",
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},
-  "condition": {
-    "miniprogram": {
-      "list": [
-        {
-          "name": "pages/resource",
-          "pathName": "pages/resource",
-          "query": "",
-          "scene": null
-        },
-        {
-          "name": "pages/resourcesearch",
-          "pathName": "pages/resourcesearch",
-          "query": "",
-          "scene": null
-        }
-      ]
-    }
-  },
-  "libVersion": "2.27.2",
-  "srcMiniprogramRoot": "weapp/",
+  "libVersion": "2.13.2",
   "packOptions": {
     "ignore": [],
     "include": []
   },
+  "cloudfunctionTemplateRoot": "cloudfunctionTemplate/",
+  "condition": {},
+  "srcMiniprogramRoot": "weapp/",
   "editorSetting": {
     "tabIndent": "insertSpaces",
     "tabSize": 2
