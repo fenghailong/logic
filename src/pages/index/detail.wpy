@@ -1,26 +1,73 @@
 <style lang="less">
-  .page{
-    background-color: #eee;
+.page{
+  background-color: #eee;
+  .logic-detail-box {
+    padding: 0 10px;
+    margin-top: 10px;
   }
+  .logic-detail-content {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 10px 20px 20px;
+    .logic-detail-content-people {
+      text-align: right;
+      font-size: 12px;
+      color: #999;
+    }
+    .logic-detail-content-title {
+      text-align: left;
+      font-size: 18px;
+      font-weight: 500;
+    }
+    .logic-detail-content-describe {
+      text-align: left;
+      font-size: 14px;
+      color: #999;
+      margin: 20px 0;
+    }
+    .logic-detail-content-message {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 20px 10px;
+      .logic-detail-content-message-practice {
+        font-size: 12px;
+        color: #999;
+        margin-right: 100px;
+      }
+    }
+    .logic-detail-content-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      .logic-detail-content-button {
+        .van-button {
+          width: 120px;
+        }
+      }
+    }
+  }
+}
 </style>
 <template>
   <div class="page">
     <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，在进行考点评测效果会更好哦" />
     <div class="logic-detail-box">
-      <div class="logic-detail-box-people">25624人正在学习</div>
-      <div class="logic-detail-box-title">国考高频成语</div>
-      <div class="logic-detail-box-describe">搜集历年国考、省考等考试中“逻辑填空”模块出现的高频成语，需要掌握意思，用法等。</div>
-      <div class="logic-detail-box-message">
-        <div class="logic-detail-box-message-practice">已练习 0/240</div>
-        <div class="logic-detail-box-message-">
-          <van-circle value="{{ 30 }}" text="text" />
+      <div class="logic-detail-content">
+        <div class="logic-detail-content-people">25624人正在学习</div>
+        <div class="logic-detail-content-title">国考高频成语</div>
+        <div class="logic-detail-content-describe">搜集历年国考、省考等考试中“逻辑填空”模块出现的高频成语，需要掌握意思，用法等。</div>
+        <div class="logic-detail-content-message">
+          <div class="logic-detail-content-message-practice">已练习 0/240</div>
+          <van-rate readonly value="{{ 2.5 }}" bind:change="onChange" />
+        </div>
+        <div class="logic-detail-content-footer">
+          <van-button class="logic-detail-content-button" color="#4755EB" round >开始学习</van-button>
+          <van-button class="logic-detail-content-button" color="#54BBCB" round >考点评测</van-button>
         </div>
       </div>
-      <div class="logic-detail-box-footer">
-        <van-button color="#7232dd" round >开始学习</van-button>
-        <van-button color="#7232dd" round >考点评测</van-button>
-      </div>
     </div>
+
   </div>
 </template>
 <config>
@@ -30,6 +77,7 @@
       "van-search": "../../libs/vant/circle/index",
       "van-notice-bar": "../../libs/vant/notice-bar/index",
       "van-button": "../../libs/vant/button/index",
+      "van-rate": "../../libs/vant/rate/index",
     }
   }
 </config>

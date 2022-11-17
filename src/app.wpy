@@ -80,9 +80,8 @@ wepy.app({
 {
     pages: [
       'pages/index/index',
-      'pages/index/create',
+      'pages/index/list',
       'pages/index/detail',
-      'pages/index/user-index',
       'pages/users/me',
       'pages/users/show',
       'pages/users/edit',

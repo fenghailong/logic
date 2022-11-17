@@ -1,8 +1,4 @@
 <style lang="less">
-  .weui-media-box__info__meta {
-    margin: 0;
-    font-size: 12px;
-  }
   .page {
     background-color: #eee;
     .logic-index-box {
