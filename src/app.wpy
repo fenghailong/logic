@@ -53,6 +53,26 @@ wepy.app({
 
     //   return false
     // }
+    // tabBar: {
+    //   list: [{
+    //     pagePath: 'pages/index/index',
+    //     text: '首页',
+    //     iconPath: 'assets/images/index.png',
+    //     selectedIconPath: 'assets/images/index-selected.png'
+    //   },{
+    //     pagePath: 'pages/index/create',
+    //     text: '发布',
+    //     iconPath: 'assets/images/commit.png',
+    //     selectedIconPath: 'assets/images/commit-selected.png'
+    //   },{
+    //     pagePath: 'pages/users/me',
+    //     text: '我的',
+    //     iconPath: 'assets/images/user.png',
+    //     selectedIconPath: 'assets/images/user-selected.png'
+    //   }],
+    //   color: '#707070',
+    //   selectedColor: '#1296db'
+    // }
   }
 });
 </script>
@@ -61,7 +81,7 @@ wepy.app({
     pages: [
       'pages/index/index',
       'pages/index/create',
-      'pages/index/show',
+      'pages/index/detail',
       'pages/index/user-index',
       'pages/users/me',
       'pages/users/show',
@@ -78,26 +98,6 @@ wepy.app({
       navigationBarBackgroundColor: '#fff',
       navigationBarTitleText: 'LaraBBS',
       navigationBarTextStyle: 'black'
-    },
-    tabBar: {
-      list: [{
-        pagePath: 'pages/index/index',
-        text: '首页',
-        iconPath: 'assets/images/index.png',
-        selectedIconPath: 'assets/images/index-selected.png'
-      },{
-        pagePath: 'pages/index/create',
-        text: '发布',
-        iconPath: 'assets/images/commit.png',
-        selectedIconPath: 'assets/images/commit-selected.png'
-      },{
-        pagePath: 'pages/users/me',
-        text: '我的',
-        iconPath: 'assets/images/user.png',
-        selectedIconPath: 'assets/images/user-selected.png'
-      }],
-      color: '#707070',
-      selectedColor: '#1296db'
     }
 }
 </config>
