@@ -6,7 +6,7 @@ cloud.init({
 const db = cloud.database();
 const collection = db.collection('users');
 
-const randomName = (prefix = "看客", randomLength = 7) => {
+const randomName = (prefix = "游客", randomLength = 7) => {
   // 兼容更低版本的默认值写法
   prefix === undefined ? prefix = "" : prefix;
   randomLength === undefined ? randomLength = 8 : randomLength;

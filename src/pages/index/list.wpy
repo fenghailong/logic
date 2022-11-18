@@ -129,8 +129,8 @@
         </div>
       </div>
       <div class="logic-index-list-footer">
-        <van-button round type="info">上一题</van-button>
-        <van-button round type="info">下一题</van-button>
+        <van-button round type="info">上一词</van-button>
+        <van-button round type="info">下一词</van-button>
       </div>
     </div>
   </div>

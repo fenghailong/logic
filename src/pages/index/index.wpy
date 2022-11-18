@@ -47,21 +47,21 @@
       <div class="logic-index-box-hot">
         <div class="logic-index-box-hot-title">热门词库</div>
         <div class="logic-index-box-hot-content">
-          <div class="logic-index-box-hot-content-item">
+          <div class="logic-index-box-hot-content-item" @click="toDetail">
             <div>国考高频成语</div>
-            <text>564 词</text>
+            <text>{{words.countryHotWordsCount}} 词</text>
           </div>
           <div class="logic-index-box-hot-content-item">
             <div>国考历年成语</div>
-            <text>789 词</text>
+            <text>{{words.countryCount}} 词</text>
           </div>
           <div class="logic-index-box-hot-content-item" style="background-color:#fb9b6c">
             <div>公考高频成语</div>
-            <text>326 词</text>
+            <text>{{words.publicExamHotWordsCount}} 词</text>
           </div>
           <div class="logic-index-box-hot-content-item" style="background-color:#fb9b6c">
             <div>公考高频实词</div>
-            <text>1112 词</text>
+            <text>{{words.publicExamShotHotWordsCount}} 词</text>
           </div>
         </div>
       </div>
@@ -81,7 +81,7 @@
 </config>
 <script>
   import wepy from '@wepy/core'
-  import { getTopics, getCategories } from '@/api/topic'
+  import { getWordsCount } from '@/api/words'
   import eventHub from '@/common/eventHub'
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
@@ -90,16 +90,9 @@
   wepy.page({
     store,
     mixins: [ syncBadge ],
-
     data: {
-      // 分类数据
-      // categories: [],
-      // 当前的分类
-      // currentCategory: {},
-      // 是否显示分类
-      // categoryOpen: false,
       // 话题数据
-      topics: [],
+      words: [],
       // 当前分页
       currentPage: 1,
       // 是否还有更多数据
@@ -108,30 +101,11 @@
       isLoading: false
     },
     computed: {
-      // currentCategoryId() {
-      //   return this.currentCategory.id || null
-      // },
-      // currentCategoryName() {
-      //   return this.currentCategory.name || '话题'
-      // },
       ...mapGetters([ 'unreadCount' ])
     },
     async onLoad() {
       // await this.$store.dispatch('login')
-
-      // this.loadTopics()
-      // this.loadCategories()
-      eventHub.$on('topic-deleted', (topic) => {
-        this.currentPage = 1
-        this.noMoreData = false
-        this.loadTopics(true)
-      })
-
-      eventHub.$on('topic-created', () => {
-        this.currentPage = 1
-        this.noMoreData = false
-        this.loadTopics(true)
-      });
+      this.getCount()
     },
     async onPullDownRefresh() {
       this.currentPage = 1
@@ -139,46 +113,21 @@
       await this.loadTopics(true)
       wx.stopPullDownRefresh()
     },
-    async onReachBottom () {
-      // 如果没有更多内容，直接返回
-      if (this.noMoreData) {
-        return
-      }
-      // this.isLoading = true
-      this.currentPage += 1
-      await this.loadTopics()
-      // this.isLoading = false
-    },
     methods: {
-
-      // 获取话题数据
-      async loadTopics(reset = false) {
-        let params = {
-          currentPage: this.currentPage,
-          pageCount: 10
-        }
+      // 获取词语数量
+      async getCount() {
         wx.showLoading({title: '加载中'})
         // 请求话题列表接口
-        const topicsResponse = await getTopics(params)
+        const topicsResponse = await getWordsCount()
         // 将数据合并到 this.topics
-        this.topics = reset ? topicsResponse.result.data : this.topics.concat(topicsResponse.result.data)
+        this.words = topicsResponse.result
         wx.hideLoading()
-        // // 根据分页设置是否还有更多数据
-        if (topicsResponse.result.data.length === 0) {
-          this.noMoreData = true
-        }
       },
-      // categoryToggle() {
-      //   this.categoryOpen = !this.categoryOpen
-      // },
-      // async changeCategory (category = {}) {
-      //   this.currentCategory = category
-      //   this.categoryOpen = false
-      //   this.page = 1
-
-      //   // 设置 reset 为 true
-      //   this.loadTopics(true)
-      // }
+      toDetail () {
+        wx.navigateTo({
+          url: '/pages/index/detail?id=1',
+        })
+      }
     }
 
   })
