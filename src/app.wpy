@@ -25,7 +25,7 @@ wepy.app({
         //   env 参数决定接下来小程序发起的云开发调用（wx.cloud.xxx）会默认请求到哪个云环境的资源
         //   此处请填入环境 ID, 环境 ID 可打开云控制台查看
         //   如不填则使用默认环境（第一个创建的环境）
-        env: 'dev-2gm8v7dxd9491ded',
+        env: 'prod-2gzhco766f4e1e27',
         traceUser: true,
       })
     }
@@ -81,16 +81,7 @@ wepy.app({
     pages: [
       'pages/index/index',
       'pages/index/list',
-      'pages/index/detail',
-      'pages/users/me',
-      'pages/users/show',
-      'pages/users/edit',
-      'pages/auth/login',
-      'pages/auth/register',
-      'pages/replies/index',
-      'pages/replies/user-index',
-      'pages/replies/create',
-      'pages/notifications/index'
+      'pages/index/detail'
     ],
     window: {
       backgroundTextStyle: 'light',

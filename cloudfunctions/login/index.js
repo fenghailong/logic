@@ -1,10 +1,10 @@
 // 云函数入口文件
 const cloud = require('wx-server-sdk');
 cloud.init({
-  env:'gwybbs-0gkv8q1q39862d8c'
+  env:'prod-2gzhco766f4e1e27'
 });
 const db = cloud.database();
-const collection = db.collection('users');
+const collection = db.collection('user');
 
 const randomName = (prefix = "游客", randomLength = 7) => {
   // 兼容更低版本的默认值写法
@@ -44,15 +44,13 @@ const login = async (_openid) => {
     await collection.add({
       data: {
         wechat_openid: _openid,
-        userInfo: {
-          avatarUrl: 'cloud://gwybbs-0gkv8q1q39862d8c.6777-gwybbs-0gkv8q1q39862d8c-1308145583/avatars/avatar.png',
-          city: '',
-          country: '',
-          gender: 0,
-          language: 'zh_CN',
-          nickName: randomName(),
-          province: ''
-        }
+        avatarUrl: '',
+        city: '',
+        country: '',
+        gender: 0,
+        language: '',
+        nickName: '',
+        province: ''
       }
     });
     hasUser = await collection.where({ wechat_openid: _openid }).get();

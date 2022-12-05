@@ -69,6 +69,28 @@
           line-height: 1;
           margin-right: 10px;
         }
+        .logic-index-item-synonym-nodata {
+          font-size: 14px;
+          color: #999;
+        }
+      }
+      .logic-index-item-title {
+        text-align: right;
+        font-size: 16px;
+        padding: 0 20px;
+        color: #999;
+      }
+      .logic-index-item-introduce {
+        font-size: 18px;
+        padding: 0 10px;
+        margin-top: 10px;
+        color: #666;
+      }
+      .logic-index-item-tag {
+        font-size: 18px;
+        padding: 0 10px;
+        margin-top: 10px;
+        font-weight: 500;
       }
     }
     .logic-index-list-footer {
@@ -78,61 +100,78 @@
       margin-top: 30px;
     }
   }
+  .logic-index-list-popup-list {
+    padding: 20px 40px 10px;
+    overflow: auto;
+    .logic-index-list-popup-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+      .logic-index-list-popup-index {
+        margin-right: 50px;
+        color: #2fcebe;
+      }
+      .logic-index-list-popup-words {
+        flex: 1;
+      } 
+    }
+  }
 }
 </style>
 <template>
   <div class="page">
     <div class="logic-index-box">
-      <div class="logic-index-item">
-        <div class="logic-index-item-name">积重难返</div>
+      <div class="logic-index-item" v-if="options.type !== '人物素材'">
+        <div class="logic-index-item-name">{{wordDetail.name}}</div>
         <div class="logic-index-item-tag">
-          <van-tag type="primary">标签</van-tag>
-          <div class="logic-index-item-count">考察 28 次</div>
-          <van-rate readonly value="{{ 2.5 }}" bind:change="onChange" />
+          <van-tag type="primary">考察</van-tag>
+          <div class="logic-index-item-count">考察 {{wordDetail.count}} 次</div>
+          <van-rate readonly value="{{ wordDetail.starValue }}" bind:change="onChange" />
         </div>
         <div class="logic-index-item-implication">
           <van-tag type="primary">含义</van-tag>
-          <div class="logic-index-item-implication-info">重：程度深。返：返回。形容长期养成的习惯难以改变。多指长期存在的不良习惯、弊端已经发展到了难以革除的地步。</div>
+          <div class="logic-index-item-implication-info">{{wordDetail.implication}}</div>
         </div>
         <div class="logic-index-item-synonym">
           <van-tag type="primary">关联</van-tag>
-          <div class="logic-index-item-synonym-list">
-            <div class="logic-index-item-synonym-item">
-              <text class="logic-index-item-synonym-item-name">根深蒂固：</text>
-              <text class="logic-index-item-synonym-item-implication">重：程度深。返：返回。形容长期养成的习惯难以改变。多指长期存在的不良习惯、弊端已经发展到了难以革除的地步。</text>
-            </div>
-            <div class="logic-index-item-synonym-item">
-              <text class="logic-index-item-synonym-item-name">根深蒂固：</text>
-              <text class="logic-index-item-synonym-item-implication">重：程度深。返：返回。形容长期养成的习惯难以改变。多指长期存在的不良习惯、弊端已经发展到了难以革除的地步。</text>
-            </div>
-            <div class="logic-index-item-synonym-item">
-              <text class="logic-index-item-synonym-item-name">根深蒂固：</text>
-              <text class="logic-index-item-synonym-item-implication">重：程度深。返：返回。形容长期养成的习惯难以改变。多指长期存在的不良习惯、弊端已经发展到了难以革除的地步。</text>
-            </div>
-            <div class="logic-index-item-synonym-item">
-              <text class="logic-index-item-synonym-item-name">根深蒂固：</text>
-              <text class="logic-index-item-synonym-item-implication">重：程度深。返：返回。形容长期养成的习惯难以改变。多指长期存在的不良习惯、弊端已经发展到了难以革除的地步。</text>
-            </div>
-            <div class="logic-index-item-synonym-item">
-              <text class="logic-index-item-synonym-item-name">根深蒂固：</text>
-              <text class="logic-index-item-synonym-item-implication">重：程度深。返：返回。形容长期养成的习惯难以改变。多指长期存在的不良习惯、弊端已经发展到了难以革除的地步。</text>
-            </div>
-            <div class="logic-index-item-synonym-item">
-              <text class="logic-index-item-synonym-item-name">根深蒂固：</text>
-              <text class="logic-index-item-synonym-item-implication">重：程度深。返：返回。形容长期养成的习惯难以改变。多指长期存在的不良习惯、弊端已经发展到了难以革除的地步。</text>
-            </div>
-            <div class="logic-index-item-synonym-item">
-              <text class="logic-index-item-synonym-item-name">根深蒂固：</text>
-              <text class="logic-index-item-synonym-item-implication">重：程度深。返：返回。形容长期养成的习惯难以改变。多指长期存在的不良习惯、弊端已经发展到了难以革除的地步。</text>
+          <div v-if = "wordDetail.synonymList.length > 0" class="logic-index-item-synonym-list">
+            <div class="logic-index-item-synonym-item" v-for="(item, index) in wordDetail.synonymList" :key="index">
+              <text class="logic-index-item-synonym-item-name">{{item.name}}：</text>
+              <text class="logic-index-item-synonym-item-implication">{{item.implication}}</text>
             </div>
           </div>
+          <div v-else class="logic-index-item-synonym-nodata">无关联词语</div>
+        </div>
+      </div>
+      <div class="logic-index-item" v-else>
+        <div class="logic-index-item-name">{{personDetail.name}}</div>
+        <div class="logic-index-item-title" v-if="personDetail.title">
+          <div class="logic-index-item-title-text">————{{personDetail.title}}</div>
+        </div>
+        <div class="logic-index-item-tag" v-if="personDetail.tag">
+          <div class="logic-index-item-tag-info">适用:{{personDetail.tag}}</div>
+        </div>
+        <div class="logic-index-item-introduce">
+          <div class="logic-index-item-introduce-info">{{personDetail.introduce}}</div>
         </div>
       </div>
       <div class="logic-index-list-footer">
-        <van-button round type="info">上一词</van-button>
-        <van-button round type="info">下一词</van-button>
+        <van-button round type="info" @click="previousWord">上一个</van-button>
+        <van-button round type="info" @click="showListPopup">列表</van-button>
+        <van-button round type="info" @click="nextWord">下一个</van-button>
       </div>
     </div>
+    <van-popup @click-overlay="clickOverlay" :show="showPopup" position="bottom" round>
+      <div class="logic-index-list-popup-list" :style="{ height: '70vh' }">
+        <div class="logic-index-list-popup-item" v-for="(item, index) in allList" :key="index" @click="toWords(item._id)">
+          <div class="logic-index-list-popup-index">{{index + 1}}</div>
+          <div class="logic-index-list-popup-words">{{item.name}}</div>
+          <van-tag v-if="item.isStudyed" type="primary" size="medium">已学</van-tag>
+          <van-tag v-else type="primary" plain color="#999999" size="medium">未学</van-tag>
+        </div>
+      </div>
+    </van-popup>
   </div>
 </template>
 <config>
@@ -142,6 +181,7 @@
       "van-rate": "../../libs/vant/rate/index",
       "van-tag": "../../libs/vant/tag/index",
       "van-button": "../../libs/vant/button/index",
+      "van-popup": "../../libs/vant/popup/index",
     }
   }
 </config>
@@ -149,66 +189,139 @@
   import wepy from '@wepy/core'
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
-  import { addReply } from '@/api/reply'
   import eventHub from '@/common/eventHub'
-  import { addTopic } from '@/api/topic'
+  import { getWordsList, getWordsDetail } from '@/api/words'
+  import { getPersonList, getPersonDetail } from '@/api/person'
 
   wepy.page({
     store,
     computed: {
       // 用户信息
-      ...mapGetters(['_id','user','isLoggedIn'])
+      ...mapGetters(['_id'])
     },
     data: {
-      // 回复的话题id
-      title: '',
-      content: ''
+      allList: [],
+      showPopup: false,
+      wordDetail: {},
+      personDetail: {},
+      currentWord_id: '',
+      options: {}
     },
-    onLoad() {
+    async onLoad(options) {
+      options.user_id = this._id
+      this.options = options
+      if (this.options.type !== '人物素材'){
+        await this.getWordsList(options)
+        await this.getWordsDetail(this.allList[0]._id)
+      } else {
+        await this.getPersonList(options)
+        await this.getPersonDetail(this.allList[0]._id)
+      }
     },
     methods: {
-      titleChange (e) {
-        this.title = e.$wx.detail
-      },
-      contentChange (e) {
-        this.content = e.$wx.detail
-      },
-      // 提交表单
-      async submit () {
-        if (!this.title || !this.content) {
-          wx.showToast({
-            title: '请填写内容',
-            icon: 'none',
-            duration: 2000
-          })
-          return
-        }
-        wx.showLoading({title: '发布中'})
-        let options = {
-          title: this.title,
-          content: this.content,
-          userInfo: this.user,
-          user_id: this._id,
-        }
-        console.log(options)
-        // 请求发布回复接口
-        let createResponse = await addTopic(options)
+      // 获取模块词语列表
+      async getWordsList(options) {
+        wx.showLoading({title: '加载中'})
+        let result = await getWordsList(options)
+        this.allList = result.result.allWords
         wx.hideLoading()
-        console.log(createResponse, '============')
-
-        // 提示发布成功
-         wx.showToast({
-           title: '发布成功',
-           icon: 'success'
-        })
-
-        // 1 秒后返回上一页
-        setTimeout(function() {
-          eventHub.$emit('topic-created', createResponse.data);
-          wx.switchTab({
-            url: '/pages/topics/index',
+      },
+      // 获取人物素材列表
+      async getPersonList(options) {
+        wx.showLoading({title: '加载中'})
+        let result = await getPersonList(options)
+        this.allList = result.result.allPerson
+        wx.hideLoading()
+      },
+      // 获取单个词语
+      async getWordsDetail(word_id) {
+        let options = {}
+        options.user_id = this._id
+        options.word_id = word_id
+        wx.showLoading({title: '加载中'})
+        let result = await getWordsDetail(options)
+        this.wordDetail = result.result
+        this.wordDetail.starValue = this.getStarValue(this.wordDetail.count)
+        this.currentWord_id = this.wordDetail._id
+        wx.hideLoading()
+      },
+      // 获取单个人物
+      async getPersonDetail(person_id) {
+        let options = {}
+        options.user_id = this._id
+        options.person_id = person_id
+        wx.showLoading({title: '加载中'})
+        let result = await getPersonDetail(options)
+        this.personDetail = result.result
+        this.personDetail.starValue = this.getStarValue(this.personDetail.count)
+        this.currentWord_id = this.personDetail._id
+        wx.hideLoading()
+      },
+      async nextWord () {
+        let nextIndex = 0
+        let index = this.allList.findIndex((item) => item._id == this.currentWord_id)
+        nextIndex = index + 1
+        if (nextIndex > (this.allList.length - 1)) {
+          wx.showToast({
+            title: '已经是最后一个了',
+            icon: 'success'
           })
-        }, 1000)
+        } else {
+          if (this.options.type !== '人物素材'){
+            await this.getWordsDetail(this.allList[nextIndex]._id)
+          } else {
+            await this.getPersonDetail(this.allList[nextIndex]._id)
+          }
+        }
+      },
+      async previousWord () {
+        let previousIndex = 0
+        let index = this.allList.findIndex((item) => item._id == this.currentWord_id)
+        previousIndex = index - 1
+        if (previousIndex < 0) {
+          wx.showToast({
+            title: '前面已经没有了',
+            icon: 'success'
+          })
+        } else {
+          if (this.options.type !== '人物素材'){
+            await this.getWordsDetail(this.allList[previousIndex]._id)
+          } else {
+            await this.getPersonDetail(this.allList[previousIndex]._id)
+          }
+        }
+      },
+      async toWords (id) {
+        this.showPopup = false
+        if (this.options.type !== '人物素材'){
+          await this.getWordsDetail(id)
+        } else {
+          await this.getPersonDetail(id)
+        }
+      },
+      getStarValue (count) {
+        let starValue = 0
+        if (count > 0 && count < 5) {
+          starValue = 1.5
+        } else if (count>= 5 && count < 10) {
+          starValue = 2.5
+        } else if (count>= 10 && count < 20) {
+          starValue = 3.5
+        } else if (count>= 20) {
+          starValue = 5
+        }
+        return starValue
+      },
+      async showListPopup () {
+        this.showPopup = !this.showPopup
+        if (this.options.type !== '人物素材'){
+          await this.getWordsList(this.options)
+        } else {
+          await this.getPersonList(this.options)
+        }
+      },
+      clickOverlay () {
+        this.showPopup = false
       }
     }
   })

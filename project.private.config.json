@@ -18,14 +18,14 @@
         {
           "name": "pages/index/detail",
           "pathName": "pages/index/detail",
-          "query": "",
+          "query": "type='国考高频成语'&count=2",
           "launchMode": "default",
           "scene": null
         },
         {
           "name": "pages/index/list",
           "pathName": "pages/index/list",
-          "query": "",
+          "query": "type='国考高频成语'",
           "launchMode": "default",
           "scene": null
         }

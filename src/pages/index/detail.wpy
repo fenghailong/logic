@@ -33,7 +33,7 @@
       .logic-detail-content-message-practice {
         font-size: 12px;
         color: #999;
-        margin-right: 100px;
+        margin-right: 80px;
       }
     }
     .logic-detail-content-footer {
@@ -53,26 +53,38 @@
   <div class="page">
     <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，在进行考点评测效果会更好哦" />
     <div class="logic-detail-box">
-      <div class="logic-detail-content">
-        <div class="logic-detail-content-people">25624人正在学习</div>
-        <div class="logic-detail-content-title">国考高频成语</div>
+      <div class="logic-detail-content" v-if="detail.type!=='人物素材'">
+        <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->
+        <div class="logic-detail-content-title">{{detail.type}}</div>
         <div class="logic-detail-content-describe">搜集历年国考、省考等考试中“逻辑填空”模块出现的高频成语，需要掌握意思，用法等。</div>
         <div class="logic-detail-content-message">
-          <div class="logic-detail-content-message-practice">已练习 0/240</div>
-          <van-rate readonly value="{{ 2.5 }}" bind:change="onChange" />
+          <div class="logic-detail-content-message-practice">已练习 {{studyCount}}/{{detail.count}}</div>
+          <van-rate readonly value="{{ starValue }}" allow-half/>
         </div>
         <div class="logic-detail-content-footer">
-          <van-button class="logic-detail-content-button" color="#4755EB" round >开始学习</van-button>
-          <van-button class="logic-detail-content-button" color="#54BBCB" round >考点评测</van-button>
+          <van-button class="logic-detail-content-button" color="#4755EB" round @click="toList">开始学习</van-button>
+          <!-- <van-button class="logic-detail-content-button" color="#54BBCB" round >考点评测</van-button> -->
+        </div>
+      </div>
+      <div class="logic-detail-content" v-else>
+        <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->
+        <div class="logic-detail-content-title">{{detail.type}}</div>
+        <div class="logic-detail-content-describe">人物素材积累汇总 | 适用于各种考试大作文</div>
+        <div class="logic-detail-content-message">
+          <div class="logic-detail-content-message-practice">已学习 {{studyCount}}/{{detail.count}}</div>
+          <van-rate readonly value="{{ starValue }}" allow-half/>
+        </div>
+        <div class="logic-detail-content-footer">
+          <van-button class="logic-detail-content-button" color="#4755EB" round @click="toList">开始学习</van-button>
+          <!-- <van-button class="logic-detail-content-button" color="#54BBCB" round >考点评测</van-button> -->
         </div>
       </div>
     </div>
-
   </div>
 </template>
 <config>
   {
-  navigationBarTitleText: '话题详情',
+  navigationBarTitleText: '知识点详情',
     usingComponents: {
       "van-search": "../../libs/vant/circle/index",
       "van-notice-bar": "../../libs/vant/notice-bar/index",
@@ -85,18 +97,20 @@
   import wepy from '@wepy/core'
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
-  import { getTopicById, deleteTopic } from '@/api/topic'
+  import { getWordsStudyCount } from '@/api/words'
+  import { getPersonStudyCount } from '@/api/person'
   import eventHub from '@/common/eventHub'
 
   wepy.page({
     store,
     data: {
-      // 话题数据
-      topic: {}
+      detail: {},
+      studyCount: 0,
+      starValue: 0
     },
     // 计算的属性
     computed: {
-      // ...mapGetters(['user', '_id', 'isLoggedIn']),
+      ...mapGetters(['_id']),
       // // 是否可以删除话题
       // canDelete() {
       //   if (!this.isLoggedIn || !this.topic) {
@@ -106,49 +120,43 @@
       //   return (this._id === this.topic.user_id) || this.$app.can('manage_contents')
       // }
     },
-    methods: {
-      async deleteTopic() {
-        // 删除确认
-        const res = await wepy.wx.showModal({
-          title: '确认删除',
-          content: '您确认删除该话题吗',
-          confirmText: '删除',
-          cancelText: '取消'
-        })
-
-        // 用户点击取消后返回
-        if (!res.confirm) {
-          return
-        }
-
-        // 调用接口删除话题
-        const deleteResponse = await deleteTopic(this.topic.id)
-
-        wx.showToast({
-          title: '删除成功',
-          icon: 'success'
-        })
-
-        // 2 秒后返回上一页
-        setTimeout(function() {
-          eventHub.$emit('topic-deleted', this.topic);
-          wx.navigateBack()
-        }, 2000)
-      },
-      // 获取话题数据
-      async loadTopic(id) {
-        wx.showLoading({title: '加载中'})
-        const topicResponse = await getTopicById(id)
-        this.topic = topicResponse.result.data
-        console.log(this.topic, '=======')
-        wx.hideLoading()
+    onLoad(options) {
+      this.detail = options
+      this.detail.user_id = this._id
+      if (this.detail.type !== '人物素材'){
+        this.getWordsStudyCount(options)
+      } else {
+        this.getPersonStudyCount(options)
       }
     },
-    onLoad(options) {
-      // this.loadTopic(options.id)
-      // eventHub.$on('reply-created', (...args) => {
-      //   this.loadTopic(options.id)
-      // });
+    onShow(options) {
+      if (this.detail.type !== '人物素材'){
+        this.getWordsStudyCount(this.detail)
+      } else {
+        this.getPersonStudyCount(this.detail)
+      }
+    },
+    methods: {
+      // 获取已学习
+      async getWordsStudyCount(options) {
+        wx.showLoading({title: '加载中'})
+        let result = await getWordsStudyCount(options)
+        this.studyCount = result.result.allWordsCount
+        this.starValue = result.result.starValue
+        wx.hideLoading()
+      },
+      async getPersonStudyCount(options) {
+        wx.showLoading({title: '加载中'})
+        let result = await getPersonStudyCount(options)
+        this.studyCount = result.result.allPersonCount
+        this.starValue = result.result.starValue
+        wx.hideLoading()
+      },
+      toList () {
+        wx.navigateTo({
+          url: `/pages/index/list?type=${this.detail.type}`,
+        })          
+      }
     },
     onShareAppMessage () {
       return {

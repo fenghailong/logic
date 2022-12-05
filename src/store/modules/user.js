@@ -26,15 +26,15 @@ const actions = {
     const authResponse = await login()
     console.log(authResponse.result[0], '========login')
     commit('setId', authResponse.result[0])
-    commit('setUser', authResponse.result[0].userInfo)
-    auth.setUser(authResponse.result[0].userInfo)
+    commit('setUser', authResponse.result[0])
+    auth.setUser(authResponse.result[0])
     auth.setId(authResponse.result[0])
   },
 
   async getUser ({ dispatch, commit }) {
     const userResponse = await getUser()
-    commit('setUser', userResponse.result[0].userInfo)
-    auth.setUser(userResponse.result[0].userInfo)
+    commit('setUser', userResponse.result[0])
+    auth.setUser(userResponse.result[0])
   },
 
   async refresh ({ dispatch, commit, state }, params = {}) {

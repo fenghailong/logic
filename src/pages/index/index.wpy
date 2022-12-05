@@ -18,7 +18,7 @@
         margin-top: 10px;
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-around;
+        justify-content: center;
       }
       .logic-index-box-hot-content-item {
         display: flex;
@@ -28,11 +28,14 @@
         padding: 5px 20px;
         background-color: #2fcebe;
         margin-bottom: 10px;
-        font-size: 14px;
+        font-size: 16px;
         color: #FFFFFF;
         border-radius: 10px;
+        margin-right: 20px;
+        width: 30%;
+        height: 60px;
         text {
-          font-size: 12px;
+          font-size: 14px;
         }
       }
     }
@@ -42,26 +45,48 @@
 <template>
   <div class="page">
     <van-search value="{{ value }}" shape="round" background="#387ffb" placeholder="请输入搜索词语"/>
-    <van-notice-bar scrollable left-icon="volume-o" text="逻辑填空1.0正式上线" />
+    <van-notice-bar scrollable left-icon="volume-o" text="逻辑填空1.0正式上线(免费,更新中)" />
     <div class="logic-index-box">
       <div class="logic-index-box-hot">
         <div class="logic-index-box-hot-title">热门词库</div>
         <div class="logic-index-box-hot-content">
-          <div class="logic-index-box-hot-content-item" @click="toDetail">
+          <div class="logic-index-box-hot-content-item" @click="toDetail('国考高频成语', words.countryHotWordsCount)">
             <div>国考高频成语</div>
             <text>{{words.countryHotWordsCount}} 词</text>
           </div>
-          <div class="logic-index-box-hot-content-item">
+          <div class="logic-index-box-hot-content-item" @click="toDetail('国考历年成语', words.countryCount)">
             <div>国考历年成语</div>
             <text>{{words.countryCount}} 词</text>
           </div>
-          <div class="logic-index-box-hot-content-item" style="background-color:#fb9b6c">
+          <div class="logic-index-box-hot-content-item" style="background-color:#fb9b6c" @click="toDetail('公考高频成语', words.publicExamHotWordsCount)">
             <div>公考高频成语</div>
             <text>{{words.publicExamHotWordsCount}} 词</text>
           </div>
-          <div class="logic-index-box-hot-content-item" style="background-color:#fb9b6c">
+          <!-- <div class="logic-index-box-hot-content-item" style="background-color:#fb9b6c" @click="toDetail('公考高频实词', words.publicExamShotHotWordsCount)">
             <div>公考高频实词</div>
             <text>{{words.publicExamShotHotWordsCount}} 词</text>
+          </div> -->
+        </div>
+      </div>
+      <div class="logic-index-box-hot">
+        <div class="logic-index-box-hot-title">申论积累</div>
+        <div class="logic-index-box-hot-content">
+          <div class="logic-index-box-hot-content-item" @click="toDetail('人物素材', personCount)">
+            <div>人物素材</div>
+            <text>{{personCount}} 个</text>
+          </div>
+        </div>
+      </div>
+      <div class="logic-index-box-hot">
+        <div class="logic-index-box-hot-title">即将上线</div>
+        <div class="logic-index-box-hot-content">
+          <div class="logic-index-box-hot-content-item">
+            <div>高频实词</div>
+            <text>0 词</text>
+          </div>
+          <div class="logic-index-box-hot-content-item">
+            <div>申论金句</div>
+            <text>0 句</text>
           </div>
         </div>
       </div>
@@ -81,36 +106,36 @@
 </config>
 <script>
   import wepy from '@wepy/core'
-  import { getWordsCount } from '@/api/words'
+  import { getWordsCount, importWords, refreshSynonym, addWordsList } from '@/api/words'
+  import { getPersonCount } from '@/api/person'
   import eventHub from '@/common/eventHub'
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
-  import syncBadge from '@/mixins/sync-badge'
-
+  // import syncBadge from '@/mixins/sync-badge'
+  import { importData } from '@/utils/import'
   wepy.page({
     store,
-    mixins: [ syncBadge ],
+    // mixins: [ syncBadge ],
     data: {
-      // 话题数据
+      // 词语数量
       words: [],
-      // 当前分页
-      currentPage: 1,
-      // 是否还有更多数据
-      noMoreData: false,
+      // 申论人物素材数量
+      personCount: 0,
       // 是否在加载中
       isLoading: false
     },
     computed: {
-      ...mapGetters([ 'unreadCount' ])
+      ...mapGetters([ 'isLoggedIn' ])
     },
     async onLoad() {
-      // await this.$store.dispatch('login')
-      this.getCount()
+      // let data = await addWordsList(importData)
+      // let data1 = await importWords(importData)
+      // let data2 = await refreshSynonym(importData)
+      await this.$store.dispatch('login')
+      await this.getCount()
     },
     async onPullDownRefresh() {
-      this.currentPage = 1
-      this.noMoreData = false
-      await this.loadTopics(true)
+      await this.getCount()
       wx.stopPullDownRefresh()
     },
     methods: {
@@ -118,15 +143,30 @@
       async getCount() {
         wx.showLoading({title: '加载中'})
         // 请求话题列表接口
-        const topicsResponse = await getWordsCount()
-        // 将数据合并到 this.topics
-        this.words = topicsResponse.result
+        const wordsCount = await getWordsCount()
+        const personCount = await getPersonCount()
+        this.personCount = personCount.result.personCount
+        this.words = wordsCount.result
         wx.hideLoading()
       },
-      toDetail () {
-        wx.navigateTo({
-          url: '/pages/index/detail?id=1',
-        })
+      toDetail (type, count) {
+        if (this.isLoggedIn) {
+          wx.navigateTo({
+            url: `/pages/index/detail?type=${type}&count=${count}`,
+          })          
+        }
+      }
+    },
+    onShareAppMessage() {
+      return {
+        title: '逻辑填空-你的好助手',
+        path: '/pages/index/index'
+      }
+    },
+    onShareTimeline() {
+      return {
+        title: '逻辑填空-你的好助手',
+        query: '/pages/index/index'
       }
     }
 
