@@ -1,6 +1,28 @@
 <style lang="less">
   .page {
     background-color: #eee;
+    .logic-index-search {
+      position: relative;
+      .van-search {
+        height: 60px;
+      }
+      .logic-index-search-list {
+        position: absolute;
+        top: 60px;
+        display: flex;
+        flex-direction: column;
+        background-color: #FFFFFF;
+        padding: 0 20px;
+        width: 100%;
+        z-index: 100;
+        .logic-index-search-item {
+          font-size: 16px;
+          color: #666;
+          margin-top: 5px;
+          padding: 10px;
+        }
+      }
+    }
     .logic-index-box {
       padding: 0 10px;
     }
@@ -44,7 +66,15 @@
 </style>
 <template>
   <div class="page">
-    <van-search value="{{ value }}" shape="round" background="#387ffb" placeholder="请输入搜索词语"/>
+    <div class="logic-index-search">
+      <van-search value="{{ value }}" shape="round" background="#387ffb" placeholder="请输入搜索词语" @change="searchChange">
+      </van-search>
+      <div class="logic-index-search-list">
+        <div class="logic-index-search-item" v-for="(item, index) in searchList" :key="index"  @click.stop="sureCompany(item._id)">
+            {{item.name}}
+        </div>
+      </div>
+    </div>
     <van-notice-bar scrollable left-icon="volume-o" text="逻辑填空1.0正式上线(免费,更新中)" />
     <div class="logic-index-box">
       <div class="logic-index-box-hot">
@@ -106,7 +136,7 @@
 </config>
 <script>
   import wepy from '@wepy/core'
-  import { getWordsCount, importWords, refreshSynonym, addWordsList } from '@/api/words'
+  import { getWordsCount, importWords, refreshSynonym, addWordsList, getWAllList } from '@/api/words'
   import { getPersonCount } from '@/api/person'
   import eventHub from '@/common/eventHub'
   import store from '@/store'
@@ -122,7 +152,10 @@
       // 申论人物素材数量
       personCount: 0,
       // 是否在加载中
-      isLoading: false
+      isLoading: false,
+
+      searchList: [],
+      listData: []
     },
     computed: {
       ...mapGetters([ 'isLoggedIn' ])
@@ -133,6 +166,7 @@
       // let data2 = await refreshSynonym(importData)
       await this.$store.dispatch('login')
       await this.getCount()
+      this.getListData()
     },
     async onPullDownRefresh() {
       await this.getCount()
@@ -153,8 +187,31 @@
         if (this.isLoggedIn) {
           wx.navigateTo({
             url: `/pages/index/detail?type=${type}&count=${count}`,
-          })          
+          })
         }
+      },
+      searchChange (e) {
+         //执行函数
+        let value = e.$wx.detail
+        this.searchList=[]
+        if (value) {
+          this.listData.forEach(i=>{
+            //判断遍历是否包含输入字符
+            if(i.name.indexOf(value)!=-1){
+              this.searchList.push(i)
+            }
+          })
+        }
+      },
+      //获取搜索列表函数（这里是模拟数据）
+      async getListData() {
+        let data = await getWAllList()
+        this.listData = data.result.allWords
+      },
+      sureCompany(id) {
+        wx.navigateTo({
+          url: `/pages/index/searchDetail?_id=${id}`,
+        })
       }
     },
     onShareAppMessage() {

@@ -1,0 +1,187 @@
+<style lang="less">
+.page{
+  background-color: #eee;
+  .logic-index-box {
+    padding: 20px 20px;
+    .logic-index-item {
+      background-color: #fff;
+      height: 90vh;
+      border-radius: 20px;
+      padding: 0 20px;
+      overflow: auto;
+      .logic-index-item-name {
+        padding: 10px;
+        font-size: 30px;
+        text-align: center;
+      }
+      .logic-index-item-tag {
+        display: flex;
+        align-items: center;
+        .logic-index-item-count {
+          line-height: 1;
+          font-size: 14px;
+          color: #999;
+          margin-right: 30px;
+        }
+        van-tag {
+          line-height: 1;
+          margin-right: 10px;
+        }
+        van-rate {
+          line-height: 1;
+        }
+      }
+      .logic-index-item-implication {
+        display: flex;
+        align-items: flex-start;
+        margin-top: 20px;
+        .logic-index-item-implication-info {
+          font-size: 14px;
+          color: #666;
+          width: 80%;
+        }
+        van-tag {
+          line-height: 1;
+          margin-right: 10px;
+        }
+      }
+      .logic-index-item-synonym {
+        display: flex;
+        align-items: flex-start;
+        margin-top: 20px;
+        .logic-index-item-synonym-list {
+          font-size: 14px;
+          color: #999;
+          width: 80%;
+          display: flex;
+          flex-direction: column;
+          .logic-index-item-synonym-item {
+            margin-bottom: 5px;
+            .logic-index-item-synonym-item-name {
+              color: #000;
+            }
+            .logic-index-item-synonym-item-implication {
+              font-size: 14px;
+            }
+          }
+        }
+        van-tag {
+          line-height: 1;
+          margin-right: 10px;
+        }
+        .logic-index-item-synonym-nodata {
+          font-size: 14px;
+          color: #999;
+        }
+      }
+      .logic-index-item-title {
+        text-align: right;
+        font-size: 16px;
+        padding: 0 20px;
+        color: #999;
+      }
+      .logic-index-item-introduce {
+        font-size: 18px;
+        padding: 0 10px;
+        margin-top: 10px;
+        color: #666;
+      }
+      .logic-index-item-tag {
+        font-size: 18px;
+        padding: 0 10px;
+        margin-top: 10px;
+        font-weight: 500;
+      }
+    }
+  }
+}
+</style>
+<template>
+  <div class="page">
+    <div class="logic-index-box">
+      <div class="logic-index-item">
+        <div class="logic-index-item-name">{{wordDetail.name}}</div>
+        <div class="logic-index-item-tag">
+          <van-tag type="primary">考察</van-tag>
+          <div class="logic-index-item-count">考察 {{wordDetail.count}} 次</div>
+          <van-rate readonly value="{{ wordDetail.starValue }}" bind:change="onChange" />
+        </div>
+        <div class="logic-index-item-implication">
+          <van-tag type="primary">含义</van-tag>
+          <div class="logic-index-item-implication-info">{{wordDetail.implication}}</div>
+        </div>
+        <div class="logic-index-item-synonym">
+          <van-tag type="primary">关联</van-tag>
+          <div v-if = "wordDetail.synonymList.length > 0" class="logic-index-item-synonym-list">
+            <div class="logic-index-item-synonym-item" v-for="(item, index) in wordDetail.synonymList" :key="index">
+              <text class="logic-index-item-synonym-item-name">{{item.name}}：</text>
+              <text class="logic-index-item-synonym-item-implication">{{item.implication}}</text>
+            </div>
+          </div>
+          <div v-else class="logic-index-item-synonym-nodata">无关联词语</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<config>
+  {
+    navigationBarTitleText: '词语含义',
+    usingComponents: {
+      "van-rate": "../../libs/vant/rate/index",
+      "van-tag": "../../libs/vant/tag/index",
+      "van-button": "../../libs/vant/button/index"
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import { mapGetters } from '@wepy/x'
+  import eventHub from '@/common/eventHub'
+  import { getWordsList, getWordsDetail } from '@/api/words'
+  import { getPersonList, getPersonDetail } from '@/api/person'
+
+  wepy.page({
+    store,
+    computed: {
+      // 用户信息
+      ...mapGetters(['_id'])
+    },
+    data: {
+      wordDetail: {},
+      options: {}
+    },
+    async onLoad(options) {
+      options.user_id = this._id
+      this.options = options
+      await this.getWordsDetail(this.options._id)
+    },
+    methods: {
+      // 获取单个词语
+      async getWordsDetail(word_id) {
+        let options = {}
+        options.user_id = this._id
+        options.word_id = word_id
+        wx.showLoading({title: '加载中'})
+        let result = await getWordsDetail(options)
+        this.wordDetail = result.result
+        this.wordDetail.starValue = this.getStarValue(this.wordDetail.count)
+        wx.hideLoading()
+      },
+      getStarValue (count) {
+        let starValue = 0
+        if (count > 0 && count < 5) {
+          starValue = 1.5
+        } else if (count>= 5 && count < 10) {
+          starValue = 2.5
+        } else if (count>= 10 && count < 20) {
+          starValue = 3.5
+        } else if (count>= 20) {
+          starValue = 5
+        }
+        return starValue
+      }
+    }
+  })
+</script>

@@ -81,7 +81,8 @@ wepy.app({
     pages: [
       'pages/index/index',
       'pages/index/list',
-      'pages/index/detail'
+      'pages/index/detail',
+      'pages/index/searchDetail'
     ],
     window: {
       backgroundTextStyle: 'light',

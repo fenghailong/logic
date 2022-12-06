@@ -29,6 +29,16 @@ const getAllWords = async () => {
   })
   return result
 }
+const getWAllList = async () => {
+  const result = await getAllWords()
+  result.data.sort((a,b)=>{ return b.count-a.count})//降序
+  let allWords = []
+  allWords= result.data
+  let res = {
+    allWords
+  }
+  return res;
+}
 const getWordsCount = async (data) => {
   const result = await getAllWords()
   console.log(result)
@@ -36,11 +46,11 @@ const getWordsCount = async (data) => {
   const countryHotWords = country.filter(item => item.count > 5)
   const publicExamHotWords = result.data.filter((item) => item.tag.includes('公考') && item.count > 5);
   const publicExamShotHotWords = result.data.filter((item) => item.type == 2 && item.count > 5);
-  let res = { 
-    countryCount: country.length, 
-    countryHotWordsCount: countryHotWords.length, 
-    publicExamHotWordsCount: publicExamHotWords.length, 
-    publicExamShotHotWordsCount: publicExamShotHotWords.length 
+  let res = {
+    countryCount: country.length,
+    countryHotWordsCount: countryHotWords.length,
+    publicExamHotWordsCount: publicExamHotWords.length,
+    publicExamShotHotWordsCount: publicExamShotHotWords.length
   }
   console.log(res)
   return res;
@@ -51,12 +61,14 @@ const getWordsStudyCount = async (data) => {
   const resultRecord = await reCollection.where({ user_id: data.user_id }).get()
   let allWords = []
   let allStudyWords = []
+  console.log(data)
   if(data.type.includes('国考历年成语')) {
     allWords = result.data.filter(item => item.type == 1 && item.tag.includes('国考'))
   } else if (data.type.includes('国考高频成语')) {
     allWords= result.data.filter((item) => item.type == 1 && item.tag.includes('国考') && item.count > 5);
   } else if (data.type.includes('公考高频成语')) {
-    allWords= result.data.filter((item) => item.type == 2 && item.tag.includes('公考') && item.count > 5);
+    allWords= result.data.filter((item) => item.type == 1 && item.tag.includes('公考') && item.count > 5);
+    console.log(allWords)
   } else if (data.type.includes('公考高频实词')) {
     allWords= result.data.filter((item) => item.type == 2 && item.tag.includes('公考') && item.count > 5);
   }
@@ -69,7 +81,7 @@ const getWordsStudyCount = async (data) => {
       })
     });
   }
-  let res = { 
+  let res = {
     allWordsCount: allStudyWords.length,
     starValue:( Number(allStudyWords.length)/Number(allWords.length) * 5 ).toFixed(1)
   }
@@ -103,7 +115,7 @@ const getWordsList = async (data) => {
       return element;
     });
   }
-  let res = { 
+  let res = {
     allWords
   }
   return res;
@@ -117,7 +129,6 @@ const getWordsDetail = async (options) => {
   } else {
     await reflashWordsRecord(options);
     word = hasWord.data[0];
-    console.log(word)
     if(word.synonym) {
       let result = await getSynonymWords(word.synonym)
       word.synonymList = result.data
@@ -172,6 +183,9 @@ exports.main = async (event, context) => {
   }
   else if (func === 'reflashWordsRecord') {
     res = await reflashWordsRecord(data);
+  }
+  else if (func === 'getWAllList') {
+    res = await getWAllList();
   }
   return res;
 }

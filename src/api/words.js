@@ -70,6 +70,16 @@ export async function addWordsList(data) {
   })
 }
 
+export async function getWAllList(data) {
+  return await wx.cloud.callFunction({
+    name: 'words',
+    data: {
+      func: 'getWAllList',
+      data
+    },
+  })
+}
+
 // export async function addTopic(data) {
 //   return await wx.cloud.callFunction({
 //     name: 'topic',

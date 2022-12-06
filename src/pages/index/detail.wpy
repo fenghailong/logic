@@ -129,18 +129,19 @@
         this.getPersonStudyCount(options)
       }
     },
-    onShow(options) {
-      if (this.detail.type !== '人物素材'){
-        this.getWordsStudyCount(this.detail)
-      } else {
-        this.getPersonStudyCount(this.detail)
-      }
-    },
+    // onShow(options) {
+    //   if (this.detail.type !== '人物素材'){
+    //     this.getWordsStudyCount(this.detail)
+    //   } else {
+    //     this.getPersonStudyCount(this.detail)
+    //   }
+    // },
     methods: {
       // 获取已学习
       async getWordsStudyCount(options) {
         wx.showLoading({title: '加载中'})
         let result = await getWordsStudyCount(options)
+        console.log(result)
         this.studyCount = result.result.allWordsCount
         this.starValue = result.result.starValue
         wx.hideLoading()
@@ -155,7 +156,7 @@
       toList () {
         wx.navigateTo({
           url: `/pages/index/list?type=${this.detail.type}`,
-        })          
+        })
       }
     },
     onShareAppMessage () {
