@@ -75,7 +75,7 @@
         </div>
       </div>
     </div>
-    <van-notice-bar scrollable left-icon="volume-o" text="逻辑填空1.0正式上线(免费,更新中)" />
+    <van-notice-bar scrollable left-icon="volume-o" text="首页搜索功能已更新，欢迎使用" />
     <div class="logic-index-box">
       <div class="logic-index-box-hot">
         <div class="logic-index-box-hot-title">热门词库</div>
