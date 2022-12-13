@@ -1,6 +1,6 @@
 <style lang="less">
   .page {
-    background-color: #eee;
+    background-color: #fff;
     .logic-index-search {
       position: relative;
       .van-search {
@@ -26,10 +26,79 @@
     .logic-index-box {
       padding: 0 10px;
     }
+    .logic-index-box-middle {
+      display: flex;
+      justify-content: space-between;
+      padding: 0 10px;
+      margin-top: 10px;
+      .logic-index-box-middle-left{
+        flex: 1;
+        background-color: #4881F3;
+        color: #FFFFFF;
+        border-radius: 10px;
+        padding: 20px 20px;
+        .logic-index-box-middle-left-title{
+          display: flex;
+          align-items: center;
+          margin-bottom: 10px;
+        }
+        .logic-index-box-middle-left-icon{
+          display: flex;
+          align-items: center;
+          border: 1px solid #EE7878;
+          background-color: #EE7878;
+          border-radius: 20px;
+          font-size: 12px;
+          padding: 0 5px;
+          margin-left: 10px;
+          height: 18px;
+          text{
+            line-height: 1;
+            margin-left: 3px;
+            font-size: 10px;
+            font-style:italic;
+            font-weight: 800;
+          }
+        }
+        .logic-index-box-middle-left-text {
+          font-size: 14px;
+          display: block;
+          font-weight: 300;
+        }
+      }
+      .logic-index-box-middle-right {
+        display: flex;
+        flex-direction: column;
+        font-size: 14px;
+        font-weight: 800;
+        font-weight: middle;
+        margin-left: 10px;
+        color: #FFFFFF;
+        .logic-index-box-middle-right-article {
+          background-color: #fb9b6c;
+          padding: 10px 10px;
+          border-radius: 10px;
+          text {
+            font-size: 12px;
+            font-weight: 400;
+          }
+        }
+        .logic-index-box-middle-right-person {
+          background-color: #2fcebe;
+          padding: 10px 10px;
+          border-radius: 10px;
+          margin-top: 5px;
+          text {
+            font-size: 12px;
+            font-weight: 400;
+          }
+        }
+      }
+    }
     .logic-index-box-hot {
       margin: 10px 0;
       padding: 10px;
-      background-color: #FFFFFF;
+      background-color: #eee;
       border-radius: 5px;
       .logic-index-box-hot-title {
         font-size: 16px;
@@ -77,33 +146,26 @@
     </div>
     <van-notice-bar scrollable left-icon="volume-o" text="首页搜索功能已更新，欢迎使用" />
     <div class="logic-index-box">
-      <div class="logic-index-box-hot">
-        <div class="logic-index-box-hot-title">热门词库</div>
-        <div class="logic-index-box-hot-content">
-          <div class="logic-index-box-hot-content-item" @click="toDetail('国考高频成语', words.countryHotWordsCount)">
-            <div>国考高频成语</div>
-            <text>{{words.countryHotWordsCount}} 词</text>
+      <div class="logic-index-box-middle">
+        <div class="logic-index-box-middle-left" @click="toDetail('国考高频成语', words.countryHotWordsCount)">
+          <div class="logic-index-box-middle-left-title">
+            <text>高频成语</text>
+            <div class="logic-index-box-middle-left-icon">
+              <van-icon name="fire" />
+              <text>HOT</text>
+            </div>
           </div>
-          <div class="logic-index-box-hot-content-item" @click="toDetail('国考历年成语', words.countryCount)">
-            <div>国考历年成语</div>
-            <text>{{words.countryCount}} 词</text>
-          </div>
-          <div class="logic-index-box-hot-content-item" style="background-color:#fb9b6c" @click="toDetail('公考高频成语', words.publicExamHotWordsCount)">
-            <div>公考高频成语</div>
-            <text>{{words.publicExamHotWordsCount}} 词</text>
-          </div>
-          <!-- <div class="logic-index-box-hot-content-item" style="background-color:#fb9b6c" @click="toDetail('公考高频实词', words.publicExamShotHotWordsCount)">
-            <div>公考高频实词</div>
-            <text>{{words.publicExamShotHotWordsCount}} 词</text>
-          </div> -->
+          <text class="logic-index-box-middle-left-text">词语日常积累</text>
+          <text class="logic-index-box-middle-left-text">轻松搞定逻辑填空</text>
         </div>
-      </div>
-      <div class="logic-index-box-hot">
-        <div class="logic-index-box-hot-title">申论积累</div>
-        <div class="logic-index-box-hot-content">
-          <div class="logic-index-box-hot-content-item" @click="toDetail('人物素材', personCount)">
+        <div class="logic-index-box-middle-right">
+          <div class="logic-index-box-middle-right-article" @click="toDetail('申论范文', personCount)">
+            <div>申论范文</div>
+            <text>每日一篇，轻松80+</text>
+          </div>
+          <div class="logic-index-box-middle-right-person" @click="toDetail('人物素材', personCount)">
             <div>人物素材</div>
-            <text>{{personCount}} 个</text>
+            <text>不积跬步，无以至千里</text>
           </div>
         </div>
       </div>
@@ -131,6 +193,7 @@
       "van-search": "../../libs/vant/search/index",
       "van-notice-bar": "../../libs/vant/notice-bar/index",
       "van-tag": "../../libs/vant/tag/index",
+      "van-icon": "../../libs/vant/icon/index",
     }
   }
 </config>
