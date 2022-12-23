@@ -43,7 +43,7 @@ const getWordsCount = async (data) => {
   const result = await getAllWords()
   console.log(result)
   const country= result.data.filter((item) => item.tag.includes('国考'));
-  const countryHotWords = country.filter(item => item.count > 5)
+  const countryHotWords = country.filter(item => item.count > 1)
   const publicExamHotWords = result.data.filter((item) => item.tag.includes('公考') && item.count > 5);
   const publicExamShotHotWords = result.data.filter((item) => item.type == 2 && item.count > 5);
   let res = {
