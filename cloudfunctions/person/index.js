@@ -55,7 +55,8 @@ const getPersonStudyCount = async (data) => {
     });
   }
   let res = { 
-    allPersonCount: allStudyPerson.length,
+    personCount: allPerson.length,
+    studyCount: allStudyPerson.length,
     starValue:( Number(allStudyPerson.length)/Number(allPerson.length) * 5 ).toFixed(1)
   }
   return res;

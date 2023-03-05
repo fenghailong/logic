@@ -82,13 +82,14 @@ wepy.app({
       'pages/index/index',
       'pages/index/list',
       'pages/index/detail',
-      'pages/index/searchDetail'
+      'pages/index/searchDetail',
+      'pages/index/web-view'
     ],
     window: {
       backgroundTextStyle: 'light',
-      navigationBarBackgroundColor: '#fff',
+      navigationBarBackgroundColor: '#387ffb',
       navigationBarTitleText: 'LaraBBS',
-      navigationBarTextStyle: 'black'
+      navigationBarTextStyle: 'white'
     }
 }
 </config>

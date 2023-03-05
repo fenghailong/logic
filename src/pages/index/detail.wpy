@@ -53,7 +53,7 @@
   <div class="page">
     <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，在进行考点评测效果会更好哦" />
     <div class="logic-detail-box">
-      <div class="logic-detail-content" v-if="detail.type === '国考高频成语'">
+      <div class="logic-detail-content" v-if="detail.type === '高频成语'">
         <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->
         <div class="logic-detail-content-title">{{detail.type}}</div>
         <div class="logic-detail-content-describe">搜集历年国考、省考等考试中“逻辑填空”模块出现的高频成语，需要掌握意思，用法等。</div>
@@ -118,9 +118,11 @@
   wepy.page({
     store,
     data: {
-      detail: {},
+      detail: {
+        count: 0,
+      },
       studyCount: 0,
-      starValue: 0
+      starValue: 0,
     },
     // 计算的属性
     computed: {
@@ -135,14 +137,15 @@
       // }
     },
     onLoad(options) {
-      this.detail = options
+      console.log(options)
+      this.detail.type = options.type
       this.detail.user_id = this._id
-      if (this.detail.type === '人物素材'){
-        this.getWordsStudyCount(options)
-      } else if (this.detail.type === '国考高频成语') {
-        this.getPersonStudyCount(options)
+      if (this.detail.type === '国考高频成语'){
+        this.getWordsStudyCount(this.detail)
+      } else if (this.detail.type === '人物素材') {
+        this.getPersonStudyCount(this.detail)
       } else {
-        this.getArticleStudyCount(options)
+        this.getArticleStudyCount(this.detail)
       }
     },
     methods: {
@@ -151,23 +154,26 @@
         wx.showLoading({title: '加载中'})
         let result = await getWordsStudyCount(options)
         console.log(result)
-        this.studyCount = result.result.allWordsCount
+        this.studyCount = result.result.studyCount
         this.starValue = result.result.starValue
+        this.detail.count = result.result.wordCount
         wx.hideLoading()
       },
       async getPersonStudyCount(options) {
         wx.showLoading({title: '加载中'})
         let result = await getPersonStudyCount(options)
-        this.studyCount = result.result.allPersonCount
+        this.studyCount = result.result.studyCount
         this.starValue = result.result.starValue
+        this.detail.count = result.result.personCount
         wx.hideLoading()
       },
       async getArticleStudyCount(options) {
         wx.showLoading({title: '加载中'})
         let result = await getArticleStudyCount(options)
         console.log(result)
-        // this.studyCount = result.result.allArticleCount
-        // this.starValue = result.result.starValue
+        this.studyCount = result.result.studyCount
+        this.starValue = result.result.starValue
+        this.detail.count = result.result.articleCount
         wx.hideLoading()
       },
       toList () {

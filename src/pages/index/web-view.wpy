@@ -1,0 +1,37 @@
+<style lang="less">
+</style>
+<template>
+    <div class="page">
+        <web-view src="{{path}}"></web-view>
+    </div>
+</template>
+<config>
+{
+    navigationBarTitleText: '逻辑填空',
+    enablePullDownRefresh: true,
+    usingComponents: {}
+}
+</config>
+<script>
+import wepy from '@wepy/core'
+import store from '@/store'
+import { mapGetters } from '@wepy/x'
+import eventHub from '@/common/eventHub'
+wepy.page({
+    store,
+    // mixins: [ syncBadge ],
+    data: {
+        path: ''
+    },
+    computed: {
+    },
+    onLoad (options) {
+        console.log(options.webview)
+        let webview = decodeURIComponent(options.webview);
+        this.path = webview
+    },
+    methods: {
+
+    }
+})
+</script>

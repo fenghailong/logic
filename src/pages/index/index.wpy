@@ -1,6 +1,6 @@
 <style lang="less">
   .page {
-    background-color: #fff;
+    background-color: rgb(245, 244, 244);
     .logic-index-search {
       position: relative;
       .van-search {
@@ -96,21 +96,56 @@
       }
     }
     .logic-index-box-hot {
-      margin: 10px 0;
-      padding: 10px;
-      background-color: #eee;
-      border-radius: 5px;
-      .logic-index-box-hot-title {
-        font-size: 16px;
-        font-weight: middle;
-        padding: 0 10px;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 10px;
+      margin-top: 20px;
+      .logic-index-box-hot-left {
+        position: relative;
+        height: 150px;
+        border-radius: 10px;
+        overflow: hidden;
+        padding: 20px 20px;
+        width: 50%;
+        image {
+          position: absolute;
+          left: 0;
+          bottom: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 0;
+        }
+        .logic-index-box-hot-left-content {
+          position: relative;
+          z-index: 1;
+        }
+        .logic-index-box-hot-left-title{
+          display: flex;
+          align-items: center;
+          margin-bottom: 10px;
+          font-size: 16px;
+          font-weight: bold;
+        }
+        .logic-index-box-hot-left-text {
+          font-size: 14px;
+          display: block;
+          font-weight: 500;
+        }
       }
-      .logic-index-box-hot-content {
-        margin-top: 10px;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-      }
+      // .logic-index-box-hot-left-title {
+      //   font-size: 16px;
+      //   font-weight: bold;
+      // }
+      // .logic-index-box-hot-left-title {
+      //   font-size: 16px;
+      //   font-weight: bold;
+      // }
+      // .logic-index-box-hot-content {
+      //   margin-top: 10px;
+      //   display: flex;
+      //   flex-wrap: wrap;
+      //   justify-content: center;
+      // }
       .logic-index-box-hot-content-item {
         display: flex;
         justify-content: center;
@@ -129,6 +164,105 @@
           font-size: 14px;
         }
       }
+      .logic-index-box-hot-right {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        margin-left: 10px;
+        padding: 20px;
+        background-color: #FFFFFF;
+        border-radius: 10px;
+        .logic-index-box-hot-right-item {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-direction: column;
+          image {
+            width: 40px;
+            height: 40px;
+          }
+          text {
+            font-size: 14px;
+            color: #666;
+          }
+        }
+      }
+    }
+    .logic-index-undertaking {
+      padding: 0 20px 120px;
+      margin-top: 20px;
+      border-radius: 10px;
+      .logic-index-undertaking-box {
+        background-color: #FFFFFF;
+        text-align: center;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 800;
+        font-weight: middle;
+      }
+      .logic-index-undertaking-title {
+        text-align: center;
+        padding: 10px 0;
+      }
+      .logic-index-undertaking-list {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0 10px 10px;
+        .logic-index-undertaking-item {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          flex: 25%;
+          text-align: center;
+          padding: 5px 0;
+          image {
+            width: 25px;
+            height: 25px;
+          }
+          text {
+            margin-top: 5px;
+          }
+        }
+      }
+    }
+    .logic-index-footer {
+      padding: 0 20px;
+      position: fixed;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+      bottom: 30px;
+      .logic-index-footer-box {
+        background-color: #FFFFFF;
+        display: flex;
+        font-size: 14px;
+        font-weight: 800;
+        font-weight: middle;
+        padding: 10px 10px;
+        border-radius: 10px;
+        van-button {
+          flex: 1;
+          text-align: center;
+        }
+        .no-style::after {
+          border: none !important;
+        }
+        .no-style {
+          border: none !important;
+          background-color: #fff;
+        }
+        .logic-index-footer-share {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          image {
+            width: 20px;
+            height: 20px;
+          }
+        }
+      }
     }
   }
 
@@ -144,10 +278,10 @@
         </div>
       </div>
     </div>
-    <van-notice-bar scrollable left-icon="volume-o" text="首页搜索功能已更新，欢迎使用" />
+    <van-notice-bar scrollable left-icon="volume-o" text="右下角分享好友，解决只能看到100个词的bug，我的收藏在开发中..." />
     <div class="logic-index-box">
       <div class="logic-index-box-middle">
-        <div class="logic-index-box-middle-left" @click="toDetail('国考高频成语', words.countryHotWordsCount)">
+        <div class="logic-index-box-middle-left" @click="toDetail('国考高频成语')">
           <div class="logic-index-box-middle-left-title">
             <text>高频成语</text>
             <div class="logic-index-box-middle-left-icon">
@@ -159,28 +293,100 @@
           <text class="logic-index-box-middle-left-text">轻松搞定逻辑填空</text>
         </div>
         <div class="logic-index-box-middle-right">
-          <div class="logic-index-box-middle-right-article" @click="toDetail('申论范文', personCount)">
-            <div>申论范文</div>
-            <text>每日一篇，轻松80+</text>
+          <div class="logic-index-box-middle-right-article">
+            <div>敬请期待</div>
+            <text>不积跬步，无以至千里</text>
           </div>
-          <div class="logic-index-box-middle-right-person" @click="toDetail('人物素材', personCount)">
-            <div>人物素材</div>
+          <div class="logic-index-box-middle-right-person">
+            <div>敬请期待</div>
             <text>不积跬步，无以至千里</text>
           </div>
         </div>
       </div>
       <div class="logic-index-box-hot">
-        <div class="logic-index-box-hot-title">即将上线</div>
-        <div class="logic-index-box-hot-content">
-          <div class="logic-index-box-hot-content-item">
-            <div>高频实词</div>
-            <text>0 词</text>
-          </div>
-          <div class="logic-index-box-hot-content-item">
-            <div>申论金句</div>
-            <text>0 句</text>
+        <div class="logic-index-box-hot-left" @click="toDetail('申论范文', personCount)">
+          <image src="../../assets/images/index-hot-item-bg.png" />
+          <div class="logic-index-box-hot-left-content">
+            <div class="logic-index-box-hot-left-title">
+              <text>申论范文</text>
+            </div>
+            <text class="logic-index-box-hot-left-text">每日一篇</text>
+            <text class="logic-index-box-hot-left-text">申论轻松上80+</text>
           </div>
         </div>
+        <div class="logic-index-box-hot-right">
+          <div class="logic-index-box-hot-right-item" @click="toDetail('人物素材', personCount)">
+            <image src="../../assets/images/index-hot-item-one.png" />
+            <text>人物素材</text>
+          </div>
+          <div class="logic-index-box-hot-right-item">
+            <image src="../../assets/images/index-hot-item-two.png" />
+            <text>学习交流</text>
+          </div>
+          <div class="logic-index-box-hot-right-item">
+            <image src="../../assets/images/index-hot-item-three.png" />
+            <text>敬请期待</text>
+          </div>
+          <div class="logic-index-box-hot-right-item">
+            <image src="../../assets/images/index-hot-item-four.png" />
+            <text>敬请期待</text>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="logic-index-undertaking">
+      <div class="logic-index-undertaking-box">
+        <div class="logic-index-undertaking-title">事业单位公基知识点</div>
+        <div class="logic-index-undertaking-list">
+          <div class="logic-index-undertaking-item">
+            <image src="../../assets/images/politics.png" />
+            <text>政治</text>
+          </div>
+          <div class="logic-index-undertaking-item">
+            <image src="../../assets/images/economy.png" />
+            <text>经济</text>
+          </div>
+          <div class="logic-index-undertaking-item">
+            <image src="../../assets/images/manage.png" />
+            <text>管理</text>
+          </div>
+          <div class="logic-index-undertaking-item">
+            <image src="../../assets/images/official.png" />
+            <text>公文</text>
+          </div>
+          <div class="logic-index-undertaking-item">
+            <image src="../../assets/images/humanity.png" />
+            <text>人文</text>
+          </div>
+          <div class="logic-index-undertaking-item">
+            <image src="../../assets/images/science.png" />
+            <text>科技</text>
+          </div>
+          <div class="logic-index-undertaking-item">
+            <image src="../../assets/images/law.png" />
+            <text>法律</text>
+          </div>
+          <div class="logic-index-undertaking-item">
+            <image src="../../assets/images/other.png" />
+            <text>其他</text>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="logic-index-footer">
+      <div class="logic-index-footer-box">
+        <van-button custom-class="no-style">
+          <div class="logic-index-footer-share">
+            <image src="../../assets/images/collect.png" />
+            <text>我的收藏</text>
+          </div>
+        </van-button>
+        <van-button custom-class="no-style" open-type="share">
+          <div class="logic-index-footer-share">
+            <image src="../../assets/images/share.png" />
+            <text>分享他人</text>
+          </div>
+        </van-button>
       </div>
     </div>
   </div>
@@ -194,13 +400,13 @@
       "van-notice-bar": "../../libs/vant/notice-bar/index",
       "van-tag": "../../libs/vant/tag/index",
       "van-icon": "../../libs/vant/icon/index",
+      "van-button": "../../libs/vant/button/index",
     }
   }
 </config>
 <script>
   import wepy from '@wepy/core'
-  import { getWordsCount, importWords, refreshSynonym, addWordsList, getWAllList } from '@/api/words'
-  import { getPersonCount } from '@/api/person'
+  import { importWords, refreshSynonym, addWordsList, getWAllList } from '@/api/words'
   import eventHub from '@/common/eventHub'
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
@@ -228,28 +434,16 @@
       // let data1 = await importWords(importData)
       // let data2 = await refreshSynonym(importData)
       await this.$store.dispatch('login')
-      await this.getCount()
       this.getListData()
     },
     async onPullDownRefresh() {
-      await this.getCount()
       wx.stopPullDownRefresh()
     },
     methods: {
-      // 获取词语数量
-      async getCount() {
-        wx.showLoading({title: '加载中'})
-        // 请求话题列表接口
-        const wordsCount = await getWordsCount()
-        const personCount = await getPersonCount()
-        this.personCount = personCount.result.personCount
-        this.words = wordsCount.result
-        wx.hideLoading()
-      },
-      toDetail (type, count) {
+      toDetail (type) {
         if (this.isLoggedIn) {
           wx.navigateTo({
-            url: `/pages/index/detail?type=${type}&count=${count}`,
+            url: `/pages/index/detail?type=${type}`,
           })
         }
       },

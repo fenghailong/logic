@@ -18,7 +18,7 @@ const addWordsList = async (data) => {
     obj.implication = temp[1]
     obj.count = Number(temp[2])
     obj.type = 1
-    obj.tag = "#国考"
+    obj.tag = "#公考"
     obj._createTime = Date.now(),
     obj._updateTime = Date.now()
     if(temp[3]) {
@@ -30,21 +30,37 @@ const addWordsList = async (data) => {
     }
     arr.push(obj)
   }
-  let obj = {}
-  arr = arr.reduce(function(item, next) {
-    obj[next.name] ? '' : obj[next.name] = true && item.push(next);
-    return item;
-  }, []);
+  // console.log(arr,'去重前')
+  // let obj = {}
+  // arr = arr.reduce(function(item, next) {
+  //   obj[next.name] ? '' : obj[next.name] = true && item.push(next);
+  //   return item;
+  // }, []);
   console.log(arr,'添加')
   let pList = []
   for (let n = 0; n < arr.length; n++) {
     let p = new Promise(async (resolve, reject) => {
       const hasWord = await collection.where({ name: arr[n].name }).get()
+      let result = hasWord.data[0]
       if (Array.isArray(hasWord.data) && hasWord.data.length === 0) {
         await addWords(arr[n]);
         resolve('添加')
       } else {
-        resolve('重复')
+        if(result.synonym && result.synonym.length > 0){
+          resolve('重复')
+        } else {
+          await collection.doc(result._id).update({
+            data: {
+              implication: result.implication.length > arr[n].implication.length ? result.implication : arr[n].implication,
+              count: arr[n].count,
+              tag: result.tag === "#国考" ? "#国考#公考" : "#公考",
+              synonym: arr[n].synonym,
+              type: 1,
+              _createTime: Date.now(),
+              _updateTime: Date.now()
+            }
+          });
+        }
       }
     })
     pList.push(p)
@@ -66,7 +82,7 @@ const importWords = async (data) => {
     obj.implication = temp[1]
     obj.count = Number(temp[2])
     obj.type = 1
-    obj.tag = "#国考"
+    obj.tag = "#公考"
     obj._createTime = Date.now(),
     obj._updateTime = Date.now()
     if(temp[3]) {
@@ -93,7 +109,7 @@ const importWords = async (data) => {
           data: {
             implication: result.implication.length > arr[n].implication.length ? result.implication : arr[n].implication,
             count: arr[n].count,
-            tag: "#国考",
+            tag: "#公考",
             type: 1,
             _createTime: Date.now(),
             _updateTime: Date.now()
@@ -121,7 +137,7 @@ const refreshSynonym = async (data) => {
     obj.implication = temp[1]
     obj.count = Number(temp[2])
     obj.type = 1
-    obj.tag = "#国考"
+    obj.tag = "#公考"
     obj._createTime = Date.now(),
     obj._updateTime = Date.now()
     if(temp[3]) {
@@ -133,18 +149,31 @@ const refreshSynonym = async (data) => {
     }
     arr.push(obj)
   }
-  let = pList2 = []
+  arr= arr.filter((item) => item.synonym && item.synonym.length > 0);
+  let pList2 = [];
   for (let j = 0; j < arr.length; j++) {
     if(arr[j].synonym && arr[j].synonym.length > 0) {
       let p = new Promise(async (resolve, reject) => {
         arr[j].synonym = await getSynonymWords(arr[j].synonym)
         const hasWord = await collection.where({ name: arr[j].name }).get();
         if (Array.isArray(hasWord.data) && hasWord.data.length === 0) {
-          await addWords(arr[j]);
+          // await addWords(arr[j]);
           resolve('再次添加')
         } else {
           let result = hasWord.data[0]
+          console.log(result)
           if(result.synonym && result.synonym.length > 0) {
+            let reg = new RegExp("[\\u4E00-\\u9FFF]+","g");
+            let val = result.synonym.toString()
+　　        if (reg.test(val)) {
+              await collection.doc(result._id).update({
+                data: {
+                  synonym: arr[j].synonym,
+                }
+              });
+              resolve(result.name + '已经更新')
+              return
+            }
             resolve('不用更新')
             return
           }
@@ -161,6 +190,7 @@ const refreshSynonym = async (data) => {
   }
   Promise.all(pList2).then((res)=>{
     console.log(res)
+    console.log(arr)
   }).catch(err => {
     console.log(err)
   })
@@ -186,7 +216,7 @@ const addWords = async (options) => {
       implication: options.implication,
       count: options.count,
       type: 1,
-      tag: "#国考",
+      tag: "#公考",
       _createTime: Date.now(),
       _updateTime: Date.now()
     }

@@ -86,11 +86,28 @@
         margin-top: 10px;
         color: #666;
       }
-      .logic-index-item-tag {
+      .logic-index-item-tag-person {
         font-size: 18px;
         padding: 0 10px;
         margin-top: 10px;
         font-weight: 500;
+      }
+      .logic-index-item-name-article {
+        padding: 10px;
+        font-size: 20px;
+        text-align: center;
+      }
+      .logic-index-item-title-article {
+        text-align: right;
+        font-size: 14px;
+        padding: 0 20px;
+        color: #999;
+      }
+      .logic-index-item-introduce-article {
+        font-size: 14px;
+        padding: 0 10px;
+        margin-top: 10px;
+        color: #666;
       }
     }
     .logic-index-list-footer {
@@ -114,7 +131,11 @@
       }
       .logic-index-list-popup-words {
         flex: 1;
-      } 
+      }
+      .logic-index-list-popup-words-title {
+        flex: 1;
+        font-size: 14 px;
+      }
     }
   }
 }
@@ -122,7 +143,7 @@
 <template>
   <div class="page">
     <div class="logic-index-box">
-      <div class="logic-index-item" v-if="options.type !== '人物素材'">
+      <div class="logic-index-item" v-if="options.type === '国考高频成语'">
         <div class="logic-index-item-name">{{wordDetail.name}}</div>
         <div class="logic-index-item-tag">
           <van-tag type="primary">考察</van-tag>
@@ -144,21 +165,32 @@
           <div v-else class="logic-index-item-synonym-nodata">无关联词语</div>
         </div>
       </div>
-      <div class="logic-index-item" v-else>
+      <div class="logic-index-item" v-else-if="options.type === '人物素材'">
         <div class="logic-index-item-name">{{personDetail.name}}</div>
         <div class="logic-index-item-title" v-if="personDetail.title">
           <div class="logic-index-item-title-text">————{{personDetail.title}}</div>
         </div>
-        <div class="logic-index-item-tag" v-if="personDetail.tag">
+        <div class="logic-index-item-tag-person" v-if="personDetail.tag">
           <div class="logic-index-item-tag-info">适用:{{personDetail.tag}}</div>
         </div>
         <div class="logic-index-item-introduce">
           <div class="logic-index-item-introduce-info">{{personDetail.introduce}}</div>
         </div>
       </div>
+      <div class="logic-index-item" v-else>
+        <div class="logic-index-item-name-article">{{articleDetail.title}}</div>
+        <div class="logic-index-item-title-article" v-if="articleDetail.author">
+          <div class="logic-index-item-title-text">————{{articleDetail.author}}</div>
+        </div>
+        <div class="logic-index-item-introduce-article">
+          <rich-text nodes="{{ articleDetail.content }}"></rich-text>
+          <!-- <div class="logic-index-item-introduce-info">{{articleDetail.content}}</div> -->
+        </div>
+      </div>
       <div class="logic-index-list-footer">
         <van-button round type="info" @click="previousWord">上一个</van-button>
         <van-button round type="info" @click="showListPopup">列表</van-button>
+        <van-button round type="info" v-if="options.type === '申论范文'" @click="doAnaysis(articleDetail)">解析</van-button>
         <van-button round type="info" @click="nextWord">下一个</van-button>
       </div>
     </div>
@@ -166,7 +198,8 @@
       <div class="logic-index-list-popup-list" :style="{ height: '70vh' }">
         <div class="logic-index-list-popup-item" v-for="(item, index) in allList" :key="index" @click="toWords(item._id)">
           <div class="logic-index-list-popup-index">{{index + 1}}</div>
-          <div class="logic-index-list-popup-words">{{item.name}}</div>
+          <div class="logic-index-list-popup-words-title" v-if="options.type === '申论范文'">{{item.title}}</div>
+          <div class="logic-index-list-popup-words" v-else>{{item.name}}</div>
           <van-tag v-if="item.isStudyed" type="primary" size="medium">已学</van-tag>
           <van-tag v-else type="primary" plain color="#999999" size="medium">未学</van-tag>
         </div>
@@ -192,6 +225,7 @@
   import eventHub from '@/common/eventHub'
   import { getWordsList, getWordsDetail } from '@/api/words'
   import { getPersonList, getPersonDetail } from '@/api/person'
+  import { getArticleList, getArticleDetail } from '@/api/article'
 
   wepy.page({
     store,
@@ -204,18 +238,22 @@
       showPopup: false,
       wordDetail: {},
       personDetail: {},
+      articleDetail: {},
       currentWord_id: '',
       options: {}
     },
     async onLoad(options) {
       options.user_id = this._id
       this.options = options
-      if (this.options.type !== '人物素材'){
+      if (this.options.type === '国考高频成语'){
         await this.getWordsList(options)
         await this.getWordsDetail(this.allList[0]._id)
-      } else {
+      } else if (this.options.type === '人物素材') {
         await this.getPersonList(options)
         await this.getPersonDetail(this.allList[0]._id)
+      } else {
+        await this.getArticleList(options)
+        await this.getArticleDetail(this.allList[0]._id)
       }
     },
     methods: {
@@ -231,6 +269,13 @@
         wx.showLoading({title: '加载中'})
         let result = await getPersonList(options)
         this.allList = result.result.allPerson
+        wx.hideLoading()
+      },
+      // 获取范文列表
+      async getArticleList(options) {
+        wx.showLoading({title: '加载中'})
+        let result = await getArticleList(options)
+        this.allList = result.result.allArticle
         wx.hideLoading()
       },
       // 获取单个词语
@@ -257,6 +302,27 @@
         this.currentWord_id = this.personDetail._id
         wx.hideLoading()
       },
+      // 获取单个范文
+      async getArticleDetail(article_id) {
+        let options = {}
+        options.user_id = this._id
+        options.article_id = article_id
+        wx.showLoading({title: '加载中'})
+        let result = await getArticleDetail(options)
+        this.articleDetail = result.result
+        this.articleDetail.starValue = this.getStarValue(this.articleDetail.count)
+        this.currentWord_id = this.articleDetail._id
+        wx.hideLoading()
+      },
+      // 跳转范文解析
+      doAnaysis (options) {
+        console.log(options.wechat_url)
+        let webview = options.wechat_url
+        webview = encodeURIComponent(webview)
+        wx.navigateTo({
+          url: '/pages/index/web-view?webview='+webview,
+        })
+      },
       async nextWord () {
         let nextIndex = 0
         let index = this.allList.findIndex((item) => item._id == this.currentWord_id)
@@ -267,10 +333,12 @@
             icon: 'success'
           })
         } else {
-          if (this.options.type !== '人物素材'){
+          if (this.options.type === '国考高频成语'){
             await this.getWordsDetail(this.allList[nextIndex]._id)
-          } else {
+          } else if (this.options.type === '人物素材') {
             await this.getPersonDetail(this.allList[nextIndex]._id)
+          } else {
+            await this.getArticleDetail(this.allList[nextIndex]._id)
           }
         }
       },
@@ -284,19 +352,23 @@
             icon: 'success'
           })
         } else {
-          if (this.options.type !== '人物素材'){
+          if (this.options.type === '国考高频成语'){
             await this.getWordsDetail(this.allList[previousIndex]._id)
-          } else {
+          } else if (this.options.type === '人物素材') {
             await this.getPersonDetail(this.allList[previousIndex]._id)
+          } else {
+            await this.getArticleDetail(this.allList[previousIndex]._id)
           }
         }
       },
       async toWords (id) {
         this.showPopup = false
-        if (this.options.type !== '人物素材'){
+        if (this.options.type === '国考高频成语'){
           await this.getWordsDetail(id)
-        } else {
+        } else if (this.options.type === '人物素材') {
           await this.getPersonDetail(id)
+        } else {
+          await this.getArticleDetail(id)
         }
       },
       getStarValue (count) {
@@ -314,10 +386,12 @@
       },
       async showListPopup () {
         this.showPopup = !this.showPopup
-        if (this.options.type !== '人物素材'){
+        if (this.options.type === '国考高频成语'){
           await this.getWordsList(this.options)
-        } else {
+        } else if (this.options.type === '人物素材') {
           await this.getPersonList(this.options)
+        } else {
+          await this.getArticleList(this.options)
         }
       },
       clickOverlay () {
