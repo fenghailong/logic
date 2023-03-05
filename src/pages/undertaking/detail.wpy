@@ -63,9 +63,11 @@
       ...mapGetters(['_id'])
     },
     data: {
+      moudleId: '',
       detail: {}
     },
     async onLoad(options) {
+      this.moudleId = options.id
       await this.getKnowledgeDetailByIdData(options.id)
     },
     methods: {
@@ -75,7 +77,15 @@
         let result = await getKnowledgeDetailById(options)
         this.detail = result.result.data[0]
         wx.hideLoading()
+      },
+    },
+    onShareAppMessage () {
+      return {
+        // 标题是话题标题
+        title: '知识要点',
+        // 路径为话题详情路径
+        path: '/pages/undertaking/detail?id=' + this.moudleId,
       }
-    }
+    },
   })
 </script>
