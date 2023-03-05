@@ -1,0 +1,79 @@
+<style lang="less">
+.page{
+  background-color: #eee;
+  .logic-index-box {
+    padding: 20px 20px;
+    .logic-index-item {
+      background-color: #fff;
+      height: 100vh;
+      border-radius: 10px;
+      padding: 0 10px;
+      overflow: auto;
+      .logic-index-item-name {
+        padding: 10px;
+        font-size: 20px;
+        text-align: center;
+      }
+      .logic-index-item-introduce-article {
+        font-size: 14px;
+        padding: 0 10px;
+        margin-top: 10px;
+        color: #666;
+      }
+    }
+  }
+}
+</style>
+<template>
+  <div class="page">
+    <div class="logic-index-box">
+      <div class="logic-index-item">
+        <div class="logic-index-item-name">{{detail.title}}</div>
+        <div class="logic-index-item-introduce-article">
+          <rich-text nodes="{{ detail.content }}"></rich-text>
+          <!-- <div class="logic-index-item-introduce-info">{{articleDetail.content}}</div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<config>
+  {
+    navigationBarTitleText: '词语含义',
+    usingComponents: {
+      "van-rate": "../../libs/vant/rate/index",
+      "van-tag": "../../libs/vant/tag/index",
+      "van-button": "../../libs/vant/button/index",
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import { mapGetters } from '@wepy/x'
+  import eventHub from '@/common/eventHub'
+  import { getKnowledgeDetailById } from '@/api/knowledgeModule'
+
+  wepy.page({
+    store,
+    computed: {
+      // 用户信息
+      ...mapGetters(['_id'])
+    },
+    data: {
+      detail: {}
+    },
+    async onLoad(options) {
+      await this.getKnowledgeDetailByIdData(options.id)
+    },
+    methods: {
+      // 获取模块词语列表
+      async getKnowledgeDetailByIdData(options) {
+        wx.showLoading({title: '加载中'})
+        let result = await getKnowledgeDetailById(options)
+        this.detail = result.result.data[0]
+        wx.hideLoading()
+      }
+    }
+  })
+</script>

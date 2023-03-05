@@ -338,37 +338,9 @@
       <div class="logic-index-undertaking-box">
         <div class="logic-index-undertaking-title">事业单位公基知识点</div>
         <div class="logic-index-undertaking-list">
-          <div class="logic-index-undertaking-item">
-            <image src="../../assets/images/politics.png" />
-            <text>政治</text>
-          </div>
-          <div class="logic-index-undertaking-item">
-            <image src="../../assets/images/economy.png" />
-            <text>经济</text>
-          </div>
-          <div class="logic-index-undertaking-item">
-            <image src="../../assets/images/manage.png" />
-            <text>管理</text>
-          </div>
-          <div class="logic-index-undertaking-item">
-            <image src="../../assets/images/official.png" />
-            <text>公文</text>
-          </div>
-          <div class="logic-index-undertaking-item">
-            <image src="../../assets/images/humanity.png" />
-            <text>人文</text>
-          </div>
-          <div class="logic-index-undertaking-item">
-            <image src="../../assets/images/science.png" />
-            <text>科技</text>
-          </div>
-          <div class="logic-index-undertaking-item">
-            <image src="../../assets/images/law.png" />
-            <text>法律</text>
-          </div>
-          <div class="logic-index-undertaking-item">
-            <image src="../../assets/images/other.png" />
-            <text>其他</text>
+          <div v-for="(item, index) in undertaking" class="logic-index-undertaking-item" @click="toUndertaking(item._id)">
+            <image src="{{item.icon}}" />
+            <text>{{item.name}}</text>
           </div>
         </div>
       </div>
@@ -407,6 +379,7 @@
 <script>
   import wepy from '@wepy/core'
   import { importWords, refreshSynonym, addWordsList, getWAllList } from '@/api/words'
+  import { getAllModules } from '@/api/knowledgeModule'
   import eventHub from '@/common/eventHub'
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
@@ -424,7 +397,9 @@
       isLoading: false,
 
       searchList: [],
-      listData: []
+      listData: [],
+      // 事业单位模块
+      undertaking: []
     },
     computed: {
       ...mapGetters([ 'isLoggedIn' ])
@@ -435,6 +410,7 @@
       // let data2 = await refreshSynonym(importData)
       await this.$store.dispatch('login')
       this.getListData()
+      this.getAllModulesData()
     },
     async onPullDownRefresh() {
       wx.stopPullDownRefresh()
@@ -469,6 +445,20 @@
         wx.navigateTo({
           url: `/pages/index/searchDetail?_id=${id}`,
         })
+      },
+      // 获取事业单位模块
+      async getAllModulesData () {
+        let data = await getAllModules(2,true)
+        this.undertaking = data.result.data
+      },
+      // toKnowledgeModules
+      async toUndertaking (id) {
+        console.log(id, '=======')
+        if (this.isLoggedIn) {
+          wx.navigateTo({
+            url: `/pages/undertaking/index?id=${id}`,
+          })
+        }
       }
     },
     onShareAppMessage() {

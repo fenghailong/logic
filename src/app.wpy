@@ -83,7 +83,10 @@ wepy.app({
       'pages/index/list',
       'pages/index/detail',
       'pages/index/searchDetail',
-      'pages/index/web-view'
+      'pages/index/web-view',
+      'pages/undertaking/index',
+      'pages/undertaking/list',
+      'pages/undertaking/detail'
     ],
     window: {
       backgroundTextStyle: 'light',

@@ -1,0 +1,108 @@
+<style lang="less">
+.page{
+  background-color: #eee;
+  .logic-undertaking-list-header {
+    line-height: 100px;
+    background-color: #387ffb;
+    padding: 0 20px;
+    font-size: 20px;
+    color: #fff;
+    font-weight: bold;
+  }
+  .logic-undertaking-list-box {
+  }
+  .logic-undertaking-list-content {
+    background-color: #fff;
+    padding: 25px 20px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    .logic-undertaking-list-content-title {
+      text-align: left;
+      font-size: 18px;
+      font-weight: 500;
+      line-height: 1;
+      flex: 1;
+    }
+  }
+}
+</style>
+<template>
+  <div class="page">
+    <div class="logic-undertaking-list-header">{{title}}</div>
+    <div class="logic-undertaking-list-box" v-if="moudleList.length > 0">
+      <div class="logic-undertaking-list-content" v-for="(item, index) in moudleList" @click="toDetail(item._id)">
+        <!-- <div class="logic-undertaking-list-content-people">25624人正在学习</div> -->
+        <div class="logic-undertaking-list-content-title">第{{index+1}}章 {{item.name}}</div>
+        <van-icon name="arrow" color="#387ffb" />
+        <!-- <div class="logic-undertaking-list-content-message">
+          <div class="logic-undertaking-list-content-message-practice">已练习 {{studyCount}}/{{undertaking-list.count}}</div>
+          <van-rate readonly value="{{ starValue }}" allow-half/>
+        </div> -->
+      </div>
+    </div>
+    <van-empty v-else description="从政治模块开始更新，敬请期待" />
+  </div>
+</template>
+<config>
+  {
+  navigationBarTitleText: '知识点详情',
+    usingComponents: {
+      "van-search": "../../libs/vant/circle/index",
+      "van-notice-bar": "../../libs/vant/notice-bar/index",
+      "van-button": "../../libs/vant/button/index",
+      "van-rate": "../../libs/vant/rate/index",
+      "van-empty": "../../libs/vant/empty/index",
+      "van-icon": "../../libs/vant/icon/index",
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import { mapGetters } from '@wepy/x'
+  import { getModulesById } from '@/api/knowledgeModule'
+  import eventHub from '@/common/eventHub'
+
+  wepy.page({
+    store,
+    data: {
+      title: '',
+      moudleId: '',
+      moudleList: []
+    },
+    // 计算的属性
+    computed: {
+      ...mapGetters(['_id']),
+    },
+    onLoad(options) {
+      console.log(options)
+      this.moudleId = options.id
+      this.title = options.name
+      console.log(this.title)
+      this.getModulesByIdData(this.moudleId)
+    },
+    methods: {
+      // 获取已学习
+      async getModulesByIdData(moudleId) {
+        wx.showLoading({title: '加载中'})
+        let result = await getModulesById(moudleId)
+        this.moudleList = result.result.data
+        wx.hideLoading()
+      },
+      toDetail (id) {
+        wx.navigateTo({
+          url: `/pages/undertaking/detail?id=${id}`,
+        })
+      }
+    },
+    onShareAppMessage () {
+      return {
+        // 标题是话题标题
+        title: '知识模块',
+        // 路径为话题详情路径
+        path: '/pages/undertaking/list?id=' + this.moudleId,
+      }
+    },
+  })
+</script>
