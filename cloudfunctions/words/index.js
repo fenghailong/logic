@@ -12,6 +12,7 @@ const _ = db.command
 // 获取所有词语
 const getAllWords = async () => {
   const countResult = await collection.count()
+  console.log(countResult)
   const total = countResult.total
   // 计算需分几次取
   const batchTimes = Math.ceil(total / 100)
@@ -22,12 +23,14 @@ const getAllWords = async () => {
     tasks.push(promise)
   }
   // 等待所有
+  console.log(tasks, '=============')
   let result = (await Promise.all(tasks)).reduce((acc, cur) => {
     return {
       data: acc.data.concat(cur.data),
       errMsg: acc.errMsg,
     }
   })
+  // result.data = result.data || [] // 处理 没有数据时 reduce 结果 undefined 的情况
   return result
 }
 // 获取所有以学习词语
@@ -44,11 +47,14 @@ const getAllStudyWords = async (data) => {
   }
   // 等待所有
   let result = (await Promise.all(tasks)).reduce((acc, cur) => {
+    if(acc.length <= 0) acc.data = []
+    if(cur.length <= 0) cur.data = []
     return {
       data: acc.data.concat(cur.data),
       errMsg: acc.errMsg,
     }
-  })
+  },[])
+  result.data = result.data || [] // 处理 没有数据时 reduce 结果 undefined 的情况
   return result
 }
 
