@@ -54,7 +54,7 @@
   <div class="page">
     <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，在进行刷题效果会更好哦" />
     <div class="logic-detail-box">
-      <div class="logic-detail-content" v-for="(item, index) in moudleList">
+      <div class="logic-detail-content" v-for="(item, index) in moudleList" :key="index">
         <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->
         <div class="logic-detail-content-title">{{item.name}}</div>
         <div class="logic-detail-content-describe">总结{{item.name}}模块的知识点，需要掌握熟记，学习完后最好配合FB对应的刷题模块。</div>
@@ -86,6 +86,7 @@
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
   import { getModulesById } from '@/api/knowledgeModule'
+  import { addMessage } from '@/api/subscribe'
   import eventHub from '@/common/eventHub'
 
   wepy.page({
@@ -111,9 +112,55 @@
         wx.hideLoading()
       },
       toList (id, name) {
+        this.onSubscribe()
         wx.navigateTo({
           url: `/pages/undertaking/list?id=${id}&name=${name}`,
         })
+      },
+      onSubscribe(e) {
+        let date = new Date(Date.parse(new Date()));
+        console.log(date)
+        let lessonTmplId = 'bccZvCHjX2W6yCvLylr8ww9McM_C8rBSbDKZ6sKE3ok'
+        const item = {
+          thing1: {
+            value: this.text
+          },
+          date2: {
+            value: this.formdate(date)
+          }
+        }
+        let that = this
+        wx.requestSubscribeMessage({
+          tmplIds: [lessonTmplId],
+          async success (res) {
+            if (res.errMsg === 'requestSubscribeMessage:ok') {
+              wx.showLoading({
+                title: '订阅中',
+                mask:true
+              })
+              await addMessage({
+                data: item,
+                templateId: lessonTmplId,
+                user_id: that._id
+              })
+              wx.hideLoading();
+              wx.showToast({
+                title: '订阅成功'
+              });
+            }
+          }
+        });
+      },
+      textin(e){
+        this.text = e.detail.value;
+      },
+      formdate(date){
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        var date1 = date.getDate();
+        var hour = date.getHours();
+        var minutes = date.getMinutes();
+        return year + "年" + month + "月" + date1 + "日 " + hour + ":" + minutes;
       }
     },
     onShareAppMessage () {
