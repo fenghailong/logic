@@ -29,3 +29,13 @@ export async function getKnowledgeDetailById(data) {
     },
   })
 }
+
+export async function getEvaluationById(data) {
+  return await wx.cloud.callFunction({
+    name: 'knowledgeModule',
+    data: {
+      func: 'getEvaluationById',
+      data
+    },
+  })
+}

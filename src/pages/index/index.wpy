@@ -338,7 +338,7 @@
       <div class="logic-index-undertaking-box">
         <div class="logic-index-undertaking-title">事业单位公基知识点</div>
         <div class="logic-index-undertaking-list">
-          <div v-for="(item, index) in undertaking" :key=index class="logic-index-undertaking-item" @click="toUndertaking(item._id)">
+          <div v-for="(item, index) in undertaking" :key="index" class="logic-index-undertaking-item" @click="toUndertaking(item._id)">
             <image src="{{item.icon}}" />
             <text>{{item.name}}</text>
           </div>

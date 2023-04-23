@@ -14,7 +14,6 @@ const getKnowledgeDetailById = async (id) => {
   return result
 }
 
-
 exports.main = async (event, context) => {
   const { func, data } = event;
   // const { OPENID, APPID, UNIONID } = cloud.getWXContext();

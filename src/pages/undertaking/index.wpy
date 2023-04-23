@@ -64,7 +64,7 @@
         </div> -->
         <div class="logic-detail-content-footer">
           <van-button class="logic-detail-content-button" color="#4755EB" round @click="toList(item._id, item.name)">开始学习</van-button>
-          <!-- <van-button class="logic-detail-content-button" color="#54BBCB" round >考点评测</van-button> -->
+          <van-button class="logic-detail-content-button" color="#54BBCB" round @click="toEvaluation(item._id, item.name)">考点评测</van-button>
         </div>
       </div>
     </div>
@@ -112,9 +112,13 @@
         wx.hideLoading()
       },
       toList (id, name) {
-        this.onSubscribe()
         wx.navigateTo({
           url: `/pages/undertaking/list?id=${id}&name=${name}`,
+        })
+      },
+      toEvaluation (id, name) {
+        wx.navigateTo({
+          url: `/pages/undertaking/evaluation?id=${id}&name=${name}`,
         })
       },
       onSubscribe(e) {

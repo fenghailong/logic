@@ -86,7 +86,8 @@ wepy.app({
       'pages/index/web-view',
       'pages/undertaking/index',
       'pages/undertaking/list',
-      'pages/undertaking/detail'
+      'pages/undertaking/detail',
+      'pages/undertaking/evaluation',
     ],
     window: {
       backgroundTextStyle: 'light',

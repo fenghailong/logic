@@ -6,6 +6,7 @@ cloud.init({
 });
 const db = cloud.database();
 const collection = db.collection('knowledgeModule');
+const evaluationCollection = db.collection('evaluation');
 
 // 获取所有模块
 const getAllModules = async (data) => {
@@ -20,6 +21,12 @@ const getModulesById = async (id) => {
   return result
 }
 
+// 获取单个模块下面的考点
+const getEvaluationById = async (id) => {
+  const result = await evaluationCollection.where({ knowledgeModule_id: id }).get();
+  console.log(result, '======')
+  return result
+}
 
 exports.main = async (event, context) => {
   const { func, data } = event;
@@ -29,6 +36,8 @@ exports.main = async (event, context) => {
     res = await getAllModules(data);
   } else if (func === 'getModulesById') {
     res = await getModulesById(data);
+  } else if (func === 'getEvaluationById') {
+    res = await getEvaluationById(data);
   }
   return res;
 }
