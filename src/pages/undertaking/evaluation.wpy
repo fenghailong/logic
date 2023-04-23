@@ -7,8 +7,56 @@
       background-color: #fff;
       height: 75vh;
       border-radius: 10px;
-      padding: 15px;
+      padding: 20px;
       overflow: auto;
+      font-size: 18px;
+    }
+    .logic-index-item {
+      margin-bottom: 10px;
+      line-height: 34px;
+    }
+    .logic-index-item-line {
+      color: #d3d3d3;
+      display: inline;
+    }
+    .logic-index-item-line-current {
+      color: blue;
+      // animation: mydeamon 1s infinite;//1s值一秒内完成动画
+    }
+    @keyframes mydeamon {
+      0% {
+        transform:scale(1);//scale代表闪烁的体型变化，其他倾斜等样式自行搜索
+        opacity: 0.5;//透明程度
+      }
+      
+      100% {
+        transform:scale(10);
+        color: blue;
+        opacity: 1;
+      }
+    }
+    .logic-index-item-text {
+      display: inline;
+    }
+    .logic-index-footer{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      bottom: 25px;
+      left: 0;
+      right: 0;
+    }
+    .logic-index-footer-img{
+      margin: 0 50px;
+      text-align: center;
+      image {
+        width: 50px;
+        height: 50px;
+        box-shadow: 4rpx 4rpx 7rpx 2rpx #999;
+        border-radius: 50%;
+        border: none;
+      }
     }
   }
 }
@@ -17,9 +65,26 @@
   <div class="page">
     <div class="logic-index-box">
       <div class="logic-index-list">
-        <div class="logic-index-item">
-          aaa
+        <div v-for="(item, index) in subjectList" :key="index" class="logic-index-item">
+          <div class="logic-index-item-content">
+            <text>{{index+1}}.</text>
+            <div class="logic-index-item-text" v-for="(element, dindex) in item.finallData" :key="dindex">
+              <text v-if="element.isAnswer" class="'logic-index-item-line' {{element.isCurrent === 2 ? 'logic-index-item-line-current' : ''}}" @click="changCurrent(index, dindex)">
+                <text v-if="element.isShowAnswer"> {{element.value}} </text>
+                <text v-else> _______ </text>
+              </text>
+              <div class="logic-index-item-text" v-else @click="changCurrent(index, dindex)">{{element}}</div>
+            </div>
+          </div>
         </div>
+      </div>
+      <div class="logic-index-footer">
+        <div>输入文字</div>
+        <div class="logic-index-footer-img" @touchstart="touchStart" @touchend="touchEnd">
+          <image src="../../assets/images/speak.png" />
+          <div>长按说话</div>
+        </div>
+        <div>忘记了</div>
       </div>
     </div>
   </div>
@@ -41,7 +106,8 @@
   import { mapGetters } from '@wepy/x'
   import eventHub from '@/common/eventHub'
   import { getEvaluationById } from '@/api/knowledgeModule'
-
+  let plugin = requirePlugin("WechatSI")
+  let manager = plugin.getRecordRecognitionManager()
   wepy.page({
     store,
     computed: {
@@ -50,12 +116,19 @@
     },
     data: {
       moudleId: '',
-      subjectList: {}
+      subjectList: {},
+      currentAnswer: {
+        speak: '',
+      },
+      currentIndex: 0,
+      currentDIndex: 0
     },
     async onLoad(options) {
       this.moudleId = options.id
       wx.setNavigationBarTitle({title: options.name})
       await this.getEvaluationByIdData(options.id)
+      //识别语音
+      this.initRecord();
     },
     methods: {
       // 获取模块词语列表
@@ -71,11 +144,78 @@
           })
           item.answers = item.answer.split('#')
           let index = 0;
-          item.finallData = item.subjects.map(a => a === "#" ? {isAnswer:true, value: item.answers[index++]} : a)
+          item.finallData = item.subjects.map(a => a === "#" ? { 
+            isAnswer:true, 
+            value: item.answers[index++], 
+            isCurrent:1,
+            isShowAnswer: false,
+          } : a)
           return item
         })
+        let index = this.subjectList[0].finallData.map(o => o.isAnswer).indexOf(true)
+        this.subjectList[0].finallData[index].isCurrent = 2
+        this.currentIndex = 0
+        this.currentDIndex = index
         console.log(this.subjectList)
         wx.hideLoading()
+      },
+      changCurrent (index, dindex) {
+        this.subjectList.forEach(item => {
+          item.finallData.forEach(a => {
+            if(a.isCurrent){
+              a.isCurrent = 1
+            }
+          })
+        })
+        this.subjectList[index].finallData[dindex].isCurrent = 2
+        this.currentIndex = index
+        this.currentDIndex = dindex
+      },
+      touchStart () {
+        wx.showLoading({title: '松开结束'})
+        manager.start({
+          lang: 'zh_CN',// 识别的语言，目前支持zh_CN en_US zh_HK sichuanhua
+        })
+      },
+      touchEnd () {
+        manager.stop();
+        wx.hideLoading()
+      },
+      //识别语音 -- 初始化
+      initRecord () {
+        // 有新的识别内容返回，则会调用此事件
+        manager.onRecognize = (res) => {
+          console.log(res)
+        }
+        // 正常开始录音识别时会调用此事件
+        manager.onStart = (res) => {
+          console.log("成功开始录音识别", res)
+        }
+        // 识别错误事件
+        manager.onError = (res) => {
+          console.error("error msg", res)
+        }
+        //识别结束事件
+        manager.onStop = (res) => {
+          if (res.result == '') {
+            wx.showModal({
+              title: '提示',
+              content: '听不清楚，请重新说一遍！',
+              showCancel: false,
+              success: (res) => {}
+            })
+            return;
+          }
+          this.currentAnswer.speak = res.result.replace(/[。，\/#！$%\^&\*；：{}=\-_`~()]/g,"");
+          if (this.currentAnswer.speak === this.subjectList[this.currentIndex].finallData[this.currentDIndex].value) {
+            this.subjectList[this.currentIndex].finallData[this.currentDIndex].isShowAnswer = true
+          } else {
+            wx.showToast({
+              title: '回答错误，再想想呢？'
+            })
+          }
+          console.log(this.currentAnswer.speak)
+        }
       },
     },
     onShareAppMessage () {
