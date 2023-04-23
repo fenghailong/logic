@@ -28,10 +28,8 @@
   <div class="page">
     <div class="logic-index-box">
       <div v-if="detail.title" class="logic-index-item">
-        <!-- <div class="logic-index-item-name">{{detail.title}}</div> -->
         <div class="logic-index-item-introduce-article">
           <rich-text nodes="{{ detail.content }}"></rich-text>
-          <!-- <div class="logic-index-item-introduce-info">{{articleDetail.content}}</div> -->
         </div>
       </div>
       <van-empty v-else description="每日更新，敬请期待" />
