@@ -28,7 +28,7 @@
         transform:scale(1);//scale代表闪烁的体型变化，其他倾斜等样式自行搜索
         opacity: 0.5;//透明程度
       }
-      
+
       100% {
         transform:scale(10);
         color: blue;
@@ -38,25 +38,51 @@
     .logic-index-item-text {
       display: inline;
     }
+    .logic-index-item-text-answer {
+      color: blue;
+    }
     .logic-index-footer{
       display: flex;
       justify-content: center;
       align-items: center;
       position: fixed;
-      bottom: 25px;
+      bottom: 30px;
       left: 0;
       right: 0;
     }
     .logic-index-footer-img{
-      margin: 0 50px;
+      flex: 0 0 50%;
       text-align: center;
       image {
         width: 50px;
         height: 50px;
         box-shadow: 4rpx 4rpx 7rpx 2rpx #999;
         border-radius: 50%;
-        border: none;
       }
+    }
+    .logic-index-footer-input {
+      text-align: center;
+      position: relative;
+      image {
+        width: 30px;
+        height: 30px;
+      }
+      input {
+        position: absolute;
+        top: 0;
+        height: 100%;
+      }
+    }
+    .logic-index-footer-next {
+      text-align: center;
+      image {
+        width: 30px;
+        height: 30px;
+      }
+    }
+    .logic-index-footer-text {
+      font-size: 14px;
+      color: #666;
     }
   }
 }
@@ -70,21 +96,28 @@
             <text>{{index+1}}.</text>
             <div class="logic-index-item-text" v-for="(element, dindex) in item.finallData" :key="dindex">
               <text v-if="element.isAnswer" class="'logic-index-item-line' {{element.isCurrent === 2 ? 'logic-index-item-line-current' : ''}}" @click="changCurrent(index, dindex)">
-                <text v-if="element.isShowAnswer"> {{element.value}} </text>
+                <text class="logic-index-item-text-answer" v-if="element.isShowAnswer"> {{element.value}} </text>
                 <text v-else> _______ </text>
               </text>
-              <div class="logic-index-item-text" v-else @click="changCurrent(index, dindex)">{{element}}</div>
+              <div class="logic-index-item-text" v-else @click="changCurrent(index, dindex)">{{element.value}}</div>
             </div>
           </div>
         </div>
       </div>
       <div class="logic-index-footer">
-        <div>输入文字</div>
+        <div class="logic-index-footer-input">
+          <image src="../../assets/images/input.png" />
+          <div class="logic-index-footer-text">输入文字</div>
+          <input type="text" 	:adjust-position="false" 	@confirm="inputConfirm" />
+        </div>
         <div class="logic-index-footer-img" @touchstart="touchStart" @touchend="touchEnd">
           <image src="../../assets/images/speak.png" />
-          <div>长按说话</div>
+          <div class="logic-index-footer-text">长按说话</div>
         </div>
-        <div>忘记了</div>
+        <div class="logic-index-footer-next">
+          <image src="../../assets/images/next.png" />
+          <div class="logic-index-footer-text">忘记了</div>
+        </div>
       </div>
     </div>
   </div>
@@ -135,7 +168,7 @@
       async getEvaluationByIdData(options) {
         wx.showLoading({title: '加载中'})
         let result = await getEvaluationById(options)
-        this.subjectList = result.result.data.map(item => {
+        this.subjectList = result.result.data.map((item, subIndex )=> {
           item.subjects = item.subject.split(/(#)/g)
           item.subjects.forEach((element, dindex)=> {
             if(element === ''){
@@ -144,12 +177,17 @@
           })
           item.answers = item.answer.split('#')
           let index = 0;
-          item.finallData = item.subjects.map(a => a === "#" ? { 
-            isAnswer:true, 
-            value: item.answers[index++], 
+          item.finallData = item.subjects.map((element, subsIndex)=> element === "#" ? {
+            isAnswer:true,
+            value: item.answers[index++],
             isCurrent:1,
             isShowAnswer: false,
-          } : a)
+            subIndex: subIndex,
+            answerIndex: subsIndex,
+          } : {
+            isAnswer:false,
+            value: element
+          })
           return item
         })
         let index = this.subjectList[0].finallData.map(o => o.isAnswer).indexOf(true)
@@ -207,15 +245,56 @@
             return;
           }
           this.currentAnswer.speak = res.result.replace(/[。，\/#！$%\^&\*；：{}=\-_`~()]/g,"");
-          if (this.currentAnswer.speak === this.subjectList[this.currentIndex].finallData[this.currentDIndex].value) {
-            this.subjectList[this.currentIndex].finallData[this.currentDIndex].isShowAnswer = true
-          } else {
-            wx.showToast({
-              title: '回答错误，再想想呢？'
-            })
-          }
-          console.log(this.currentAnswer.speak)
+          this.checkAnswer(this.currentAnswer.speak)
         }
+      },
+      // input输入框确认时
+      inputConfirm (e) {
+        let str = e.$wx.detail.value
+        this.checkAnswer(str)
+      },
+      checkAnswer (answer) {
+        if (answer === this.subjectList[this.currentIndex].finallData[this.currentDIndex].value) {
+          // 过滤题干 获取一个anwer的新数组
+          let arr = this.getAnswerArr(this.subjectList)
+          // 获取下一个答案的index
+          let result = this.getNextAnswer(arr)
+          // 试下一个答案变为当前答案
+          this.subjectList[this.currentIndex].finallData[this.currentDIndex].isShowAnswer = true
+          this.changCurrent(result.subIndex, result.answerIndex)
+        } else {
+          wx.showToast({
+            title: '回答错误，再想想呢？'
+          })
+        }
+      },
+      // 获取下一个答案的index
+      getNextAnswer (arr) {
+        let index = arr.findIndex(item => item.subIndex == this.currentIndex && item.answerIndex == this.currentDIndex)
+        index = index + 1
+        if (index <= arr.length-1) {
+          return {
+            subIndex: arr[index].subIndex,
+            answerIndex: arr[index].answerIndex
+          }
+        } else {
+          return {
+            subIndex: arr[0].subIndex,
+            answerIndex: arr[0].answerIndex
+          }
+        }
+      },
+      // 过滤数组得到一个只有答案的新数组
+      getAnswerArr (subjectList) {
+        let arr = []
+        subjectList.forEach(item => {
+          item.finallData.forEach(a => {
+            if(a.isAnswer && !a.isShowAnswer){
+              arr.push(a)
+            }
+          })
+        })
+        return arr
       },
     },
     onShareAppMessage () {
