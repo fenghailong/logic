@@ -21,6 +21,27 @@
         color: #666;
       }
     }
+    .logic-index-note-title {
+      font-size: 20px;
+      padding: 20px 0 0;
+      text-align: center;
+      font-weight: bold;
+    }
+    .logic-index-note-list {
+      margin-top: 10px;
+      background-color: #fff;
+      border-radius: 5px;
+      padding: 10px 20px;
+    }
+    .logic-index-note-input {
+      margin-top: 20px;
+    }
+    .logic-index-content-button {
+      margin-top: 20px;
+      .van-button {
+        width: 100%;
+      }
+    }
   }
 }
 </style>
@@ -33,6 +54,25 @@
         </div>
       </div>
       <van-empty v-else description="每日更新，敬请期待" />
+      <div v-if="notesList.length > 0" class="logic-index-note-title">我的笔记积累</div>
+      <div v-if="notesList.length > 0" v-for="(item, index) in notesList" :key="index" class="logic-index-note-list"> 
+          {{item.content}}
+      </div>
+      <div class="logic-index-note-input">
+        <van-field
+          :value="currentNote "
+          type="textarea"
+          placeholder="请输入笔记"
+          autosize
+          maxlength="200"
+          show-word-limit
+          :border="false"
+          @change = "noteChange"
+        />
+      </div>
+      <div class="logic-index-content-button">
+        <van-button color="#4755EB" round @click="doNotes">记笔记</van-button>
+      </div>
     </div>
   </div>
 </template>
@@ -40,10 +80,9 @@
   {
     navigationBarTitleText: '哲学概述',
     usingComponents: {
-      "van-rate": "../../libs/vant/rate/index",
-      "van-tag": "../../libs/vant/tag/index",
       "van-button": "../../libs/vant/button/index",
-      "van-empty": "../../libs/vant/empty/index"
+      "van-empty": "../../libs/vant/empty/index",
+      "van-field": "../../libs/vant/field/index"
     }
   }
 </config>
@@ -52,7 +91,7 @@
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
   import eventHub from '@/common/eventHub'
-  import { getKnowledgeDetailById } from '@/api/knowledgeModule'
+  import { getKnowledgeDetailById, addNotes, getNotes } from '@/api/knowledgeModule'
 
   wepy.page({
     store,
@@ -62,11 +101,14 @@
     },
     data: {
       moudleId: '',
-      detail: {}
+      detail: {},
+      currentNote: '',
+      notesList: []
     },
     async onLoad(options) {
       this.moudleId = options.id
       await this.getKnowledgeDetailByIdData(options.id)
+      await this.getNoteList()
       wx.setNavigationBarTitle({title: this.detail.title})
     },
     methods: {
@@ -77,6 +119,31 @@
         this.detail = result.result.data[0]
         wx.hideLoading()
       },
+      noteChange (e) {
+        this.currentNote = e.$wx.detail
+      },
+      async getNoteList () {
+        wx.showLoading({title: '加载中'})
+        let options = {
+          module_id: this.moudleId,
+          user_id: this._id
+        }
+        let data = await getNotes(options)
+        this.notesList = data.result.data
+        wx.hideLoading()
+      },
+      async doNotes () {
+        wx.showLoading({title: '加载中'})
+        let options = {
+          module_id: this.moudleId,
+          user_id: this._id,
+          content: this.currentNote
+        }
+        await addNotes(options)
+        await this.getNoteList()
+        this.currentNote = ''
+        wx.hideLoading()
+      }
     },
     onShareAppMessage () {
       return {

@@ -85,6 +85,21 @@
       color: #666;
     }
   }
+  .logic-index-input {
+      position: fixed;
+      top: -110rpx;
+      box-sizing: border-box;
+      width: 100%;
+      padding: 20rpx 30rpx;
+      background: #F8F8F8;
+      z-index: 1000;
+      input {
+        margin-top: 4rpx;
+        flex: 1;
+        font-size: 28rpx;
+        color: #050505;  
+      }
+    }
 }
 </style>
 <template>
@@ -104,32 +119,50 @@
           </div>
         </div>
       </div>
-      <div class="logic-index-footer">
-        <div class="logic-index-footer-input">
+      <div v-if="!isSpeak" class="logic-index-footer">
+        <van-button class="logic-detail-content-button" color="#4755EB" round @click="nextSubject">下一个</van-button>
+      </div>
+      <div v-else class="logic-index-footer">
+        <div class="logic-index-footer-input" @click="showInputBox">
           <image src="../../assets/images/input.png" />
           <div class="logic-index-footer-text">输入文字</div>
-          <input type="text" 	:adjust-position="false" 	@confirm="inputConfirm" />
+          <!-- <input type="text" 	:adjust-position="false" 	@confirm="inputConfirm" /> -->
         </div>
         <div class="logic-index-footer-img" @touchstart="touchStart" @touchend="touchEnd">
           <image src="../../assets/images/speak.png" />
           <div class="logic-index-footer-text">长按说话</div>
         </div>
-        <div class="logic-index-footer-next">
+        <div class="logic-index-footer-next" @click="viewAnswer">
           <image src="../../assets/images/next.png" />
-          <div class="logic-index-footer-text">忘记了</div>
+          <div class="logic-index-footer-text">查看答案</div>
         </div>
       </div>
     </div>
+    <div 
+        id="ctInput"
+        class="logic-index-input"
+        v-if="showComtBox"
+        style="top: {{ ctInput_top }}px;"
+      >
+        <input
+          :focus="showComtBox" 
+          bindblur="comtBlur"
+          maxlength="-1"
+          auto-height
+          bindfocus="ctFocus"
+          bindconfirm="inputConfirm"
+          :show-confirm-bar="false"
+          :adjust-position="true"
+        />
+      </div>
   </div>
 </template>
 <config>
   {
     navigationBarTitleText: '马克思主义哲学',
     usingComponents: {
-      "van-rate": "../../libs/vant/rate/index",
-      "van-tag": "../../libs/vant/tag/index",
-      "van-button": "../../libs/vant/button/index",
-      "van-empty": "../../libs/vant/empty/index"
+      "van-empty": "../../libs/vant/empty/index",
+      "van-button": "../../libs/vant/button/index"
     }
   }
 </config>
@@ -139,6 +172,7 @@
   import { mapGetters } from '@wepy/x'
   import eventHub from '@/common/eventHub'
   import { getEvaluationById } from '@/api/knowledgeModule'
+  import { getSystemData, queryNodes } from '@/utils/util'
   let plugin = requirePlugin("WechatSI")
   let manager = plugin.getRecordRecognitionManager()
   wepy.page({
@@ -154,9 +188,16 @@
         speak: '',
       },
       currentIndex: 0,
-      currentDIndex: 0
+      currentDIndex: 0,
+      
+      isSpeak: true,
+      // 显示输入框
+      showComtBox: false,
+      windowHeight: '',
+      ctInput_top: '',
     },
     async onLoad(options) {
+      await this.getWindowData()
       this.moudleId = options.id
       wx.setNavigationBarTitle({title: options.name})
       await this.getEvaluationByIdData(options.id)
@@ -247,6 +288,35 @@
           this.currentAnswer.speak = res.result.replace(/[。，\/#！$%\^&\*；：{}=\-_`~()]/g,"");
           this.checkAnswer(this.currentAnswer.speak)
         }
+      },
+      // 查看答案
+      viewAnswer () {
+        this.subjectList.forEach(item => {
+          item.finallData.forEach(a => {
+              a.isShowAnswer = true
+          })
+        })
+        this.isSpeak = false
+      },
+
+      showInputBox () {
+        this.showComtBox = true
+      },
+      comtBlur () {
+        this.showComtBox = false
+      },
+      async getWindowData () {
+        let h = await getSystemData('windowHeight')
+        console.log(h)
+        this.windowHeight = h
+      },
+      async ctFocus (e) {
+        let keyboard_h = e.$wx.detail.height
+        let ctInput_top = this.windowHeight - keyboard_h
+        let ctInput_h = await queryNodes('#ctInput', 'height')
+        console.log(ctInput_h)
+        ctInput_top -= ctInput_h
+        this.ctInput_top = ctInput_top
       },
       // input输入框确认时
       inputConfirm (e) {

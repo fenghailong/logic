@@ -30,6 +30,26 @@ export async function getKnowledgeDetailById(data) {
   })
 }
 
+export async function addNotes(data) {
+  return await wx.cloud.callFunction({
+    name: 'knowledgeDetail',
+    data: {
+      func: 'addNotes',
+      data
+    },
+  })
+}
+
+export async function getNotes(data) {
+  return await wx.cloud.callFunction({
+    name: 'knowledgeDetail',
+    data: {
+      func: 'getNotes',
+      data
+    },
+  })
+}
+
 export async function getEvaluationById(data) {
   return await wx.cloud.callFunction({
     name: 'knowledgeModule',

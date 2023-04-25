@@ -40,7 +40,7 @@ wepy.app({
   methods: {
     async updateUnreadCount() {
       await this.$store.dispatch('updateUnreadCount')
-    },
+    }
     // can(targetPerm) {
     //   if (!this.$store.getters.isLoggedIn) {
     //     return false
