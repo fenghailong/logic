@@ -35,6 +35,14 @@ const addNotes = async (options) => {
   })
 }
 
+// 删除笔记
+const deleteNotes = async (options) => {
+  await noteCollection.doc(options).remove({
+    success: function(res) {
+      console.log(res.data)
+    }
+  })
+}
 
 exports.main = async (event, context) => {
   const { func, data } = event;
@@ -44,6 +52,8 @@ exports.main = async (event, context) => {
     res = await getKnowledgeDetailById(data);
   } else if (func === 'addNotes') {
     res = await addNotes(data);
+  } else if (func === 'deleteNotes') {
+    res = await deleteNotes(data);
   } else if (func === 'getNotes') {
     res = await getNotes(data);
   }

@@ -30,6 +30,16 @@ export async function getKnowledgeDetailById(data) {
   })
 }
 
+export async function deleteNotes(data) {
+  return await wx.cloud.callFunction({
+    name: 'knowledgeDetail',
+    data: {
+      func: 'deleteNotes',
+      data
+    },
+  })
+}
+
 export async function addNotes(data) {
   return await wx.cloud.callFunction({
     name: 'knowledgeDetail',

@@ -7,7 +7,7 @@
       background-color: #fff;
       height: 100vh;
       border-radius: 10px;
-      padding: 0 10px;
+      padding: 0 10px 20px;
       overflow: auto;
       .logic-index-item-name {
         padding: 10px;
@@ -28,10 +28,28 @@
       font-weight: bold;
     }
     .logic-index-note-list {
+      display: flex;
+      align-items: center;
       margin-top: 10px;
       background-color: #fff;
-      border-radius: 5px;
+      // border-radius: 5px;
       padding: 10px 20px;
+      .logic-index-note-text {
+        flex: 1;
+      }
+      .van-icon {
+        margin-left: 5px;
+      }
+    }
+    .logic-index-note-delete{
+        background-color: red;
+        width: 60px;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: white;
     }
     .logic-index-note-input {
       margin-top: 20px;
@@ -41,6 +59,9 @@
       .van-button {
         width: 100%;
       }
+    }
+    .logic-index-content-dialog {
+      width: 300px;
     }
   }
 }
@@ -55,9 +76,19 @@
       </div>
       <van-empty v-else description="每日更新，敬请期待" />
       <div v-if="notesList.length > 0" class="logic-index-note-title">我的笔记积累</div>
-      <div v-if="notesList.length > 0" v-for="(item, index) in notesList" :key="index" class="logic-index-note-list"> 
-          {{item.content}}
-      </div>
+      <van-swipe-cell
+        v-for="(item, index) in notesList"
+        :key="index"
+        id="store{{item._id}}"
+        right-width="60"
+        async-close
+      >
+        <div class="logic-index-note-list">
+          <div class="logic-index-note-text">{{item.content}}</div>
+          <van-icon name="ellipsis" @click="showMore(item._id)"></van-icon>
+        </div>
+        <view class="logic-index-note-delete" slot="right" @click="deNotes(item._id)">删除</view>
+      </van-swipe-cell>
       <div class="logic-index-note-input">
         <van-field
           :value="currentNote "
@@ -74,6 +105,7 @@
         <van-button color="#4755EB" round @click="doNotes">记笔记</van-button>
       </div>
     </div>
+    <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
   </div>
 </template>
 <config>
@@ -82,7 +114,10 @@
     usingComponents: {
       "van-button": "../../libs/vant/button/index",
       "van-empty": "../../libs/vant/empty/index",
-      "van-field": "../../libs/vant/field/index"
+      "van-field": "../../libs/vant/field/index",
+      "van-swipe-cell": "../../libs/vant/swipe-cell/index",
+      "van-icon": "../../libs/vant/icon/index",
+      "van-dialog": "../../libs/vant/dialog/index"
     }
   }
 </config>
@@ -91,7 +126,8 @@
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
   import eventHub from '@/common/eventHub'
-  import { getKnowledgeDetailById, addNotes, getNotes } from '@/api/knowledgeModule'
+  import { getKnowledgeDetailById, addNotes, getNotes, deleteNotes } from '@/api/knowledgeModule'
+  import Dialog from '../../libs/vant/dialog/dialog';
 
   wepy.page({
     store,
@@ -132,12 +168,35 @@
         this.notesList = data.result.data
         wx.hideLoading()
       },
+      showMore(id){
+        // 关闭其他swipeCell
+        console.log(this)
+        for (const item of this.notesList) {
+            if (item._id === id) continue;
+            this.$wx.selectComponent("#store"+item._id).close();
+        }        
+        this.$wx.selectComponent("#store"+id).open({position: "right"});
+      },
+      deNotes(id) {
+        Dialog.confirm({
+          message: '确定删除吗？'
+        }).then(async () => {
+          wx.showLoading({title: '加载中'})
+          await deleteNotes(id)
+          await this.getNoteList()
+          wx.hideLoading()
+        });
+      },
       async doNotes () {
         wx.showLoading({title: '加载中'})
         let options = {
           module_id: this.moudleId,
           user_id: this._id,
           content: this.currentNote
+        }
+        if (!options.content) {
+          wx.showToast({ title: '笔记不能为空' })
+          return
         }
         await addNotes(options)
         await this.getNoteList()
