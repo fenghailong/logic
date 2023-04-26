@@ -69,3 +69,13 @@ export async function getEvaluationById(data) {
     },
   })
 }
+
+export async function addEvaluationRecord(data) {
+  return await wx.cloud.callFunction({
+    name: 'knowledgeModule',
+    data: {
+      func: 'addEvaluationRecord',
+      data
+    },
+  })
+}
