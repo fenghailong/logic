@@ -46,6 +46,9 @@
     .logic-index-item-text-answer {
       color: blue;
     }
+    .logic-index-item-text-answer-error {
+      color: red;
+    }
     .logic-index-footer{
       display: flex;
       justify-content: center;
@@ -125,7 +128,7 @@
             <text>{{index+1}}.</text>
             <div class="logic-index-item-text" v-for="(element, dindex) in item.finallData" :key="dindex">
               <text v-if="element.isAnswer" class="'logic-index-item-line' {{element.isCurrent === 2 ? 'logic-index-item-line-current' : ''}}" @click="changCurrent(index, dindex)">
-                <text class="logic-index-item-text-answer" v-if="element.isShowAnswer"> {{element.value}} </text>
+                <text class="logic-index-item-text-answer {{!element.isAnwerRight ? 'logic-index-item-text-answer-error' : ''}}" v-if="element.isShowAnswer || element.isAnwerRight"> {{element.value}} </text>
                 <text v-else> _______ </text>
               </text>
               <div class="logic-index-item-text" v-else @click="changCurrent(index, dindex)">{{element.value}}</div>
@@ -251,6 +254,7 @@
             value: item.answers[index++],
             isCurrent:1,
             isShowAnswer: false,
+            isAnwerRight: false,
             subIndex: subIndex,
             answerIndex: subsIndex,
           } : {
@@ -281,7 +285,6 @@
         this.currentDIndex = dindex
       },
       touchStart () {
-        wx.showLoading({title: '松开结束'})
         manager.start({
           lang: 'zh_CN',// 识别的语言，目前支持zh_CN en_US zh_HK sichuanhua
         })
@@ -299,6 +302,7 @@
         // 正常开始录音识别时会调用此事件
         manager.onStart = (res) => {
           console.log("成功开始录音识别", res)
+          wx.showLoading({title: '松开结束'})
         }
         // 识别错误事件
         manager.onError = (res) => {
@@ -320,13 +324,16 @@
         }
       },
       // 查看答案
-      viewAnswer () {
+      async viewAnswer () {
+        wx.showLoading({title: '加载中'})
+        await this.isAllAnswerRight(this.subjectList)
         this.subjectList.forEach(item => {
           item.finallData.forEach(a => {
               a.isShowAnswer = true
           })
         })
         this.isSpeak = false
+        wx.hideLoading()
       },
       // 显示数字输入框
       showInputBox () {
@@ -356,8 +363,10 @@
       },
       // 换一批题目
       async nextSubject () {
+        wx.showLoading({title: '加载中'})
         await this.getEvaluationByIdData(true)
         this.isSpeak = true
+        wx.hideLoading()
       },
       // 检查答案正误
       async checkAnswer (answer) {
@@ -367,8 +376,8 @@
           // 获取下一个答案的index
           let result = this.getNextAnswer(arr)
           // 使下一个答案变为当前答案
-          this.subjectList[this.currentIndex].finallData[this.currentDIndex].isShowAnswer = true
-          let isAllAnswerRight = await this.isAllAnswerRight(this.subjectList[this.currentIndex], this.subjectList[this.currentIndex].finallData)
+          this.subjectList[this.currentIndex].finallData[this.currentDIndex].isAnwerRight = true
+          // let isAllAnswerRight = await this.isAllAnswerRight(this.subjectList[this.currentIndex], this.subjectList[this.currentIndex].finallData)
           this.changCurrent(result.subIndex, result.answerIndex)
         } else {
           wx.showToast({
@@ -377,20 +386,21 @@
         }
       },
       // 查看是否所有答案都正确填写
-      async isAllAnswerRight (subject, finallData) {
-        let index = finallData.findIndex(item => item.isShowAnswer === false)
-        if (index <= 0) {
-          wx.showLoading({title: '加载中'})
-          await addEvaluationRecord({
-            evaluation_id: subject._id,
-            user_id: this._id,
-            module_id: this.moudleId
-          })
-          await this.getEvaluationByIdData(false, false)
-          return true
-        } else {
-          return false
-        }
+      async isAllAnswerRight (subjectList) {
+        let tasks = []
+        subjectList.forEach(item => {
+          let index = item.finallData.findIndex(element => element.isAnwerRight === false)
+          if (index < 0) {
+            const promise = addEvaluationRecord({
+              evaluation_id: item._id,
+              user_id: this._id,
+              module_id: this.moudleId
+            })
+            tasks.push(promise)
+          }
+        })
+        // 等待所有
+        await Promise.all(tasks)
       },
       // 获取下一个答案的index
       getNextAnswer (arr) {
@@ -413,7 +423,7 @@
         let arr = []
         subjectList.forEach(item => {
           item.finallData.forEach(a => {
-            if(a.isAnswer && !a.isShowAnswer){
+            if(a.isAnswer && !a.isAnwerRight){
               arr.push(a)
             }
           })
