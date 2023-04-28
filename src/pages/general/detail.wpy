@@ -60,6 +60,9 @@
         font-size: 14 px;
       }
     }
+    .logic-index-list-popup-item-opticty {
+      opacity: 0.4;
+    }
   }
 }
 </style>
@@ -82,11 +85,16 @@
     <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
     <van-popup @click-overlay="clickOverlay" :show="showPopup" position="bottom" round>
       <div class="logic-index-list-popup-list" :style="{ height: '70vh' }">
-        <div class="logic-index-list-popup-item" v-for="(item, index) in moudleList" :key="index" @click="toGeneral(item._id)">
+        <div v-for="(item, index) in moudleList" :key="index" class="logic-index-list-popup-item {{ index > 2 && user.isMember != '1' ? 'logic-index-list-popup-item-opticty' : ''}}"  @click="{{ index > 2 && user.isMember != '1' ? '' : toGeneral(item._id)}}">
           <div class="logic-index-list-popup-index">{{index + 1}}</div>
           <div class="logic-index-list-popup-title" >{{item.title}}</div>
-          <van-tag v-if="item.isStudyed" type="primary" size="medium">已学</van-tag>
-          <van-tag v-else type="primary" plain color="#999999" size="medium">未学</van-tag>
+          <div v-if="index > 2 && user.isMember != '1'">
+            <van-tag type="primary" plain color="#999999" size="medium">未解锁</van-tag>
+          </div>
+          <div v-else>
+            <van-tag v-if="item.isStudyed" type="primary" size="medium">已学</van-tag>
+            <van-tag v-else type="primary" plain color="#999999" size="medium">未学</van-tag>
+          </div>
         </div>
       </div>
     </van-popup>
@@ -119,7 +127,7 @@
     store,
     computed: {
       // 用户信息
-      ...mapGetters(['_id'])
+      ...mapGetters(['_id', 'user'])
     },
     data: {
       id: '',
