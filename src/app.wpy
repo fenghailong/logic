@@ -88,6 +88,8 @@ wepy.app({
       'pages/undertaking/list',
       'pages/undertaking/detail',
       'pages/undertaking/evaluation',
+      'pages/general/index',
+      'pages/general/detail'
     ],
     window: {
       backgroundTextStyle: 'light',

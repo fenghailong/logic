@@ -100,8 +100,6 @@ const getWordsList = async (data) => {
   const resultRecord = await getAllStudyWords(data)
   let allWords = []
   allWords= result.data.filter((item) => item.type == 1 && item.synonym && item.synonym.length>0);
-  console.log(allWords,'====================')
-  console.log(resultRecord,'=====')
   if (resultRecord.data.length > 0 && allWords.length){
     allWords = allWords.map(element => {
       element.isStudyed = false

@@ -293,8 +293,8 @@
           <text class="logic-index-box-middle-left-text">轻松搞定逻辑填空</text>
         </div>
         <div class="logic-index-box-middle-right">
-          <div class="logic-index-box-middle-right-article">
-            <div>敬请期待</div>
+          <div class="logic-index-box-middle-right-article" @click="toGeneral">
+            <div>常识积累</div>
             <text>不积跬步，无以至千里</text>
           </div>
           <div class="logic-index-box-middle-right-person">
@@ -453,10 +453,17 @@
       },
       // toKnowledgeModules
       async toUndertaking (id) {
-        console.log(id, '=======')
         if (this.isLoggedIn) {
           wx.navigateTo({
             url: `/pages/undertaking/index?id=${id}`,
+          })
+        }
+      },
+      // 跳转常识页面
+      toGeneral () {
+        if (this.isLoggedIn) {
+          wx.navigateTo({
+            url: `/pages/general/index?id=${'e54110dd644a20de001e8d834e839d06'}`,
           })
         }
       }

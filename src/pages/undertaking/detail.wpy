@@ -5,7 +5,7 @@
     padding: 20px 20px;
     .logic-index-item {
       background-color: #fff;
-      height: 100vh;
+      height: 70vh;
       border-radius: 10px;
       padding: 0 10px 20px;
       overflow: auto;
@@ -15,6 +15,8 @@
         text-align: center;
       }
       .logic-index-item-introduce-article {
+        height: 70vh;
+        overflow: auto;
         font-size: 14px;
         padding: 0 10px;
         margin-top: 10px;
@@ -174,7 +176,7 @@
         for (const item of this.notesList) {
             if (item._id === id) continue;
             this.$wx.selectComponent("#store"+item._id).close();
-        }        
+        }
         this.$wx.selectComponent("#store"+id).open({position: "right"});
       },
       deNotes(id) {

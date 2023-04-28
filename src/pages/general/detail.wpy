@@ -1,0 +1,209 @@
+<style lang="less">
+.page{
+  background-color: #eee;
+  .logic-index-box {
+    padding: 20px 20px;
+    .logic-index-item {
+      background-color: #fff;
+      height: 70vh;
+      border-radius: 10px;
+      padding: 0 10px 20px;
+      overflow: auto;
+      .logic-index-item-name {
+        padding: 10px;
+        font-size: 20px;
+        text-align: center;
+      }
+      .logic-index-item-introduce-article {
+        height: 70vh;
+        overflow: auto;
+        font-size: 14px;
+        padding: 0 10px;
+        margin-top: 10px;
+        color: #666;
+      }
+      .logic-index-item-introduce-title {
+        font-size: 20px;
+        font-weight: bold;
+        padding: 10px 0;
+        text-align: center;
+        color: #000;
+      }
+    }
+    .logic-index-content-button {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      margin-top: 20px;
+      .van-button {
+        width: 100%;
+      }
+    }
+    .logic-index-content-dialog {
+      width: 300px;
+    }
+  }
+  .logic-index-list-popup-list {
+    padding: 20px 40px 10px;
+    overflow: auto;
+    .logic-index-list-popup-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+      .logic-index-list-popup-index {
+        margin-right: 50px;
+        color: #2fcebe;
+      }
+      .logic-index-list-popup-title {
+        flex: 1;
+        font-size: 14 px;
+      }
+    }
+  }
+}
+</style>
+<template>
+  <div class="page">
+    <div class="logic-index-box">
+      <div v-if="detail.title" class="logic-index-item">
+        <div class="logic-index-item-introduce-article">
+          <div class="logic-index-item-introduce-title">{{ detail.title }}</div>
+          <rich-text nodes="{{ detail.content }}"></rich-text>
+        </div>
+      </div>
+      <van-empty v-else description="每日更新，敬请期待" />
+      <div class="logic-index-content-button">
+        <van-button round type="info" @click="previousGeneral">上一个</van-button>
+        <van-button round type="info" @click="showListPopup">列表</van-button>
+        <van-button round type="info" @click="nextGeneral">下一个</van-button>
+      </div>
+    </div>
+    <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
+    <van-popup @click-overlay="clickOverlay" :show="showPopup" position="bottom" round>
+      <div class="logic-index-list-popup-list" :style="{ height: '70vh' }">
+        <div class="logic-index-list-popup-item" v-for="(item, index) in moudleList" :key="index" @click="toGeneral(item._id)">
+          <div class="logic-index-list-popup-index">{{index + 1}}</div>
+          <div class="logic-index-list-popup-title" >{{item.title}}</div>
+          <van-tag v-if="item.isStudyed" type="primary" size="medium">已学</van-tag>
+          <van-tag v-else type="primary" plain color="#999999" size="medium">未学</van-tag>
+        </div>
+      </div>
+    </van-popup>
+  </div>
+</template>
+<config>
+  {
+    navigationBarTitleText: '哲学概述',
+    usingComponents: {
+      "van-button": "../../libs/vant/button/index",
+      "van-empty": "../../libs/vant/empty/index",
+      "van-field": "../../libs/vant/field/index",
+      "van-swipe-cell": "../../libs/vant/swipe-cell/index",
+      "van-icon": "../../libs/vant/icon/index",
+      "van-dialog": "../../libs/vant/dialog/index",
+      "van-tag": "../../libs/vant/tag/index",
+      "van-popup": "../../libs/vant/popup/index",
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import { mapGetters } from '@wepy/x'
+  import eventHub from '@/common/eventHub'
+  import { addGeneralRecord } from '@/api/general'
+  import Dialog from '../../libs/vant/dialog/dialog';
+
+  wepy.page({
+    store,
+    computed: {
+      // 用户信息
+      ...mapGetters(['_id'])
+    },
+    data: {
+      id: '',
+      detail: {},
+      moudleList: {},
+      showPopup: false
+    },
+    async onLoad(options) {
+      this.moudleList = JSON.parse((decodeURIComponent(options.moudleList)))
+      this.id = options.id
+      await this.getDetail()
+      wx.setNavigationBarTitle({title: this.detail.title})
+    },
+    methods: {
+      // 获取模块知识点详情
+      async getDetail() {
+        let index = this.moudleList.findIndex((item) => item._id == this.id)
+        this.detail = this.moudleList[index]
+        await this.addGeneralRecord(index)
+      },
+      async toGeneral (id) {
+        this.showPopup = false
+        this.id = id
+        this.getDetail()
+      },
+      async nextGeneral () {
+        let nextIndex = 0
+        let index = this.moudleList.findIndex((item) => item._id == this.id)
+        nextIndex = index + 1
+        if (nextIndex > (this.moudleList.length - 1)) {
+          wx.showToast({
+            title: '已经是最后一个了',
+            icon: 'success'
+          })
+        } else {
+          this.id = this.moudleList[nextIndex]._id
+          this.getDetail()
+        }
+      },
+      async previousGeneral () {
+        let previousIndex = 0
+        let index = this.moudleList.findIndex((item) => item._id == this.id)
+        previousIndex = index - 1
+        if (previousIndex < 0) {
+          wx.showToast({
+            title: '前面已经没有了',
+            icon: 'success'
+          })
+        } else {
+          this.id = this.moudleList[previousIndex]._id
+          this.getDetail()
+        }
+      },
+      // 增加知识点学习记录
+      async addGeneralRecord(index) {
+        wx.showLoading({title: '加载中'})
+        let result = await addGeneralRecord({
+          general_id: this.id,
+          user_id: this._id,
+          module_id: this.detail.module_id
+        })
+        let temp = this.moudleList[index]
+        temp.isStudyed = true
+        this.$set(this.moudleList, index, temp)
+        wx.hideLoading()
+        eventHub.$emit('refresh-list', this.moudleList);
+      },
+      async showListPopup () {
+        this.showPopup = !this.showPopup
+      },
+      clickOverlay () {
+        this.showPopup = false
+      }
+      // // 换一批知识点
+      // async nextSubject () {
+      // },
+    },
+    onShareAppMessage () {
+      return {
+        // 标题是话题标题
+        title: '知识要点',
+        // 路径为话题详情路径
+        path: '/pages/undertaking/detail?id=' + this.moudleId,
+      }
+    },
+  })
+</script>
