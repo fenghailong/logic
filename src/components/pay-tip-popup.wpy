@@ -1,0 +1,44 @@
+<style lang="less">
+
+</style>
+<template>
+  <div class="logic-index-popup">
+    <van-popup @click-overlay="clickOverlay" :show="showPayTipPopup" position="bottom">
+      <div class="logic-index-popup-box" :style="{ height: '30vh' }">
+        aaa
+      </div>
+    </van-popup>
+  </div>
+</template>
+<config>
+  {
+    usingComponents: {
+      "van-popup": "../libs/vant/popup/index",
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+
+  wepy.component({
+    options: {
+      styleIsolation: 'apply-shared',
+    },
+    props: {
+      // 父页面传入，请求参数
+      showPayTipPopup: {
+        type: Boolean,
+        default: false
+      }
+    },
+    methods: {
+      async showListPopup () {
+        this.showPayTipPopup = !this.showPayTipPopup
+      },
+      clickOverlay () {
+        this.showPayTipPopup = false
+        this.$emit('closePopup')
+      }
+    }
+  })
+</script>

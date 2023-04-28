@@ -85,7 +85,7 @@
     <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
     <van-popup @click-overlay="clickOverlay" :show="showPopup" position="bottom" round>
       <div class="logic-index-list-popup-list" :style="{ height: '70vh' }">
-        <div v-for="(item, index) in moudleList" :key="index" class="logic-index-list-popup-item {{ index > 2 && user.isMember != '1' ? 'logic-index-list-popup-item-opticty' : ''}}"  @click="{{ index > 2 && user.isMember != '1' ? '' : toGeneral(item._id)}}">
+        <div v-for="(item, index) in moudleList" :key="index" class="logic-index-list-popup-item {{ index > 2 && user.isMember != '1' ? 'logic-index-list-popup-item-opticty' : ''}}"  @click="{{ index > 2 && user.isMember != '1' ? openPayTipPopup() : toGeneral(item._id)}}">
           <div class="logic-index-list-popup-index">{{index + 1}}</div>
           <div class="logic-index-list-popup-title" >{{item.title}}</div>
           <div v-if="index > 2 && user.isMember != '1'">
@@ -98,6 +98,7 @@
         </div>
       </div>
     </van-popup>
+    <pay-tip-popup :showPayTipPopup.sync="showPayTipPopup" @custom-event="closePayPopup"></pay-tip-popup>
   </div>
 </template>
 <config>
@@ -112,6 +113,7 @@
       "van-dialog": "../../libs/vant/dialog/index",
       "van-tag": "../../libs/vant/tag/index",
       "van-popup": "../../libs/vant/popup/index",
+      "pay-tip-popup": "~@/components/pay-tip-popup"
     }
   }
 </config>
@@ -133,7 +135,8 @@
       id: '',
       detail: {},
       moudleList: {},
-      showPopup: false
+      showPopup: false,
+      showPayTipPopup: false
     },
     async onLoad(options) {
       this.moudleList = JSON.parse((decodeURIComponent(options.moudleList)))
@@ -157,6 +160,10 @@
         let nextIndex = 0
         let index = this.moudleList.findIndex((item) => item._id == this.id)
         nextIndex = index + 1
+        if (nextIndex > 2 && this.user.isMember != '1'){
+          this.showPayTipPopup = true
+          return
+        }
         if (nextIndex > (this.moudleList.length - 1)) {
           wx.showToast({
             title: '已经是最后一个了',
@@ -166,6 +173,12 @@
           this.id = this.moudleList[nextIndex]._id
           this.getDetail()
         }
+      },
+      openPayTipPopup () {
+        this.showPayTipPopup = true
+      },
+      closePayPopup () {
+        this.showPayTipPopup = false
       },
       async previousGeneral () {
         let previousIndex = 0

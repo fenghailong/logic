@@ -449,7 +449,7 @@
       // 获取事业单位模块
       async getAllModulesData () {
         let data = await getAllModules(2,true)
-        this.undertaking = data.result.data
+        this.undertaking = data.result.data.filter(item => item._id != 'e54110dd644a20de001e8d834e839d06')
       },
       // toKnowledgeModules
       async toUndertaking (id) {
