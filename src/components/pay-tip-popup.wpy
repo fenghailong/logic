@@ -1,19 +1,51 @@
 <style lang="less">
-
+.logic-index-popup-box {
+  padding: 20px;
+  .logic-index-popup-title{
+    text-align: center;
+    padding: 0 0 10px;
+  }
+  .logic-index-popup-input{
+    margin: 20px 0;
+    border: 1px solid #eee;
+  }
+  .logic-index-popup-button{
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+    .van-button {
+      width: 30%;
+    }
+  }
+}
 </style>
 <template>
   <div class="logic-index-popup">
-    <van-popup @click-overlay="clickOverlay" :show="showPayTipPopup" position="bottom">
+    <van-popup get-container="#app" @click-overlay="closePopup" :show="tipsShow" position="bottom">
       <div class="logic-index-popup-box" :style="{ height: '30vh' }">
-        aaa
+        <div class="logic-index-popup-title">激活提示</div>
+        <div class="logic-index-popup-input">
+          <van-field
+            :value="currentCode"
+            type="input"
+            placeholder="请输入激活码"
+            @change = "codeChange"
+          />
+        </div>
+        <div class="logic-index-popup-button">
+          <van-button round type="info" @click="tocontact" open-type="contact">联系客服</van-button>
+          <van-button round type="info" @click="doActivate">立刻激活</van-button>
+        </div>
       </div>
-    </van-popup>
+    </van-popup>  
   </div>
 </template>
 <config>
   {
     usingComponents: {
+      "van-button": "../libs/vant/button/index",
       "van-popup": "../libs/vant/popup/index",
+      "van-field": "../libs/vant/field/index",
     }
   }
 </config>
@@ -26,18 +58,29 @@
     },
     props: {
       // 父页面传入，请求参数
-      showPayTipPopup: {
+      tipsShow: {
         type: Boolean,
         default: false
       }
     },
+    data: {
+
+    },
     methods: {
-      async showListPopup () {
-        this.showPayTipPopup = !this.showPayTipPopup
+      tocontact(){
+        this.tipsShow = false
+        this.$emit("tocontact",this.tipsShow);
       },
-      clickOverlay () {
-        this.showPayTipPopup = false
-        this.$emit('closePopup')
+      closePopup() {
+        this.tipsShow = false
+        this.$emit("closePayPopup",this.tipsShow);
+      },
+      codeChange(e) {
+        console.log(e)
+      },
+      doActivate () {
+        this.tipsShow = false
+        this.$emit("tocontact",this.tipsShow);
       }
     }
   })
