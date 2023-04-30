@@ -13,7 +13,7 @@
   .logic-detail-list {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: space-around;
   }
   .logic-detail-content {
     position: relative;
@@ -68,8 +68,14 @@
       <div class="logic-detail-list">
         <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content" @click="{{ index > 2 && user.isMember != '1' ? '' : toDetail(item._id)}}">
           <div class="logic-detail-content-title {{ index > 2 && user.isMember != '1' ? 'logic-detail-content-opticty' : ''}}">{{item.title}}</div>
-          <image class="logic-detail-content-complete" v-if="item.isStudyed" src="../../assets/images/complete.png" />
-          <image class="logic-detail-content-locked" v-if="index > 2 && user.isMember != '1' " src="../../assets/images/locked.png" />
+          <div v-if="index > 2 && user.isMember != '1'">
+            <image class="logic-detail-content-locked" src="../../assets/images/locked.png" />
+          </div>
+          <div v-else>
+            <image class="logic-detail-content-complete" v-if="item.isStudyed" src="../../assets/images/complete.png" />
+          </div>
+          <!-- <image class="logic-detail-content-complete" v-if="item.isStudyed" src="../../assets/images/complete.png" />
+          <image class="logic-detail-content-locked" v-if="index > 2 && user.isMember != '1' " src="../../assets/images/locked.png" /> -->
         </div>
       </div>
       <!-- <div class="logic-index-content-button">
