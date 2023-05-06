@@ -1,44 +1,52 @@
 <style lang="less">
 .page{
-  // background-color: #eee;
+  background-color: #eee;
   .logic-detail-box {
-    padding: 20px;
-  }
-  .logic-detail-title {
-    text-align: center;
-    padding: 0 3px 20px;
-    font-size: 14px;
-    color: rgb(53, 50, 50);
-  }
-  .logic-detail-list {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
+    padding: 0 10px 10px;
+    margin-top: 10px;
   }
   .logic-detail-content {
-    position: relative;
-    // background: linear-gradient(to top right, #f6f5f0, #fefefd);
-    background-color: #fff ;
-    box-shadow: 0 2px 5px 2px rgba(58, 57, 57, 0.2);
-    color: rgb(53, 50, 50);
-    width: 20%;
-    height: 60px;
-    display: flex;
-    align-items: center;
-    padding: 10px;
+    background-color: #fff;
     border-radius: 10px;
+    padding: 10px 20px 20px;
     margin-bottom: 20px;
+    position: relative;
+    .logic-detail-content-people {
+      text-align: right;
+      font-size: 12px;
+      color: #999;
+    }
     .logic-detail-content-title {
-      text-align: center;
-      font-size: 14px;
+      text-align: left;
+      font-size: 18px;
       font-weight: 500;
     }
-    .logic-detail-content-complete {
-      position: absolute;
-      top: -4px;
-      right: -4px;
-      width: 20px;
-      height: 20px;
+    .logic-detail-content-describe {
+      text-align: left;
+      font-size: 14px;
+      color: #999;
+      margin: 20px 0;
+    }
+    .logic-detail-content-message {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 20px 10px;
+      .logic-detail-content-message-practice {
+        font-size: 12px;
+        color: #999;
+        margin-right: 80px;
+      }
+    }
+    .logic-detail-content-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      .logic-detail-content-button {
+        .van-button {
+          width: 120px;
+        }
+      }
     }
     .logic-detail-content-locked {
       position: absolute;
@@ -49,39 +57,33 @@
       margin: auto;
       width: 20px;
       height: 20px;
+      opacity: 1;
     }
   }
   .logic-detail-content-opticty {
-    opacity: 0.2;
-  }
-  .logic-index-content-button {
-    .van-button {
-      width: 100%;
-    }
+    opacity: 0.5;
   }
 }
 </style>
 <template>
   <div class="page">
+    <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，在进行刷题效果会更好哦" />
     <div class="logic-detail-box">
-      <div v-if="moudleList.length > 0" class="logic-detail-title">已学习 {{studyGeneralCount}}/{{generalCount}}</div>
-      <div class="logic-detail-list">
-        <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content" @click="{{ index > 2 && user.isMember != '1' ? '' : toDetail(item._id)}}">
-          <div class="logic-detail-content-title {{ index > 2 && user.isMember != '1' ? 'logic-detail-content-opticty' : ''}}">{{item.title}}</div>
-          <div v-if="index > 2 && user.isMember != '1'">
-            <image class="logic-detail-content-locked" src="../../assets/images/locked.png" />
-          </div>
-          <div v-else>
-            <image class="logic-detail-content-complete" v-if="item.isStudyed" src="../../assets/images/complete.png" />
-          </div>
-          <!-- <image class="logic-detail-content-complete" v-if="item.isStudyed" src="../../assets/images/complete.png" />
-          <image class="logic-detail-content-locked" v-if="index > 2 && user.isMember != '1' " src="../../assets/images/locked.png" /> -->
+      <div class="logic-detail-content">
+        <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->
+        <div class="logic-detail-content-title">常识学习</div>
+        <div class="logic-detail-content-describe">总结常识模块的知识点，需要掌握熟记，学习完后最好配合对应的刷题模块。</div>
+        <!-- <div class="logic-detail-content-message">
+          <div class="logic-detail-content-message-practice">已练习 {{studyCount}}/{{detail.count}}</div>
+          <van-rate readonly value="{{ starValue }}" allow-half/>
+        </div> -->
+        <div class="logic-detail-content-footer">
+          <van-button class="logic-detail-content-button" color="#4755EB" round @click="toList()">开始学习</van-button>
+          <van-button class="logic-detail-content-button" color="#54BBCB" round @click="toEvaluation()">常识4600问</van-button>
         </div>
       </div>
-      <!-- <div class="logic-index-content-button">
-        <van-button color="#4755EB" round @click="nextSubject">换一批</van-button>
-      </div> -->
     </div>
+    <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
   </div>
 </template>
 <config>
@@ -91,7 +93,7 @@
       "van-search": "../../libs/vant/circle/index",
       "van-notice-bar": "../../libs/vant/notice-bar/index",
       "van-button": "../../libs/vant/button/index",
-      "van-rate": "../../libs/vant/rate/index",
+      "van-rate": "../../libs/vant/rate/index"
     }
   }
 </config>
@@ -99,59 +101,50 @@
   import wepy from '@wepy/core'
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
-  import { getAllGeneralInfo } from '@/api/general'
+  import { getModulesById } from '@/api/knowledgeModule'
+  import { addMessage } from '@/api/subscribe'
   import eventHub from '@/common/eventHub'
 
   wepy.page({
     store,
     data: {
-      module_id: '',
+      moudleId: '',
       moudleList: [],
-      generalCount: 100,
-      studyGeneralCount: 0
+      tipsShow: false
     },
     // 计算的属性
     computed: {
       ...mapGetters(['_id', 'user']),
     },
     onLoad(options) {
-      eventHub.$on('refresh-list', (...args) => {
-        console.log('app-launch event emitted, the params are:');
-        let temp = JSON.parse(JSON.stringify(args[0]))
-        this.moudleList = temp
-        let count = 0
-        this.moudleList.forEach(element => {
-          if(element.isStudyed)count = count + 1
-        });
-        this.studyGeneralCount = count
-      });
-      this.module_id = options.id
-      this.getAllGeneralInfoData()
+      this.moudleId = options.id
+      // this.getModulesByIdData(this.moudleId)
     },
     methods: {
       // 获取已学习
-      async getAllGeneralInfoData() {
+      async getModulesByIdData(moudleId) {
         wx.showLoading({title: '加载中'})
-        let result = await getAllGeneralInfo({module_id: this.module_id})
-        console.log(result)
-        this.moudleList = result.result.generalList
-        this.generalCount = result.result.generalCount
-        this.studyGeneralCount = result.result.studyGeneralCount
+        let result = await getModulesById(moudleId)
+        this.moudleList = result.result.data
         wx.hideLoading()
       },
-      toDetail (id) {
-        let moudleList = encodeURIComponent(JSON.stringify(this.moudleList))
+      toList () {
         wx.navigateTo({
-          url: `/pages/general/detail?id=${id}&moudleList=${moudleList}`,
+          url: `/pages/general/list?id=${this.moudleId}`,
         })
-      }
+      },
+      toEvaluation () {
+        wx.navigateTo({
+          url: `/pages/general/evaluation?id=${this.moudleId}&name=${'常识'}`,
+        })
+      },
     },
     onShareAppMessage () {
       return {
         // 标题是话题标题
-        title: '常识模块',
+        title: '知识模块',
         // 路径为话题详情路径
-        path: `/pages/general/index?id=${this.module_id}`,
+        path: '/pages/undertaking/index?id=' + this.moudleId,
       }
     },
   })

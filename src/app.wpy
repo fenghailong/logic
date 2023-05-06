@@ -89,7 +89,9 @@ wepy.app({
       'pages/undertaking/detail',
       'pages/undertaking/evaluation',
       'pages/general/index',
-      'pages/general/detail'
+      'pages/general/list',
+      'pages/general/detail',
+      'pages/general/evaluation'
     ],
     window: {
       backgroundTextStyle: 'light',

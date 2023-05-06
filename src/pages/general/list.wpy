@@ -1,0 +1,167 @@
+<style lang="less">
+.page{
+  // background-color: #eee;
+  .logic-detail-box {
+    padding: 20px;
+  }
+  .logic-detail-title {
+    text-align: center;
+    padding: 0 3px 20px;
+    font-size: 14px;
+    color: rgb(53, 50, 50);
+  }
+  .logic-detail-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+  }
+  .logic-detail-content {
+    position: relative;
+    // background: linear-gradient(to top right, #f6f5f0, #fefefd);
+    background-color: #fff ;
+    box-shadow: 0 2px 5px 2px rgba(58, 57, 57, 0.2);
+    color: rgb(53, 50, 50);
+    width: 20%;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    .logic-detail-content-title {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .logic-detail-content-complete {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      width: 20px;
+      height: 20px;
+    }
+    .logic-detail-content-locked {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      margin: auto;
+      width: 20px;
+      height: 20px;
+    }
+  }
+  .logic-detail-content-opticty {
+    opacity: 0.2;
+  }
+  .logic-index-content-button {
+    .van-button {
+      width: 100%;
+    }
+  }
+}
+</style>
+<template>
+  <div class="page">
+    <div class="logic-detail-box">
+      <div v-if="moudleList.length > 0" class="logic-detail-title">已学习 {{studyGeneralCount}}/{{generalCount}}</div>
+      <div class="logic-detail-list">
+        <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content" @click="{{ index > 2 && user.isMember != '1' ? openPayTipPopup() : toDetail(item._id)}}">
+          <div class="logic-detail-content-title {{ index > 2 && user.isMember != '1' ? 'logic-detail-content-opticty' : ''}}">{{item.title}}</div>
+          <div v-if="index > 2 && user.isMember != '1'">
+            <image class="logic-detail-content-locked" src="../../assets/images/locked.png" />
+          </div>
+          <div v-else>
+            <image class="logic-detail-content-complete" v-if="item.isStudyed" src="../../assets/images/complete.png" />
+          </div>
+          <!-- <image class="logic-detail-content-complete" v-if="item.isStudyed" src="../../assets/images/complete.png" />
+          <image class="logic-detail-content-locked" v-if="index > 2 && user.isMember != '1' " src="../../assets/images/locked.png" /> -->
+        </div>
+      </div>
+      <!-- <div class="logic-index-content-button">
+        <van-button color="#4755EB" round @click="nextSubject">换一批</van-button>
+      </div> -->
+    </div>
+    <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
+  </div>
+</template>
+<config>
+  {
+  navigationBarTitleText: '知识点详情',
+    usingComponents: {
+      "van-search": "../../libs/vant/circle/index",
+      "van-notice-bar": "../../libs/vant/notice-bar/index",
+      "van-button": "../../libs/vant/button/index",
+      "van-rate": "../../libs/vant/rate/index",
+      "pay-tip-popup": "~@/components/pay-tip-popup"
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import { mapGetters } from '@wepy/x'
+  import { getAllGeneralInfo } from '@/api/general'
+  import eventHub from '@/common/eventHub'
+
+  wepy.page({
+    store,
+    data: {
+      module_id: '',
+      moudleList: [],
+      generalCount: 100,
+      studyGeneralCount: 0,
+      tipsShow: false
+    },
+    // 计算的属性
+    computed: {
+      ...mapGetters(['_id', 'user']),
+    },
+    onLoad(options) {
+      eventHub.$on('refresh-list', (...args) => {
+        console.log('app-launch event emitted, the params are:');
+        let temp = JSON.parse(JSON.stringify(args[0]))
+        this.moudleList = temp
+        let count = 0
+        this.moudleList.forEach(element => {
+          if(element.isStudyed)count = count + 1
+        });
+        this.studyGeneralCount = count
+      });
+      this.module_id = options.id
+      this.getAllGeneralInfoData()
+    },
+    methods: {
+      openPayTipPopup () {
+        this.tipsShow = true
+      },
+      closePayPopup (e) {
+        this.tipsShow = e
+      },
+      // 获取已学习
+      async getAllGeneralInfoData() {
+        wx.showLoading({title: '加载中'})
+        let result = await getAllGeneralInfo({module_id: this.module_id})
+        console.log(result)
+        this.moudleList = result.result.generalList
+        this.generalCount = result.result.generalCount
+        this.studyGeneralCount = result.result.studyGeneralCount
+        wx.hideLoading()
+      },
+      toDetail (id) {
+        let moudleList = encodeURIComponent(JSON.stringify(this.moudleList))
+        wx.navigateTo({
+          url: `/pages/general/detail?id=${id}&moudleList=${moudleList}`,
+        })
+      }
+    },
+    onShareAppMessage () {
+      return {
+        // 标题是话题标题
+        title: '常识模块',
+        // 路径为话题详情路径
+        path: `/pages/general/index?id=${this.module_id}`,
+      }
+    },
+  })
+</script>

@@ -10,37 +10,40 @@ const evaluationCollection = db.collection('evaluation');
 const evaluationRCollection = db.collection('evaluation_record');
 
 // 获取某个模块下的所有题目
-const getAllEvaluation = async () => {
-  const countResult = await evaluationCollection.count()
+const getAllEvaluation = async (options) => {
+  const countResult = await evaluationCollection.where({ knowledgeModule_id: options.module_id}).count()
   const total = countResult.total
   // 计算需分几次取
   const batchTimes = Math.ceil(total / 100)
   // 承载所有读操作的 promise 的数组
   const tasks = []
   for (let i = 0; i < batchTimes; i++) {
-    const promise = evaluationCollection.skip(i * 100).limit(100).get()
+    const promise = evaluationCollection.where({ knowledgeModule_id: options.module_id}).skip(i * 100).limit(100).get()
     tasks.push(promise)
   }
   // 等待所有
   let result = (await Promise.all(tasks)).reduce((acc, cur) => {
+    if(acc.length <= 0) acc.data = []
+    if(cur.length <= 0) cur.data = []
     return {
       data: acc.data.concat(cur.data),
       errMsg: acc.errMsg,
     }
-  })
+  },[])
+  result.data = result.data || [] // 处理 没有数据时 reduce 结果 undefined 的情况
   return result
 }
 
 // 获取某个模块下已经掌握的题目
 const getAllStudyEvaluationById = async (options) => {
-  const countResult = await evaluationRCollection.where({ user_id: options.user_id, module_id: options.module_id}).count()
+  const countResult = await evaluationRCollection.where({ user_id: options.user_id, module_id: options.module_id, isRight: '1'}).count()
   const total = countResult.total
   // 计算需分几次取
   const batchTimes = Math.ceil(total / 100)
   // 承载所有读操作的 promise 的数组
   const tasks = []
   for (let i = 0; i < batchTimes; i++) {
-    const promise = evaluationRCollection.where({ user_id: options.user_id, module_id: options.module_id}).skip(i * 100).limit(100).get()
+    const promise = evaluationRCollection.where({ user_id: options.user_id, module_id: options.module_id, isRight: '1'}).skip(i * 100).limit(100).get()
     tasks.push(promise)
   }
   // 等待所有
@@ -58,16 +61,17 @@ const getAllStudyEvaluationById = async (options) => {
 
 // 获取模块下的已经掌握的题目数量 和 模块下面的题目（除去已经掌握的）
 const getEvaluationById = async (data) => {
-  const result = await getAllEvaluation()
+  const result = await getAllEvaluation(data)
   const resultRecord = await getAllStudyEvaluationById(data)
   let allEvaluation = result.data
   let allStudyEvaluation = []
+  console.log(allEvaluation)
+  console.log(resultRecord.data)
   let resultEvaluation = allEvaluation.filter(item => {
     return !resultRecord.data.find(element => {
       return element.evaluation_id == item._id
     })
   })
-  console.log(resultEvaluation, '=======')
   if (resultRecord.data.length > 0 && allEvaluation.length > 0){
     allEvaluation.forEach(element => {
       resultRecord.data.forEach(item => {
@@ -107,12 +111,20 @@ const addEvaluationRecord = async (options) => {
         user_id: options.user_id,
         evaluation_id: options.evaluation_id,
         module_id: options.module_id,
+        isRight: options.isRight,
         _createTime: Date.now(),
         _updateTime: Date.now()
       }
     })
+    return '增加记录成功'
   } else {
-    return '已存在记录'
+    await evaluationRCollection.where({ user_id: options.user_id, evaluation_id: options.evaluation_id}).update({
+      // data 传入需要局部更新的数据
+      data: {
+        isRight: options.isRight
+      }
+    })
+    return '已更新记录'
   }
 }
 

@@ -21,6 +21,14 @@
         padding: 0 10px;
         margin-top: 10px;
         color: #666;
+        .code {
+          background-color: #eee;
+          display: block;
+          padding: 10px 10px;
+        }
+        .p {
+          padding: 5px 0;
+        }
       }
     }
     .logic-index-note-title {
@@ -155,6 +163,8 @@
         wx.showLoading({title: '加载中'})
         let result = await getKnowledgeDetailById(options)
         this.detail = result.result.data[0]
+        this.detail.content =this.detail.content.replace(/\<code/gi,'<code class="code"')
+        this.detail.content =this.detail.content.replace(/\<p/gi,'<p class="p"')
         wx.hideLoading()
       },
       noteChange (e) {

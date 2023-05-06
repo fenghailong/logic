@@ -50,7 +50,9 @@ const login = async (_openid) => {
         gender: 0,
         language: '',
         nickName: '',
-        province: ''
+        province: '',
+        _createTime: Date.now(),
+        _updateTime: Date.now()
       }
     });
     hasUser = await collection.where({ wechat_openid: _openid }).get();

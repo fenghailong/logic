@@ -167,7 +167,7 @@
       .logic-index-box-hot-right {
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-between;
+        justify-content: center;
         margin-left: 10px;
         padding: 20px;
         background-color: #FFFFFF;
@@ -278,7 +278,7 @@
         </div>
       </div>
     </div>
-    <van-notice-bar scrollable left-icon="volume-o" text="右下角分享好友，解决只能看到100个词的bug，我的收藏在开发中..." />
+    <van-notice-bar scrollable left-icon="volume-o" text="新上公基（笔记）、常识、考点评测功能" />
     <div class="logic-index-box">
       <div class="logic-index-box-middle">
         <div class="logic-index-box-middle-left" @click="toDetail('国考高频成语')">
@@ -298,8 +298,8 @@
             <text>不积跬步，无以至千里</text>
           </div>
           <div class="logic-index-box-middle-right-person">
-            <div>敬请期待</div>
-            <text>不积跬步，无以至千里</text>
+            <div>实时政治</div>
+            <text>内容填充中（即将上线）</text>
           </div>
         </div>
       </div>
@@ -323,14 +323,14 @@
             <image src="../../assets/images/index-hot-item-two.png" />
             <text>学习交流</text>
           </div>
-          <div class="logic-index-box-hot-right-item">
+          <!-- <div class="logic-index-box-hot-right-item">
             <image src="../../assets/images/index-hot-item-three.png" />
             <text>敬请期待</text>
           </div>
           <div class="logic-index-box-hot-right-item">
             <image src="../../assets/images/index-hot-item-four.png" />
             <text>敬请期待</text>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -347,12 +347,12 @@
     </div>
     <div class="logic-index-footer">
       <div class="logic-index-footer-box">
-        <van-button custom-class="no-style">
+        <!-- <van-button custom-class="no-style">
           <div class="logic-index-footer-share">
             <image src="../../assets/images/collect.png" />
             <text>我的收藏</text>
           </div>
-        </van-button>
+        </van-button> -->
         <van-button custom-class="no-style" open-type="share">
           <div class="logic-index-footer-share">
             <image src="../../assets/images/share.png" />

@@ -10,6 +10,7 @@
     border-radius: 10px;
     padding: 10px 20px 20px;
     margin-bottom: 20px;
+    position: relative;
     .logic-detail-content-people {
       text-align: right;
       font-size: 12px;
@@ -47,6 +48,20 @@
         }
       }
     }
+    .logic-detail-content-locked {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      margin: auto;
+      width: 20px;
+      height: 20px;
+      opacity: 1;
+    }
+  }
+  .logic-detail-content-opticty {
+    opacity: 0.5;
   }
 }
 </style>
@@ -54,7 +69,7 @@
   <div class="page">
     <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，在进行刷题效果会更好哦" />
     <div class="logic-detail-box">
-      <div class="logic-detail-content" v-for="(item, index) in moudleList" :key="index">
+      <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content {{ index > 0 && user.isMember != '1' ? 'logic-detail-content-opticty' : ''}}" @click="{{ index > 0 && user.isMember != '1' ? openPayTipPopup() : ''}}">
         <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->
         <div class="logic-detail-content-title">{{item.name}}</div>
         <div class="logic-detail-content-describe">总结{{item.name}}模块的知识点，需要掌握熟记，学习完后最好配合FB对应的刷题模块。</div>
@@ -66,8 +81,13 @@
           <van-button class="logic-detail-content-button" color="#4755EB" round @click="toList(item._id, item.name)">开始学习</van-button>
           <van-button class="logic-detail-content-button" color="#54BBCB" round @click="toEvaluation(item._id, item.name)">考点评测</van-button>
         </div>
+        <div v-if="index > 0 && user.isMember != '1'">
+          <image class="logic-detail-content-locked" src="../../assets/images/locked.png" />
+        </div>
+
       </div>
     </div>
+    <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
   </div>
 </template>
 <config>
@@ -78,6 +98,7 @@
       "van-notice-bar": "../../libs/vant/notice-bar/index",
       "van-button": "../../libs/vant/button/index",
       "van-rate": "../../libs/vant/rate/index",
+      "pay-tip-popup": "~@/components/pay-tip-popup"
     }
   }
 </config>
@@ -93,17 +114,24 @@
     store,
     data: {
       moudleId: '',
-      moudleList: []
+      moudleList: [],
+      tipsShow: false
     },
     // 计算的属性
     computed: {
-      ...mapGetters(['_id']),
+      ...mapGetters(['_id', 'user']),
     },
     onLoad(options) {
       this.moudleId = options.id
       this.getModulesByIdData(this.moudleId)
     },
     methods: {
+      openPayTipPopup () {
+        this.tipsShow = true
+      },
+      closePayPopup (e) {
+        this.tipsShow = e
+      },
       // 获取已学习
       async getModulesByIdData(moudleId) {
         wx.showLoading({title: '加载中'})

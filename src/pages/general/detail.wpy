@@ -98,7 +98,7 @@
         </div>
       </div>
     </van-popup>
-    <pay-tip-popup :tipsShow="tipsShow" @tocontact="tocontact" @closePayPopup="closePayPopup"></pay-tip-popup>
+    <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
   </div>
 </template>
 <config>
@@ -176,9 +176,6 @@
       },
       openPayTipPopup () {
         this.tipsShow = true
-      },
-      tocontact(e){
-        this.tipsShow = e
       },
       closePayPopup (e) {
         this.tipsShow = e
