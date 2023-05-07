@@ -3,9 +3,23 @@ import { request } from '@/utils/request'
 // export function login(data) {
 //   return request('weapp/authorizations', {method: 'post', data: data})
 // }
-export async function login() {
+export async function login(data) {
   return await wx.cloud.callFunction({
-    name: 'login'
+    name: 'login',
+    data: {
+      func: 'login',
+      data
+    }
+  })
+}
+
+export async function getPhoneNum(data) {
+  return await wx.cloud.callFunction({
+    name: 'login',
+    data: {
+      func: 'getPhoneNum',
+      data
+    }
   })
 }
 

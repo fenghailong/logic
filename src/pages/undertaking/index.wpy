@@ -78,8 +78,8 @@
           <van-rate readonly value="{{ starValue }}" allow-half/>
         </div> -->
         <div class="logic-detail-content-footer">
-          <van-button class="logic-detail-content-button" color="#4755EB" round @click="toList(item._id, item.name)">开始学习</van-button>
-          <van-button class="logic-detail-content-button" color="#54BBCB" round @click="toEvaluation(item._id, item.name)">考点评测</van-button>
+          <van-button class="logic-detail-content-button" color="#4755EB" round @click="{{index > 0 && user.isMember != '1' ? '' : toList(item._id, item.name)}}">开始学习</van-button>
+          <van-button class="logic-detail-content-button" color="#54BBCB" round @click="{{index > 0 && user.isMember != '1' ? '' : toEvaluation(item._id, item.name)}}">考点评测</van-button>
         </div>
         <div v-if="index > 0 && user.isMember != '1'">
           <image class="logic-detail-content-locked" src="../../assets/images/locked.png" />

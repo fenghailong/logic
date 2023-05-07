@@ -6,40 +6,11 @@ cloud.init({
 const db = cloud.database();
 const collection = db.collection('user');
 
-const randomName = (prefix = "游客", randomLength = 7) => {
-  // 兼容更低版本的默认值写法
-  prefix === undefined ? prefix = "" : prefix;
-  randomLength === undefined ? randomLength = 8 : randomLength;
-  // 设置随机用户名
-  // 用户名随机词典数组
-  let nameArr = [
-      [1, 2, 3, 4, 5, 6, 7, 8, 9, 0],
-      ["a", "b", "c", "d", "e", "f", "g", "h", "i", "g", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]
-  ]
-  // 随机名字字符串
-  let name = prefix;
-  // 循环遍历从用户词典中随机抽出一个
-  for (var i = 0; i < randomLength; i++) {
-      // 随机生成index
-      let index = Math.floor(Math.random() * 2);
-      let zm = nameArr[index][Math.floor(Math.random() * nameArr[index].length)];
-      // 如果随机出的是英文字母
-      if (index === 1) {
-          // 则百分之50的概率变为大写
-          if (Math.floor(Math.random() * 2) === 1) {
-              zm = zm.toUpperCase();
-          }
-      }
-      // 拼接进名字变量中
-      name += zm;
-  }
-  // 将随机生成的名字返回
-  return name;
-}
-
 const login = async (_openid) => {
+  console.log(_openid)
   let user;
   let hasUser = await collection.where({ wechat_openid: _openid }).get();
+  console.log(hasUser)
   if (Array.isArray(hasUser.data) && hasUser.data.length === 0) {
     await collection.add({
       data: {
@@ -63,10 +34,43 @@ const login = async (_openid) => {
   return user;
 }
 
+// 更新用户的手机号
+const updateUserPhone = async (_openid, phoneNumber) => {
+  let hasUser = await collection.where({ wechat_openid: _openid }).get();
+  if (Array.isArray(hasUser.data) && hasUser.data.length === 0) {
+    return '用户不存在'
+  } else {
+    await collection.doc(hasUser.data[0]._id).update({
+      // data 传入需要局部更新的数据
+      data: {
+        phoneNumber: phoneNumber
+      }
+    })
+    return '用户手机号已经更新'
+  }
+}
+
+const getPhoneNum = async (options, OPENID) => {
+  const result = await cloud.openapi.phonenumber.getPhoneNumber({
+    code: options.code
+  })
+  if (result && result.phoneInfo && result.phoneInfo.phoneNumber) {
+    let res = await updateUserPhone(OPENID, result.phoneInfo.phoneNumber)
+    return res
+  } else {
+    return false
+  }
+}
+
 
 exports.main = async (event, context) => {
+  const { func, data } = event;
   const { OPENID, APPID, UNIONID } = cloud.getWXContext();
   let res;
-  res = await login(OPENID);
+  if (func === 'login') {
+    res = await login(OPENID);
+  } else if (func === 'getPhoneNum') {
+    res = await getPhoneNum(data, OPENID);
+  }
   return res;
 }

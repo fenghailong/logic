@@ -347,12 +347,12 @@
     </div>
     <div class="logic-index-footer">
       <div class="logic-index-footer-box">
-        <!-- <van-button custom-class="no-style">
+        <van-button custom-class="no-style" open-type="contact">
           <div class="logic-index-footer-share">
             <image src="../../assets/images/collect.png" />
-            <text>我的收藏</text>
+            <text>联系客服</text>
           </div>
-        </van-button> -->
+        </van-button>
         <van-button custom-class="no-style" open-type="share">
           <div class="logic-index-footer-share">
             <image src="../../assets/images/share.png" />

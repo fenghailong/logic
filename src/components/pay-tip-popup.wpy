@@ -28,7 +28,7 @@
 <template>
   <div class="logic-index-popup">
     <van-popup get-container="#app" @click-overlay="closePopup" :show="tipsShow" position="bottom">
-      <div class="logic-index-popup-box" :style="{ height: '30vh' }">
+      <div v-if="isIOS" class="logic-index-popup-box" :style="{ height: '30vh' }">
         <div class="logic-index-popup-title">激活提示</div>
         <div class="logic-index-popup-input">
           <van-field
@@ -41,7 +41,16 @@
         <div class="logic-index-popup-tip">Tips: 激活后，可立即解锁小程序所有功能。</div>
         <div class="logic-index-popup-button">
           <van-button round type="info" @click="tocontact" open-type="contact">联系客服</van-button>
-          <van-button round type="info" @click="doActivate">立刻激活</van-button>
+          <van-button v-if="user.phoneNumber" round type="info" @click="doActivate">立刻激活</van-button>
+          <van-button v-else round type="info" @getphonenumber="getphonenumber"  open-type="getPhoneNumber">立刻激活</van-button>
+        </div>
+      </div>
+      <div v-else class="logic-index-popup-box" :style="{ height: '30vh' }">
+        <div class="logic-index-popup-title">友情提示</div>
+        <div class="logic-index-popup-tip">该功能需要会员才能使用，成为会员可立即解锁小程序所有功能。</div>
+        <div class="logic-index-popup-button">
+          <van-button round type="info" @click="tocontact" open-type="contact">联系客服</van-button>
+          <van-button round type="info" @click="pay">开通会员</van-button>
         </div>
       </div>
     </van-popup>
@@ -61,12 +70,14 @@
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
   import { addActivateRecord } from '@/api/activate'
-
+  import { getPhoneNum } from '@/api/auth'
+  import { doPay } from '@/api/pay'
+  
   wepy.component({
     store,
     computed: {
       // 用户信息
-      ...mapGetters(['_id'])
+      ...mapGetters(['_id', 'user'])
     },
     options: {
       styleIsolation: 'apply-shared',
@@ -79,9 +90,30 @@
       }
     },
     data: {
-      currentCode: ''
+      currentCode: '',
+      isIOS: false,
+    },
+    created () {
+      this.getSystemInfo()
     },
     methods: {
+      getSystemInfo () {
+        let that = this
+        wx.getSystemInfo({
+          success (res) {
+            that.isIOS = res.platform === 'ios'
+            // that.isIOS = true
+          }
+        })
+      },
+      async pay () {
+        wx.showLoading({
+          title: '正在加载',
+          mask: true
+        })
+        let res = await doPay({ totalFee: 199 })
+        console.log(res)
+      },
       tocontact(){
         this.tipsShow = false
         this.$emit("closePayPopup",this.tipsShow);
@@ -92,24 +124,43 @@
       },
       codeChange(e) {
         this.currentCode = e.$wx.detail
-        console.log(this.currentCode)
       },
-      async doActivate () {
-        this.tipsShow = false
-        this.$emit("closePayPopup",this.tipsShow);
-        wx.showLoading({title: '激活中'})
-        let result = await addActivateRecord({user_id: this._id, activate_code_id: this.currentCode})
-        wx.hideLoading()
-        console.log(result)
-        if (result.result === '激活成功') {
-          wx.showToast({
-            title: '激活成功',
-            icon: 'success'
-          })
-          await this.$store.dispatch('login')
+      async getphonenumber (e) {
+        let code = e.$wx.detail.code //开放数据ID
+        if (!code) {
+            wx.showToast({title: '用户未授权'})
+            return
+        }
+        let res = await getPhoneNum({ code: code })
+        if (res.result === '用户手机号已经更新') {
+          this.doActivate()
         } else {
           wx.showToast({
-            title: '激活失败'
+            title: '手机号获取失败'
+          })
+        }
+      },
+      async doActivate () {
+        if(this.currentCode) {
+          this.tipsShow = false
+          this.$emit("closePayPopup",this.tipsShow);
+          wx.showLoading({title: '激活中'})
+          let result = await addActivateRecord({user_id: this._id, activate_code_id: this.currentCode})
+          wx.hideLoading()
+          if (result.result === '激活成功') {
+            wx.showToast({
+              title: '激活成功',
+              icon: 'success'
+            })
+            await this.$store.dispatch('login')
+          } else {
+            wx.showToast({
+              title: '激活失败'
+            })
+          }
+        } else {
+          wx.showToast({
+            title: '请输入激活码'
           })
         }
       }
