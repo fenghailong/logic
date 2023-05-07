@@ -50,7 +50,8 @@
         <div class="logic-index-popup-tip">该功能需要会员才能使用，成为会员可立即解锁小程序所有功能。</div>
         <div class="logic-index-popup-button">
           <van-button round type="info" @click="tocontact" open-type="contact">联系客服</van-button>
-          <van-button round type="info" @click="pay">开通会员</van-button>
+          <van-button v-if="user.phoneNumber" round type="info" @click="pay">开通会员</van-button>
+          <van-button v-else round type="info" @getphonenumber="getphonenumber"  open-type="getPhoneNumber">开通会员</van-button>
         </div>
       </div>
     </van-popup>
@@ -107,11 +108,24 @@
         })
       },
       async pay () {
+        this.closePopup()
         wx.showLoading({
           title: '正在加载',
           mask: true
         })
         let res = await doPay({ totalFee: 199 })
+        if(res.result && res.result.payment) {
+          let payment = res.result.payment
+          wx.requestPayment({
+          ...payment,
+          success (res) {
+            console.log('pay success', res)
+          },
+          fail (err) {
+            console.error('pay fail', err)
+          }
+        })
+        }
         console.log(res)
       },
       tocontact(){
@@ -133,7 +147,12 @@
         }
         let res = await getPhoneNum({ code: code })
         if (res.result === '用户手机号已经更新') {
-          this.doActivate()
+          await this.$store.dispatch('login')
+          if (this.isIOS) {
+            await this.doActivate()
+          } else {
+            await this.pay()
+          }
         } else {
           wx.showToast({
             title: '手机号获取失败'
@@ -142,8 +161,7 @@
       },
       async doActivate () {
         if(this.currentCode) {
-          this.tipsShow = false
-          this.$emit("closePayPopup",this.tipsShow);
+          this.closePopup()
           wx.showLoading({title: '激活中'})
           let result = await addActivateRecord({user_id: this._id, activate_code_id: this.currentCode})
           wx.hideLoading()
