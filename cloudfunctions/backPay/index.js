@@ -48,7 +48,7 @@ exports.main = async (event, context) => {
     await changeUserToMember(OPENID)
   }
   return {
-    return_code: 'SUCCESS',
-    return_msg: 'OK'
+    errcode: '0',
+    errmsg: 'SUCCESS'
   };
 }
