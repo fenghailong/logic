@@ -116,12 +116,23 @@
         let res = await doPay({ totalFee: 199 })
         if(res.result && res.result.payment) {
           let payment = res.result.payment
+          let that = this
           wx.requestPayment({
           ...payment,
-          success (res) {
+          async success (res) {
+            wx.hideLoading()
+            wx.showToast({
+              title: '支付成功',
+              icon: 'success'
+            })
+            await that.$store.dispatch('login')
             console.log('pay success', res)
           },
           fail (err) {
+            wx.hideLoading()
+            wx.showToast({
+              title: '支付失败，如有疑问，请联系客服'
+            })
             console.error('pay fail', err)
           }
         })
