@@ -347,7 +347,7 @@
     </div>
     <div class="logic-index-footer">
       <div class="logic-index-footer-box">
-        <van-button custom-class="no-style" @click="toContaact">
+        <van-button custom-class="no-style" open-type="contact">
           <div class="logic-index-footer-share">
             <image src="../../assets/images/collect.png" />
             <text>联系客服</text>
@@ -436,16 +436,16 @@
           })
         }
       },
-      // 联系客服
-      toContaact () {
-        wx.openCustomerServiceChat({
-          extInfo: {url: 'https://work.weixin.qq.com/kfid/kfcffeb6bea0dd3ea9c'},
-          corpId: 'wwa3b7b5ecaf98ba59',
-          success(res) {
-            console.log(res)
-          }
-        })
-      },
+      // // 联系客服
+      // toContaact () {
+      //   wx.openCustomerServiceChat({
+      //     extInfo: {url: 'https://work.weixin.qq.com/kfid/kfcffeb6bea0dd3ea9c'},
+      //     corpId: 'wwa3b7b5ecaf98ba59',
+      //     success(res) {
+      //       console.log(res)
+      //     }
+      //   })
+      // },
       //获取搜索列表函数（这里是模拟数据）
       async getListData() {
         let data = await getWAllList()
