@@ -31,6 +31,25 @@ const getGeneralById = async (options) => {
     }
   },[])
   result.data = result.data || [] // 处理 没有数据时 reduce 结果 undefined 的情况
+  result.total = total
+  return result
+}
+
+// 获取常识模块下的所有常识知识点
+const getGeneralQuery = async (options) => {
+  console.log(options.pageIndex)
+  console.log(options.pageCount)
+  const countResult = await collection.where({ module_id: options.module_id }).count()
+  const total = countResult.total
+  // 计算需分几次取
+  // const batchTimes = Math.ceil(total / 100)
+  let result = await collection
+  .where({ module_id: options.module_id })
+  .skip(options.pageIndex)
+  .limit(options.pageCount)
+  .get()
+  result.data = result.data || [] //
+  result.total = total
   return result
 }
 
@@ -61,26 +80,31 @@ const getAllStudyGeneralById = async (options) => {
 
 // 获取模块下的已经掌握的常识数量 和 模块下面的常识数量（除去已经掌握的）
 const getAllGeneralInfo = async (data) => {
-  const result = await getGeneralById(data)
-  const resultRecord = await getAllStudyGeneralById(data)
-  let allGeneral = result.data
-  let allStudyGeneral = []
-  if (resultRecord.data.length > 0 && allGeneral.length > 0){
-    allGeneral = allGeneral.map(element => {
+  const result = await getGeneralById(data) //分页列表
+  const resultRecord = await getAllStudyGeneralById(data) // 记录列表
+  let generalList = result.data
+  let recordList = resultRecord.data
+  let resList = []
+  if (recordList.length > 0 && generalList.length > 0){
+    generalList = generalList.map(element => {
       element.isStudyed = false
-      resultRecord.data.forEach(item => {
+      recordList.forEach(item => {
         if (item.general_id == element._id) {
           element.isStudyed = true
-          allStudyGeneral.push(element)
         }
       })
-      return element
+      let temp = {}
+      temp._id = element._id
+      temp.title = element.title
+      temp.isStudyed = element.isStudyed
+      resList.push(temp)
     });
   }
+
   let res = {
-    generalList: allGeneral,
-    generalCount: allGeneral.length,
-    studyGeneralCount: allStudyGeneral.length
+    generalList: resList,
+    generalCount: result.total,
+    studyGeneralCount: recordList.length
   }
   return res;
 }

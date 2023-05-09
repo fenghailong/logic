@@ -58,6 +58,9 @@
       .logic-index-list-popup-title {
         flex: 1;
         font-size: 14 px;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
       }
     }
     .logic-index-list-popup-item-opticty {
@@ -122,7 +125,7 @@
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
   import eventHub from '@/common/eventHub'
-  import { addGeneralRecord } from '@/api/general'
+  import { addGeneralRecord, getKnowledgeDetailById } from '@/api/general'
   import Dialog from '../../libs/vant/dialog/dialog';
 
   wepy.page({
@@ -148,7 +151,8 @@
       // 获取模块知识点详情
       async getDetail() {
         let index = this.moudleList.findIndex((item) => item._id == this.id)
-        this.detail = this.moudleList[index]
+        let result = await getKnowledgeDetailById(this.id)
+        this.detail = result.result.data[0]
         await this.addGeneralRecord(index)
       },
       async toGeneral (id) {

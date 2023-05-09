@@ -40,7 +40,7 @@
         </div>
         <div class="logic-index-popup-tip">Tips: 激活后，可立即解锁小程序所有功能。</div>
         <div class="logic-index-popup-button">
-          <van-button round type="info" @click="tocontact" open-type="contact">联系客服</van-button>
+          <van-button round type="info" @click="tocontact">联系客服</van-button>
           <van-button v-if="user.phoneNumber" round type="info" @click="doActivate">立刻激活</van-button>
           <van-button v-else round type="info" @getphonenumber="getphonenumber"  open-type="getPhoneNumber">立刻激活</van-button>
         </div>
@@ -49,7 +49,7 @@
         <div class="logic-index-popup-title">友情提示</div>
         <div class="logic-index-popup-tip">该功能需要会员才能使用，成为会员可立即解锁小程序所有功能。</div>
         <div class="logic-index-popup-button">
-          <van-button round type="info" @click="tocontact" open-type="contact">联系客服</van-button>
+          <van-button round type="info" @click="tocontact">联系客服</van-button>
           <van-button v-if="user.phoneNumber" round type="info" @click="pay">开通会员</van-button>
           <van-button v-else round type="info" @getphonenumber="getphonenumber"  open-type="getPhoneNumber">开通会员</van-button>
         </div>
@@ -73,7 +73,7 @@
   import { addActivateRecord } from '@/api/activate'
   import { getPhoneNum } from '@/api/auth'
   import { doPay } from '@/api/pay'
-  
+
   wepy.component({
     store,
     computed: {
@@ -110,7 +110,7 @@
       async pay () {
         this.closePopup()
         wx.showLoading({
-          title: '正在加载',
+          title: '发起支付中',
           mask: true
         })
         let res = await doPay({ totalFee: 199 })
@@ -142,6 +142,14 @@
       tocontact(){
         this.tipsShow = false
         this.$emit("closePayPopup",this.tipsShow);
+        // 联系客服
+        wx.openCustomerServiceChat({
+          extInfo: {url: 'https://work.weixin.qq.com/kfid/kfcffeb6bea0dd3ea9c'},
+          corpId: 'wwa3b7b5ecaf98ba59',
+          success(res) {
+            console.log(res)
+          }
+        })
       },
       closePopup() {
         this.tipsShow = false
@@ -156,7 +164,16 @@
             wx.showToast({title: '用户未授权'})
             return
         }
+        wx.showLoading({
+          title: '加载中',
+          mask: true
+        })
         let res = await getPhoneNum({ code: code })
+        wx.hideLoading()
+        wx.showToast({
+          title: '授权成功',
+          icon: 'success'
+        })
         if (res.result === '用户手机号已经更新') {
           await this.$store.dispatch('login')
           if (this.isIOS) {

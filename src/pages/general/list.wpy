@@ -32,6 +32,11 @@
       text-align: center;
       font-size: 14px;
       font-weight: 500;
+      overflow : hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
     }
     .logic-detail-content-complete {
       position: absolute;
@@ -141,8 +146,9 @@
       // 获取已学习
       async getAllGeneralInfoData() {
         wx.showLoading({title: '加载中'})
-        let result = await getAllGeneralInfo({module_id: this.module_id})
-        console.log(result)
+        let result = await getAllGeneralInfo({
+          module_id: this.module_id
+        })
         this.moudleList = result.result.generalList
         this.generalCount = result.result.generalCount
         this.studyGeneralCount = result.result.studyGeneralCount
