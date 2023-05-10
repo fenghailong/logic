@@ -347,7 +347,7 @@
     </div>
     <div class="logic-index-footer">
       <div class="logic-index-footer-box">
-        <van-button custom-class="no-style" open-type="contact">
+        <van-button custom-class="no-style" open-type="contact" @contact="onCustomerServiceButtonClick">
           <div class="logic-index-footer-share">
             <image src="../../assets/images/collect.png" />
             <text>联系客服</text>
@@ -435,6 +435,9 @@
             }
           })
         }
+      },
+      onCustomerServiceButtonClick(e) {
+        console.log(e)
       },
       // // 联系客服
       // toContaact () {

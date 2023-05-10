@@ -93,7 +93,8 @@
       "van-search": "../../libs/vant/circle/index",
       "van-notice-bar": "../../libs/vant/notice-bar/index",
       "van-button": "../../libs/vant/button/index",
-      "van-rate": "../../libs/vant/rate/index"
+      "van-rate": "../../libs/vant/rate/index",
+      "pay-tip-popup": "~@/components/pay-tip-popup"
     }
   }
 </config>
@@ -133,10 +134,20 @@
           url: `/pages/general/list?id=${this.moudleId}`,
         })
       },
+      openPayTipPopup () {
+        this.tipsShow = true
+      },
+      closePayPopup (e) {
+        this.tipsShow = e
+      },
       toEvaluation () {
-        wx.navigateTo({
-          url: `/pages/general/evaluation?id=${this.moudleId}&name=${'常识'}`,
-        })
+        if (this.user.isMember === '1') {
+          wx.navigateTo({
+            url: `/pages/general/evaluation?id=${this.moudleId}&name=${'常识'}`,
+          })
+        } else {
+          this.openPayTipPopup()
+        }
       },
     },
     onShareAppMessage () {

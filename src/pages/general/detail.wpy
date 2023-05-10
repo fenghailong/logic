@@ -88,10 +88,10 @@
     <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
     <van-popup @click-overlay="clickOverlay" :show="showPopup" position="bottom" round>
       <div class="logic-index-list-popup-list" :style="{ height: '70vh' }">
-        <div v-for="(item, index) in moudleList" :key="index" class="logic-index-list-popup-item {{ index > 2 && user.isMember != '1' ? 'logic-index-list-popup-item-opticty' : ''}}"  @click="{{ index > 2 && user.isMember != '1' ? openPayTipPopup(item,index) : toGeneral(item._id)}}">
+        <div v-for="(item, index) in moudleList" :key="index" class="logic-index-list-popup-item {{ index > 20 && user.isMember != '1' ? 'logic-index-list-popup-item-opticty' : ''}}"  @click="{{ index > 20 && user.isMember != '1' ? openPayTipPopup(item,index) : toGeneral(item._id)}}">
           <div class="logic-index-list-popup-index">{{index + 1}}</div>
           <div class="logic-index-list-popup-title" >{{item.title}}</div>
-          <div v-if="index > 2 && user.isMember != '1'">
+          <div v-if="index > 20 && user.isMember != '1'">
             <van-tag type="primary" plain color="#999999" size="medium">未解锁</van-tag>
           </div>
           <div v-else>

@@ -14,6 +14,10 @@
     color: #ccc;
     font-size: 12px;
     margin-bottom: 20px;
+    image {
+      // width: 100%;
+      // height: 100%;
+    }
   }
   .logic-index-popup-button{
     display: flex;
@@ -21,6 +25,41 @@
     margin-top: 20px;
     .van-button {
       width: 30%;
+    }
+  }
+}
+.logic-index-popup-member-box {
+  .logic-index-popup-member-tip {
+    color: #ccc;
+    font-size: 12px;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    image {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .logic-index-popup-member-button{
+      position: absolute;
+      bottom: 50px;
+      left: 0;
+      right: 0;
+      width: 60%;
+      margin: 0 auto;
+      // .van-button {
+      //   width: 300px !important;
+      // }
+      // display: flex;
+      // justify-content: space-around;
+      // margin-top: 20px;
+      // .van-button {
+      //   width: 70%;
+      // }
     }
   }
 }
@@ -40,18 +79,20 @@
         </div>
         <div class="logic-index-popup-tip">Tips: 激活后，可立即解锁小程序所有功能。</div>
         <div class="logic-index-popup-button">
-          <van-button round type="info" @click="tocontact">联系客服</van-button>
+          <van-button round type="info" open-type="contact" @contact="onCustomerServiceButtonClick">联系客服</van-button>
           <van-button v-if="user.phoneNumber" round type="info" @click="doActivate">立刻激活</van-button>
           <van-button v-else round type="info" @getphonenumber="getphonenumber"  open-type="getPhoneNumber">立刻激活</van-button>
         </div>
       </div>
-      <div v-else class="logic-index-popup-box" :style="{ height: '30vh' }">
-        <div class="logic-index-popup-title">友情提示</div>
-        <div class="logic-index-popup-tip">该功能需要会员才能使用，成为会员可立即解锁小程序所有功能。</div>
-        <div class="logic-index-popup-button">
-          <van-button round type="info" @click="tocontact">联系客服</van-button>
-          <van-button v-if="user.phoneNumber" round type="info" @click="pay">开通会员</van-button>
-          <van-button v-else round type="info" @getphonenumber="getphonenumber"  open-type="getPhoneNumber">开通会员</van-button>
+      <div v-else class="logic-index-popup-member-box" :style="{ height: '100vh' }">
+        <!-- <div class="logic-index-popup-title">友情提示</div> -->
+        <div class="logic-index-popup-member-tip">
+          <image src="../assets/images/member.png" />
+          <div class="logic-index-popup-member-button">
+            <!-- <van-button round type="info" open-type="contact" @contact="onCustomerServiceButtonClick">联系客服</van-button> -->
+            <van-button v-if="user.phoneNumber" round type="info" block @click="pay">开通会员</van-button>
+            <van-button v-else round type="info" block @getphonenumber="getphonenumber"  open-type="getPhoneNumber">开通会员</van-button>
+          </div>
         </div>
       </div>
     </van-popup>
@@ -113,7 +154,7 @@
           title: '发起支付中',
           mask: true
         })
-        let res = await doPay({ totalFee: 199 })
+        let res = await doPay({ totalFee: 1990 })
         if(res.result && res.result.payment) {
           let payment = res.result.payment
           let that = this
@@ -139,18 +180,21 @@
         }
         console.log(res)
       },
-      tocontact(){
-        this.tipsShow = false
-        this.$emit("closePayPopup",this.tipsShow);
-        // 联系客服
-        wx.openCustomerServiceChat({
-          extInfo: {url: 'https://work.weixin.qq.com/kfid/kfcffeb6bea0dd3ea9c'},
-          corpId: 'wwa3b7b5ecaf98ba59',
-          success(res) {
-            console.log(res)
-          }
-        })
+      onCustomerServiceButtonClick (e) {
+        console.log(e)
       },
+      // tocontact(){
+      //   this.tipsShow = false
+      //   this.$emit("closePayPopup",this.tipsShow);
+      //   // 联系客服
+      //   wx.openCustomerServiceChat({
+      //     extInfo: {url: 'https://work.weixin.qq.com/kfid/kfcffeb6bea0dd3ea9c'},
+      //     corpId: 'wwa3b7b5ecaf98ba59',
+      //     success(res) {
+      //       console.log(res)
+      //     }
+      //   })
+      // },
       closePopup() {
         this.tipsShow = false
         this.$emit("closePayPopup",this.tipsShow);

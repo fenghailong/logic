@@ -71,16 +71,16 @@
     <div class="logic-detail-box">
       <div v-if="moudleList.length > 0" class="logic-detail-title">已学习 {{studyGeneralCount}}/{{generalCount}}</div>
       <div class="logic-detail-list">
-        <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content" @click="{{ index > 2 && user.isMember != '1' ? openPayTipPopup() : toDetail(item._id)}}">
-          <div class="logic-detail-content-title {{ index > 2 && user.isMember != '1' ? 'logic-detail-content-opticty' : ''}}">{{item.title}}</div>
-          <div v-if="index > 2 && user.isMember != '1'">
+        <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content" @click="{{ index > 20 && user.isMember != '1' ? openPayTipPopup() : toDetail(item._id)}}">
+          <div class="logic-detail-content-title {{ index > 20 && user.isMember != '1' ? 'logic-detail-content-opticty' : ''}}">{{item.title}}</div>
+          <div v-if="index > 20 && user.isMember != '1'">
             <image class="logic-detail-content-locked" src="../../assets/images/locked.png" />
           </div>
           <div v-else>
             <image class="logic-detail-content-complete" v-if="item.isStudyed" src="../../assets/images/complete.png" />
           </div>
           <!-- <image class="logic-detail-content-complete" v-if="item.isStudyed" src="../../assets/images/complete.png" />
-          <image class="logic-detail-content-locked" v-if="index > 2 && user.isMember != '1' " src="../../assets/images/locked.png" /> -->
+          <image class="logic-detail-content-locked" v-if="index > 20 && user.isMember != '1' " src="../../assets/images/locked.png" /> -->
         </div>
       </div>
       <!-- <div class="logic-index-content-button">

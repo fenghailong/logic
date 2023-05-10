@@ -22,13 +22,13 @@ const uuid = function () {
 const doPay = async (event, context) => {
   console.log(event)
   const wxContext = cloud.getWXContext();
-  let totalFee = event.data.totalFee
+  let totalFee = 1990
 	let openId = wxContext.OPENID
 
 	// const uid = uuid();
 	// console.log(uid);
   console.log(wxContext)
-  let body = "测试微信支付功能";
+  let body = "逻辑填空会员服务";
   let nonceStr = Math.random().toString(32).substring(2,13);
   let tempStamp = parseInt(Date.now() / 1000)
   let tradeType = 'JSAPI'

@@ -6,6 +6,23 @@ const env = 'prod-2gzhco766f4e1e27'
 cloud.init({
   env,
 });
+
+// // 云函数入口函数
+// exports.main = async (event, context) => {
+//   const wxContext = cloud.getWXContext()
+
+//   await cloud.openapi.customerServiceMessage.send({
+//     touser: wxContext.OPENID,
+//     msgtype: 'text',
+//     text: {
+//       content: '收到',
+//     },
+//   })
+
+//   return 'success'
+// }
+
+
 //<!--下载云存储图片-->
 let downLoad = async (event, context) => {
   const res = await cloud.downloadFile({
@@ -30,15 +47,15 @@ let upload = async (Buffer) => {
 // 云函数入口函数
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
-  if (event.MsgType == 'miniprogrampage') {
+  console.log(event)
+  if (event.MsgType == 'event') {
     await cloud.openapi.customerServiceMessage.send({
       touser: wxContext.OPENID,
       msgtype: 'text',
       text: {
-        content: '收到 MsgType=' + event.MsgType + ';content=' + event.Content,
+        content: '你好，获取激活码，请联系客服。（安卓用户不需要激活码）',
       },
     })
-  } else if (event.MsgType == 'image') {
     let Buffer = await downLoad()
     let meida = await upload(Buffer)
     await cloud.openapi.customerServiceMessage.send({
@@ -49,16 +66,25 @@ exports.main = async (event, context) => {
       }
     })
   } else {
-    await cloud.openapi.customerServiceMessage.send({
-      'touser': wxContext.OPENID,
-      'msgtype': 'link',
-      'link':{
-        'title': '标题1',
-        'url': 'https://www.baidu.com',
-        'description': '描述',
-        'thumb_url': 'url'
-      }
-    })
+    if (event.Content == '客服') {
+      let Buffer = await downLoad()
+      let meida = await upload(Buffer)
+      await cloud.openapi.customerServiceMessage.send({
+        "touser": wxContext.OPENID,
+        "msgtype": "image",
+        "image": {
+          "media_id": meida.mediaId
+        }
+      })
+    } else {
+      await cloud.openapi.customerServiceMessage.send({
+        touser: wxContext.OPENID,
+        msgtype: 'text',
+        text: {
+          content: '如果有其他问题反馈，请联系客服，我们会在第一时间处理。联系客服，请输入“客服”。',
+        },
+      })
+    }
   }
   return 'success'
 }
