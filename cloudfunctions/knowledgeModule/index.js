@@ -101,6 +101,12 @@ const shuffle = (array) => {
 	return array;
 }
 
+// 查询使用记录
+const getEvaluationRecordCount = async (options) => {
+  let recordCount = await evaluationRCollection.where({ user_id: options.user_id, module_id: options.module_id}).count()
+  console.log(recordCount)
+  return recordCount
+}
 
 // 增加考点评测记录
 const addEvaluationRecord = async (options) => {
@@ -151,6 +157,8 @@ exports.main = async (event, context) => {
     res = await getEvaluationById(data);
   } else if (func === 'addEvaluationRecord') {
     res = await addEvaluationRecord(data);
+  } else if (func === 'getEvaluationRecordCount') {
+    res = await getEvaluationRecordCount(data);
   }
   return res;
 }

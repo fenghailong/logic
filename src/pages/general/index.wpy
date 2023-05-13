@@ -83,7 +83,6 @@
         </div>
       </div>
     </div>
-    <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
   </div>
 </template>
 <config>
@@ -94,7 +93,6 @@
       "van-notice-bar": "../../libs/vant/notice-bar/index",
       "van-button": "../../libs/vant/button/index",
       "van-rate": "../../libs/vant/rate/index",
-      "pay-tip-popup": "~@/components/pay-tip-popup"
     }
   }
 </config>
@@ -111,7 +109,6 @@
     data: {
       moudleId: '',
       moudleList: [],
-      tipsShow: false
     },
     // 计算的属性
     computed: {
@@ -134,20 +131,10 @@
           url: `/pages/general/list?id=${this.moudleId}`,
         })
       },
-      openPayTipPopup () {
-        this.tipsShow = true
-      },
-      closePayPopup (e) {
-        this.tipsShow = e
-      },
       toEvaluation () {
-        if (this.user.isMember === '1') {
-          wx.navigateTo({
-            url: `/pages/general/evaluation?id=${this.moudleId}&name=${'常识'}`,
-          })
-        } else {
-          this.openPayTipPopup()
-        }
+        wx.navigateTo({
+          url: `/pages/general/evaluation?id=${this.moudleId}&name=${'常识'}`,
+        })
       },
     },
     onShareAppMessage () {

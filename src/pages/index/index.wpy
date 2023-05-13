@@ -189,7 +189,7 @@
       }
     }
     .logic-index-undertaking {
-      padding: 0 20px 120px;
+      padding: 0 20px;
       margin-top: 20px;
       border-radius: 10px;
       .logic-index-undertaking-box {
@@ -225,6 +225,9 @@
           }
         }
       }
+    }
+    .logic-index-undertaking-other {
+      padding: 0 20px 120px;
     }
     .logic-index-footer {
       padding: 0 20px;
@@ -335,6 +338,29 @@
       </div>
     </div>
     <div class="logic-index-undertaking">
+      <div class="logic-index-undertaking-box">
+        <div class="logic-index-undertaking-title">公考行测知识点</div>
+        <div class="logic-index-undertaking-list">
+          <div class="logic-index-undertaking-item">
+            <image src="../../assets/images/collect.png" />
+            <text>言语</text>
+          </div>
+          <div class="logic-index-undertaking-item">
+            <image src="../../assets/images/collect.png" />
+            <text>判断</text>
+          </div>
+          <div class="logic-index-undertaking-item">
+            <image src="../../assets/images/collect.png" />
+            <text>数量</text>
+          </div>
+          <div class="logic-index-undertaking-item">
+            <image src="../../assets/images/collect.png" />
+            <text>资料</text>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="logic-index-undertaking logic-index-undertaking-other">
       <div class="logic-index-undertaking-box">
         <div class="logic-index-undertaking-title">事业单位公基知识点</div>
         <div class="logic-index-undertaking-list">

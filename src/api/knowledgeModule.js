@@ -79,3 +79,15 @@ export async function addEvaluationRecord(data) {
     },
   })
 }
+
+
+// 判断非会员学习数量
+export async function getEvaluationRecordCount(data) {
+  return await wx.cloud.callFunction({
+    name: 'knowledgeModule',
+    data: {
+      func: 'getEvaluationRecordCount',
+      data
+    },
+  })
+}

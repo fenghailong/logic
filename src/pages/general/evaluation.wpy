@@ -156,6 +156,7 @@
           <div class="logic-index-footer-text">查看答案</div>
         </div>
       </div>
+      <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
     </div>
     <van-empty v-else description="没有更多题目了" />
     <div
@@ -184,7 +185,8 @@
     navigationBarTitleText: '马克思主义哲学',
     usingComponents: {
       "van-empty": "../../libs/vant/empty/index",
-      "van-button": "../../libs/vant/button/index"
+      "van-button": "../../libs/vant/button/index",
+      "pay-tip-popup": "~@/components/pay-tip-popup"
     }
   }
 </config>
@@ -193,7 +195,7 @@
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
   import eventHub from '@/common/eventHub'
-  import { getEvaluationById, addEvaluationRecord } from '@/api/knowledgeModule'
+  import { getEvaluationById, addEvaluationRecord, getEvaluationRecordCount } from '@/api/knowledgeModule'
   import { getSystemData, queryNodes } from '@/utils/util'
   let plugin = requirePlugin("WechatSI")
   let manager = plugin.getRecordRecognitionManager()
@@ -201,7 +203,7 @@
     store,
     computed: {
       // 用户信息
-      ...mapGetters(['_id'])
+      ...mapGetters(['_id', 'user'])
     },
     data: {
       moudleId: '',
@@ -219,7 +221,8 @@
       showComtBox: false,
       windowHeight: '',
       ctInput_top: '',
-      inputValue: '' // 输入框的内容
+      inputValue: '', // 输入框的内容
+      tipsShow: false // 会员判断框
     },
     async onLoad(options) {
       await this.getWindowData()
@@ -248,6 +251,7 @@
                 item.subjects.splice(dindex, 1)
               }
             })
+            console.log(item.answer)
             item.answers = item.answer.split('#')
             let index = 0;
             item.finallData = item.subjects.map((element, subsIndex)=> element === "#" ? {
@@ -326,9 +330,27 @@
           this.checkAnswer(this.currentAnswer.speak)
         }
       },
+      openPayTipPopup () {
+        this.tipsShow = true
+      },
+      closePayPopup (e) {
+        this.tipsShow = e
+      },
       // 查看答案
       async viewAnswer () {
         wx.showLoading({title: '加载中'})
+        if(this.user.isMember === '2') {
+          let result = await getEvaluationRecordCount({
+            user_id: this._id,
+            module_id: this.moudleId,
+          })
+          console.log(result)
+          if (result.result.total > 20) {
+            wx.hideLoading()
+            this.openPayTipPopup()
+            return
+          }
+        }
         await this.isAllAnswerRight(this.subjectList)
         this.subjectList.forEach(item => {
           item.finallData.forEach(a => {

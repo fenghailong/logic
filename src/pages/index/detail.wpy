@@ -62,7 +62,7 @@
           <van-rate readonly value="{{ starValue }}" allow-half/>
         </div>
         <div class="logic-detail-content-footer">
-          <van-button class="logic-detail-content-button" color="#4755EB" round @click="toList">开始学习</van-button>
+          <van-button class="logic-detail-content-button" color="#4755EB" round @click="toList" @tap="subscribe">开始学习</van-button>
           <!-- <van-button class="logic-detail-content-button" color="#54BBCB" round >考点评测</van-button> -->
         </div>
       </div>
@@ -176,7 +176,17 @@
         this.detail.count = result.result.articleCount
         wx.hideLoading()
       },
-      toList () {
+      async toList () {
+        let subscribeMessage = await wx.requestSubscribeMessage({
+          tmplIds: ['YYZyC81sN90SfsOfzO8e2eS2p2U-jzqyqipzw4h3K6E']
+        })
+        let result = await wx.getSetting({withSubscriptions: true})
+        console.log(subscribeMessage)
+        if (result.subscriptionsSetting){
+
+        }
+        console.log(result)
+        return
         wx.navigateTo({
           url: `/pages/index/list?type=${this.detail.type}`,
         })
