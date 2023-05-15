@@ -10,7 +10,9 @@ const login = async (_openid) => {
   console.log(_openid)
   let user;
   let hasUser = await collection.where({ wechat_openid: _openid }).get();
+  let hasMessage = await db.collection('messages').where({ wechat_openid: _openid, isUse: '2' }).count();
   console.log(hasUser)
+  console.log(hasMessage)
   if (Array.isArray(hasUser.data) && hasUser.data.length === 0) {
     await collection.add({
       data: {
@@ -27,8 +29,10 @@ const login = async (_openid) => {
       }
     });
     hasUser = await collection.where({ wechat_openid: _openid }).get();
+    hasUser.data[0].messageCount = hasMessage.total
     user = hasUser.data;
   } else {
+    hasUser.data[0].messageCount = hasMessage.total
     user = hasUser.data;
   }
   return user;

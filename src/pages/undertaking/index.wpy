@@ -105,6 +105,7 @@
 <script>
   import wepy from '@wepy/core'
   import store from '@/store'
+  import subscribe from '@/mixins/subscribe.js'
   import { mapGetters } from '@wepy/x'
   import { getModulesById } from '@/api/knowledgeModule'
   import { addMessage } from '@/api/subscribe'
@@ -112,6 +113,7 @@
 
   wepy.page({
     store,
+    mixins: [ subscribe ],
     data: {
       moudleId: '',
       moudleList: [],
@@ -139,7 +141,10 @@
         this.moudleList = result.result.data
         wx.hideLoading()
       },
-      toList (id, name) {
+      async toList (id, name) {
+        if (this.user.messageCount < 1) {
+          await this.onSubscribe()
+        }
         wx.navigateTo({
           url: `/pages/undertaking/list?id=${id}&name=${name}`,
         })
@@ -148,43 +153,6 @@
         wx.navigateTo({
           url: `/pages/undertaking/evaluation?id=${id}&name=${name}`,
         })
-      },
-      onSubscribe(e) {
-        let date = new Date(Date.parse(new Date()));
-        console.log(date)
-        let lessonTmplId = 'bccZvCHjX2W6yCvLylr8ww9McM_C8rBSbDKZ6sKE3ok'
-        const item = {
-          thing1: {
-            value: this.text
-          },
-          date2: {
-            value: this.formdate(date)
-          }
-        }
-        let that = this
-        wx.requestSubscribeMessage({
-          tmplIds: [lessonTmplId],
-          async success (res) {
-            if (res.errMsg === 'requestSubscribeMessage:ok') {
-              wx.showLoading({
-                title: '订阅中',
-                mask:true
-              })
-              await addMessage({
-                data: item,
-                templateId: lessonTmplId,
-                user_id: that._id
-              })
-              wx.hideLoading();
-              wx.showToast({
-                title: '订阅成功'
-              });
-            }
-          }
-        });
-      },
-      textin(e){
-        this.text = e.detail.value;
       },
       formdate(date){
         var year = date.getFullYear();

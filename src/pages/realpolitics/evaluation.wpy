@@ -182,7 +182,7 @@
 </template>
 <config>
   {
-    navigationBarTitleText: '常识评测',
+    navigationBarTitleText: '马克思主义哲学',
     usingComponents: {
       "van-empty": "../../libs/vant/empty/index",
       "van-button": "../../libs/vant/button/index",
@@ -227,6 +227,7 @@
     async onLoad(options) {
       await this.getWindowData()
       this.moudleId = options.id
+      wx.setNavigationBarTitle({title: options.name})
       await this.getEvaluationByIdData(true)
       //识别语音
       this.initRecord();
@@ -338,18 +339,6 @@
       // 查看答案
       async viewAnswer () {
         wx.showLoading({title: '加载中'})
-        if(this.user.isMember === '2') {
-          let result = await getEvaluationRecordCount({
-            user_id: this._id,
-            module_id: this.moudleId,
-          })
-          console.log(result)
-          if (result.result.total > 20) {
-            wx.hideLoading()
-            this.openPayTipPopup()
-            return
-          }
-        }
         await this.isAllAnswerRight(this.subjectList)
         this.subjectList.forEach(item => {
           item.finallData.forEach(a => {
@@ -453,6 +442,14 @@
         })
         return arr
       },
-    }
+    },
+    onShareAppMessage () {
+      return {
+        // 标题是话题标题
+        title: '知识要点',
+        // 路径为话题详情路径
+        path: '/pages/undertaking/detail?id=' + this.moudleId,
+      }
+    },
   })
 </script>

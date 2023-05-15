@@ -78,6 +78,7 @@
           />
         </div>
         <div class="logic-index-popup-tip">Tips: 激活后，可立即解锁小程序所有功能。</div>
+        <div class="logic-index-popup-tip">激活码获取，请联系客服。</div>
         <div class="logic-index-popup-button">
           <van-button round type="info" open-type="contact" @contact="onCustomerServiceButtonClick">联系客服</van-button>
           <van-button v-if="user.phoneNumber" round type="info" @click="doActivate">立刻激活</van-button>

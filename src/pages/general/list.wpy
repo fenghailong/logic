@@ -25,6 +25,7 @@
     height: 60px;
     display: flex;
     align-items: center;
+    justify-content: center;
     padding: 10px;
     border-radius: 10px;
     margin-bottom: 20px;
@@ -92,7 +93,7 @@
 </template>
 <config>
   {
-  navigationBarTitleText: '知识点详情',
+  navigationBarTitleText: '常识知识点',
     usingComponents: {
       "van-search": "../../libs/vant/circle/index",
       "van-notice-bar": "../../libs/vant/notice-bar/index",
@@ -147,6 +148,7 @@
       async getAllGeneralInfoData() {
         wx.showLoading({title: '加载中'})
         let result = await getAllGeneralInfo({
+          user_id: this._id,
           module_id: this.module_id
         })
         this.moudleList = result.result.generalList

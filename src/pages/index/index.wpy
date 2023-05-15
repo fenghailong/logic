@@ -300,9 +300,9 @@
             <div>常识积累</div>
             <text>不积跬步，无以至千里</text>
           </div>
-          <div class="logic-index-box-middle-right-person">
-            <div>实时政治</div>
-            <text>内容填充中（即将上线）</text>
+          <div class="logic-index-box-middle-right-person" @click="toRealpolitics">
+            <div>时事政治</div>
+            <text>不积小流，无以成江海</text>
           </div>
         </div>
       </div>
@@ -322,10 +322,10 @@
             <image src="../../assets/images/index-hot-item-one.png" />
             <text>人物素材</text>
           </div>
-          <div class="logic-index-box-hot-right-item">
+          <!-- <div class="logic-index-box-hot-right-item">
             <image src="../../assets/images/index-hot-item-two.png" />
             <text>学习交流</text>
-          </div>
+          </div> -->
           <!-- <div class="logic-index-box-hot-right-item">
             <image src="../../assets/images/index-hot-item-three.png" />
             <text>敬请期待</text>
@@ -337,7 +337,7 @@
         </div>
       </div>
     </div>
-    <div class="logic-index-undertaking">
+    <!-- <div class="logic-index-undertaking">
       <div class="logic-index-undertaking-box">
         <div class="logic-index-undertaking-title">公考行测知识点</div>
         <div class="logic-index-undertaking-list">
@@ -359,7 +359,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </div> -->
     <div class="logic-index-undertaking logic-index-undertaking-other">
       <div class="logic-index-undertaking-box">
         <div class="logic-index-undertaking-title">事业单位公基知识点</div>
@@ -406,6 +406,7 @@
   import wepy from '@wepy/core'
   import { importWords, refreshSynonym, addWordsList, getWAllList } from '@/api/words'
   import { getAllModules } from '@/api/knowledgeModule'
+  import { sendMessage } from '@/api/subscribe'
   import eventHub from '@/common/eventHub'
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
@@ -431,12 +432,10 @@
       ...mapGetters([ 'isLoggedIn' ])
     },
     async onLoad() {
-      // let data = await addWordsList(importData)
-      // let data1 = await importWords(importData)
-      // let data2 = await refreshSynonym(importData)
       await this.$store.dispatch('login')
       this.getListData()
       this.getAllModulesData()
+      // await sendMessage() //调用模版消息
     },
     async onPullDownRefresh() {
       wx.stopPullDownRefresh()
@@ -488,7 +487,7 @@
       // 获取事业单位模块
       async getAllModulesData () {
         let data = await getAllModules(2,true)
-        this.undertaking = data.result.data.filter(item => item._id != 'e54110dd644a20de001e8d834e839d06')
+        this.undertaking = data.result.data.filter(item => item._id != 'e54110dd644a20de001e8d834e839d06' && item._id != '2cc84e26645f47100c48bab504de9717')
       },
       // toKnowledgeModules
       async toUndertaking (id) {
@@ -503,6 +502,13 @@
         if (this.isLoggedIn) {
           wx.navigateTo({
             url: `/pages/general/index?id=${'e54110dd644a20de001e8d834e839d06'}`,
+          })
+        }
+      },
+      toRealpolitics () {
+        if (this.isLoggedIn) {
+          wx.navigateTo({
+            url: `/pages/realpolitics/index?id=${'2cc84e26645f47100c48bab504de9717'}`,
           })
         }
       }

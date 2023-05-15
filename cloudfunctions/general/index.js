@@ -10,7 +10,6 @@ const collectionRecord = db.collection('generalRecord');
 
 // 获取常识模块下的所有常识知识点
 const getGeneralById = async (options) => {
-  console.log(options)
   const countResult = await collection.where({ module_id: options.module_id }).count()
   const total = countResult.total
   // 计算需分几次取
@@ -100,7 +99,6 @@ const getAllGeneralInfo = async (data) => {
       resList.push(temp)
     });
   }
-
   let res = {
     generalList: resList,
     generalCount: result.total,

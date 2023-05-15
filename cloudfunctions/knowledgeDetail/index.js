@@ -8,9 +8,15 @@ const db = cloud.database();
 const collection = db.collection('knowledgeDetail');
 const noteCollection = db.collection('notes');
 
-// 获取单个模块下面的子集
+// 获取知识详情（事业单位）
 const getKnowledgeDetailById = async (id) => {
   const result = await collection.where({ module_id: id }).get();
+  console.log(result, '======')
+  return result
+}
+// 获取知识详情
+const getKnowledgeDetail = async (id) => {
+  const result = await collection.where({ _id: id }).get();
   console.log(result, '======')
   return result
 }
@@ -50,6 +56,8 @@ exports.main = async (event, context) => {
   let res;
   if (func === 'getKnowledgeDetailById') {
     res = await getKnowledgeDetailById(data);
+  } else if (func === 'getKnowledgeDetail') {
+    res = await getKnowledgeDetail(data);
   } else if (func === 'addNotes') {
     res = await addNotes(data);
   } else if (func === 'deleteNotes') {

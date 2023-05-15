@@ -67,22 +67,27 @@
 </style>
 <template>
   <div class="page">
-    <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，在进行刷题效果会更好哦" />
+    <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，在进行考点评测效果会更好哦" />
     <div class="logic-detail-box">
-      <div class="logic-detail-content">
+      <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content {{ index != 1 && user.isMember != '1' ? 'logic-detail-content-opticty' : ''}}" @click="{{ index != 1 && user.isMember != '1' ? openPayTipPopup() : ''}}">
         <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->
-        <div class="logic-detail-content-title">常识学习</div>
-        <div class="logic-detail-content-describe">总结常识模块的知识点，需要掌握熟记，学习完后最好配合对应的刷题模块。</div>
+        <div class="logic-detail-content-title">{{item.name}}</div>
+        <div class="logic-detail-content-describe">总结{{item.name}}模块的知识点，需要掌握熟记，学习完后最好配合FB对应的刷题模块。</div>
         <!-- <div class="logic-detail-content-message">
           <div class="logic-detail-content-message-practice">已练习 {{studyCount}}/{{detail.count}}</div>
           <van-rate readonly value="{{ starValue }}" allow-half/>
         </div> -->
         <div class="logic-detail-content-footer">
-          <van-button class="logic-detail-content-button" color="#4755EB" round @click="toList()">开始学习</van-button>
-          <van-button class="logic-detail-content-button" color="#54BBCB" round @click="toEvaluation()">常识4600问</van-button>
+          <van-button class="logic-detail-content-button" color="#4755EB" round @click="{{index != 1 && user.isMember != '1' ? '' : toList(item._id, item.name)}}">开始学习</van-button>
+          <van-button class="logic-detail-content-button" color="#54BBCB" round @click="{{index != 1 && user.isMember != '1' ? '' : toEvaluation(item._id, item.name)}}">考点评测</van-button>
         </div>
+        <div v-if="index != 1 && user.isMember != '1'">
+          <image class="logic-detail-content-locked" src="../../assets/images/locked.png" />
+        </div>
+
       </div>
     </div>
+    <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
   </div>
 </template>
 <config>
@@ -93,6 +98,7 @@
       "van-notice-bar": "../../libs/vant/notice-bar/index",
       "van-button": "../../libs/vant/button/index",
       "van-rate": "../../libs/vant/rate/index",
+      "pay-tip-popup": "~@/components/pay-tip-popup"
     }
   }
 </config>
@@ -111,6 +117,7 @@
     data: {
       moudleId: '',
       moudleList: [],
+      tipsShow: false
     },
     // 计算的属性
     computed: {
@@ -118,9 +125,15 @@
     },
     onLoad(options) {
       this.moudleId = options.id
-      // this.getModulesByIdData(this.moudleId)
+      this.getModulesByIdData(this.moudleId)
     },
     methods: {
+      openPayTipPopup () {
+        this.tipsShow = true
+      },
+      closePayPopup (e) {
+        this.tipsShow = e
+      },
       // 获取已学习
       async getModulesByIdData(moudleId) {
         wx.showLoading({title: '加载中'})
@@ -128,26 +141,26 @@
         this.moudleList = result.result.data
         wx.hideLoading()
       },
-      async toList () {
+      async toList (id, name) {
         if (this.user.messageCount < 1) {
           await this.onSubscribe()
         }
         wx.navigateTo({
-          url: `/pages/general/list?id=${this.moudleId}`,
+          url: `/pages/realpolitics/list?id=${id}&name=${name}`,
         })
       },
-      toEvaluation () {
+      toEvaluation (id, name) {
         wx.navigateTo({
-          url: `/pages/general/evaluation?id=${this.moudleId}&name=${'常识'}`,
+          url: `/pages/realpolitics/evaluation?id=${id}&name=${name}`,
         })
       },
     },
     onShareAppMessage () {
       return {
         // 标题是话题标题
-        title: '常识模块',
+        title: '知识模块',
         // 路径为话题详情路径
-        path: '/pages/general/index?id=' + this.moudleId,
+        path: '/pages/realpolitics/index?id=' + this.moudleId,
       }
     },
   })

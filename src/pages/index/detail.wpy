@@ -109,6 +109,7 @@
 <script>
   import wepy from '@wepy/core'
   import store from '@/store'
+  import subscribe from '@/mixins/subscribe.js'
   import { mapGetters } from '@wepy/x'
   import { getWordsStudyCount } from '@/api/words'
   import { getPersonStudyCount } from '@/api/person'
@@ -116,6 +117,7 @@
   import eventHub from '@/common/eventHub'
 
   wepy.page({
+    mixins: [ subscribe ],
     store,
     data: {
       detail: {
@@ -126,18 +128,9 @@
     },
     // 计算的属性
     computed: {
-      ...mapGetters(['_id']),
-      // // 是否可以删除话题
-      // canDelete() {
-      //   if (!this.isLoggedIn || !this.topic) {
-      //     return false
-      //   }
-      //   // 当前用户是话题的发布者
-      //   return (this._id === this.topic.user_id) || this.$app.can('manage_contents')
-      // }
+      ...mapGetters(['_id', 'user']),
     },
     onLoad(options) {
-      console.log(options)
       this.detail.type = options.type
       this.detail.user_id = this._id
       if (this.detail.type === '国考高频成语'){
@@ -177,16 +170,9 @@
         wx.hideLoading()
       },
       async toList () {
-        let subscribeMessage = await wx.requestSubscribeMessage({
-          tmplIds: ['YYZyC81sN90SfsOfzO8e2eS2p2U-jzqyqipzw4h3K6E']
-        })
-        let result = await wx.getSetting({withSubscriptions: true})
-        console.log(subscribeMessage)
-        if (result.subscriptionsSetting){
-
+        if (this.user.messageCount < 1) {
+          await this.onSubscribe()
         }
-        console.log(result)
-        return
         wx.navigateTo({
           url: `/pages/index/list?type=${this.detail.type}`,
         })

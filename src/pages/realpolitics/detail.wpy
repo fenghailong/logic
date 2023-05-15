@@ -136,7 +136,7 @@
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
   import eventHub from '@/common/eventHub'
-  import { getKnowledgeDetailById, addNotes, getNotes, deleteNotes } from '@/api/knowledgeModule'
+  import { getKnowledgeDetail, addNotes, getNotes, deleteNotes } from '@/api/knowledgeModule'
   import Dialog from '../../libs/vant/dialog/dialog';
 
   wepy.page({
@@ -152,19 +152,20 @@
       notesList: []
     },
     async onLoad(options) {
-      await this.getKnowledgeDetailByIdData(options.id)
+      this.moudleId = options.id
+      await this.getKnowledgeDetailData(options.id)
       await this.getNoteList()
       wx.setNavigationBarTitle({title: this.detail.title})
     },
     methods: {
       // 获取模块词语列表
-      async getKnowledgeDetailByIdData(options) {
+      async getKnowledgeDetailData(options) {
         wx.showLoading({title: '加载中'})
-        let result = await getKnowledgeDetailById(options)
+        let result = await getKnowledgeDetail(options)
+        console.log(result)
         this.detail = result.result.data[0]
         this.detail.content =this.detail.content.replace(/\<code/gi,'<code class="code"')
         this.detail.content =this.detail.content.replace(/\<p/gi,'<p class="p"')
-        this.moudleId = this.detail._id
         wx.hideLoading()
       },
       noteChange (e) {
