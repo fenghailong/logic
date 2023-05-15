@@ -29,39 +29,33 @@
   }
 }
 .logic-index-popup-member-box {
-  .logic-index-popup-member-tip {
+  padding: 20px;
+  .logic-index-popup-member-title {
+    text-align: center;
+    padding: 0 0 10px;
+  }
+  .logic-index-popup-member-text {
+    margin-top: 5px;
     color: #ccc;
     font-size: 12px;
-    width: 100%;
-    height: 100%;
-    position: relative;
-    image {
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 0;
-      bottom: 0;
-      width: 100%;
-      height: 100%;
-    }
-    .logic-index-popup-member-button{
-      position: absolute;
-      bottom: 50px;
-      left: 0;
-      right: 0;
-      width: 60%;
-      margin: 0 auto;
-      // .van-button {
-      //   width: 300px !important;
-      // }
-      // display: flex;
-      // justify-content: space-around;
-      // margin-top: 20px;
-      // .van-button {
-      //   width: 70%;
-      // }
-    }
+    padding: 0 20px;
+    margin-bottom: 20px;
   }
+  .logic-index-popup-member-tip {
+    margin-top: 5px;
+    color: #ccc;
+    font-size: 12px;
+    margin-bottom: 20px;
+    // position: relative;
+  }
+  .logic-index-popup-button{
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+      .van-button {
+        width: 50%;
+      }
+    } 
 }
 </style>
 <template>
@@ -84,10 +78,11 @@
           <van-button v-else round type="info" @getphonenumber="getphonenumber"  open-type="getPhoneNumber">立刻激活</van-button>
         </div>
       </div>
-      <div v-else class="logic-index-popup-member-box" :style="{ height: '100vh' }">
-        <!-- <div class="logic-index-popup-title">友情提示</div> -->
+      <div v-else class="logic-index-popup-member-box" :style="{ height: '30vh' }">
+        <div class="logic-index-popup-member-title">解锁提示</div>
         <div class="logic-index-popup-member-tip">
-          <image src="../assets/images/member.png" />
+          <div class="logic-index-popup-member-text">Tips: 该功能未会员专享功能，需要开通会员，开通会员后，可立即解锁小程序所有功能。</div>
+          <!-- <image src="../assets/images/member.png" /> -->
           <div class="logic-index-popup-member-button">
             <!-- <van-button round type="info" open-type="contact" @contact="onCustomerServiceButtonClick">联系客服</van-button> -->
             <van-button v-if="user.phoneNumber" round type="info" block @click="pay">开通会员</van-button>
