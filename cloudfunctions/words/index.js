@@ -73,22 +73,27 @@ const getWAllList = async () => {
 const getWordsStudyCount = async (data) => {
   const result = await getAllWords()
   const resultRecord = await getAllStudyWords(data)
-  let allWords = []
-  let allStudyWords = []
-  allWords= result.data.filter((item) => item.type == 1 && item.synonym && item.synonym.length>0);
-  if (resultRecord.data.length > 0 && allWords.length){
-    allWords.forEach(element => {
-      resultRecord.data.forEach(item => {
+  let wordsList = result.data.sort((a,b)=>{ return b.count-a.count})
+  let recordList = resultRecord.data
+  recordList = recordList.sort((a,b)=>{ return b._updateTime - a._updateTime})
+  wordsList= wordsList.filter((item) => item.type == 1 && item.synonym && item.synonym.length>0);
+
+  if (recordList.length > 0 && wordsList.length){
+    wordsList.map(element => {
+      element.isStudyed = false
+      recordList.forEach(item => {
         if (item.words_id == element._id) {
-          allStudyWords.push(element)
+          element.isStudyed = true;
         }
       })
     });
   }
   let res = {
-    wordCount: allWords.length,
-    studyCount: allStudyWords.length,
-    starValue:( Number(allStudyWords.length)/Number(allWords.length) * 5 ).toFixed(1)
+    wordsList: wordsList,
+    currentWordId: recordList.length > 0 ? recordList[0].words_id : '',
+    wordCount: wordsList.length,
+    studyCount: recordList.length,
+    starValue:( Number(recordList.length)/Number(wordsList.length) * 5 ).toFixed(1)
   }
   return res;
 }
@@ -147,7 +152,18 @@ const reflashWordsRecord = async (options) => {
   const hasWord = await reCollection.where({ words_id: options.word_id, user_id: options.user_id}).get();
   if (Array.isArray(hasWord.data) && hasWord.data.length === 0) {
     await addWordsRecord(options);
+  } else {
+    await upDateWordsRecord(hasWord.data[0]._id)
   }
+}
+
+const upDateWordsRecord = async (id) => {
+  await reCollection.doc(id).update({
+    // data 传入需要局部更新的数据
+    data: {
+      _updateTime: Date.now()
+    }
+  })
 }
 
 const addWordsRecord = async (options) => {

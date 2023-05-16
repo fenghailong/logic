@@ -223,7 +223,7 @@
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
   import eventHub from '@/common/eventHub'
-  import { getWordsList, getWordsDetail } from '@/api/words'
+  import { getWordsDetail } from '@/api/words'
   import { getPersonList, getPersonDetail } from '@/api/person'
   import { getArticleList, getArticleDetail } from '@/api/article'
 
@@ -243,11 +243,13 @@
       options: {}
     },
     async onLoad(options) {
-      options.user_id = this._id
+      options.user_id = this._id // 用户id
       this.options = options
       if (this.options.type === '国考高频成语'){
-        await this.getWordsList(options)
-        await this.getWordsDetail(this.allList[0]._id)
+        // await this.getWordsList(options)
+        this.allList = JSON.parse((decodeURIComponent(options.wordsList)))
+        this.currentWord_id = options.currentId ? options.currentId : this.allList[0]._id
+        await this.getWordsDetail(this.currentWord_id)
       } else if (this.options.type === '人物素材') {
         await this.getPersonList(options)
         await this.getPersonDetail(this.allList[0]._id)
@@ -258,12 +260,12 @@
     },
     methods: {
       // 获取模块词语列表
-      async getWordsList(options) {
-        wx.showLoading({title: '加载中'})
-        let result = await getWordsList(options)
-        this.allList = result.result.allWords
-        wx.hideLoading()
-      },
+      // async getWordsList(options) {
+      //   wx.showLoading({title: '加载中'})
+      //   let result = await getWordsList(options)
+      //   this.allList = result.result.allWords
+      //   wx.hideLoading()
+      // },
       // 获取人物素材列表
       async getPersonList(options) {
         wx.showLoading({title: '加载中'})
@@ -280,15 +282,22 @@
       },
       // 获取单个词语
       async getWordsDetail(word_id) {
-        let options = {}
-        options.user_id = this._id
-        options.word_id = word_id
         wx.showLoading({title: '加载中'})
-        let result = await getWordsDetail(options)
+        let result = await getWordsDetail({
+          user_id: this._id,
+          word_id: word_id
+        })
         this.wordDetail = result.result
         this.wordDetail.starValue = this.getStarValue(this.wordDetail.count)
         this.currentWord_id = this.wordDetail._id
         wx.hideLoading()
+        let index = this.allList.findIndex((item) => item._id == this.currentWord_id)
+        this.allList[index].isStudyed = true
+        let obj = {
+          wordsList: this.allList,
+          currentWord_id: this.currentWord_id
+        }
+        eventHub.$emit('refresh-words-info', obj);
       },
       // 获取单个人物
       async getPersonDetail(person_id) {
@@ -387,7 +396,7 @@
       async showListPopup () {
         this.showPopup = !this.showPopup
         if (this.options.type === '国考高频成语'){
-          await this.getWordsList(this.options)
+          // await this.getWordsList(this.options)
         } else if (this.options.type === '人物素材') {
           await this.getPersonList(this.options)
         } else {
