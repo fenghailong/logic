@@ -337,11 +337,11 @@
         </div>
       </div>
     </div>
-    <!-- <div class="logic-index-undertaking">
+    <div class="logic-index-undertaking">
       <div class="logic-index-undertaking-box">
         <div class="logic-index-undertaking-title">公考行测知识点</div>
         <div class="logic-index-undertaking-list">
-          <div class="logic-index-undertaking-item">
+          <div class="logic-index-undertaking-item" @click="toLinetest()">
             <image src="../../assets/images/collect.png" />
             <text>言语</text>
           </div>
@@ -359,10 +359,10 @@
           </div>
         </div>
       </div>
-    </div> -->
+    </div>
     <div class="logic-index-undertaking logic-index-undertaking-other">
       <div class="logic-index-undertaking-box">
-        <div class="logic-index-undertaking-title">事业单位公基知识点</div>
+        <div class="logic-index-undertaking-title">事考公基知识点</div>
         <div class="logic-index-undertaking-list">
           <div v-for="(item, index) in undertaking" :key="index" class="logic-index-undertaking-item" @click="toUndertaking(item._id)">
             <image src="{{item.icon}}" />
@@ -389,6 +389,7 @@
     </div>
   </div>
 </template>
+<!-- navigationStyle: 'custom', -->
 <config>
   {
     navigationBarTitleText: '逻辑填空',
@@ -494,6 +495,15 @@
         if (this.isLoggedIn) {
           wx.navigateTo({
             url: `/pages/undertaking/index?id=${id}`,
+          })
+        }
+      },
+      // toKnowledgeModules
+      async toLinetest () {
+        let id = '9428a00a6464e553000f4715287f2f0d'
+        if (this.isLoggedIn) {
+          wx.navigateTo({
+            url: `/pages/linetest/index?id=${id}`,
           })
         }
       },

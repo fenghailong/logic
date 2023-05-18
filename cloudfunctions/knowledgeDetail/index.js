@@ -7,6 +7,8 @@ cloud.init({
 const db = cloud.database();
 const collection = db.collection('knowledgeDetail');
 const noteCollection = db.collection('notes');
+const queCollection = db.collection('question');
+
 
 // 获取知识详情（事业单位）
 const getKnowledgeDetailById = async (id) => {
@@ -50,6 +52,13 @@ const deleteNotes = async (options) => {
   })
 }
 
+// 获取题目
+const getQuestions = async (options) => {
+  const result = await queCollection.where({ knowledge_id: options.knowledge_id }).get();
+  console.log(result, '======')
+  return result
+}
+
 exports.main = async (event, context) => {
   const { func, data } = event;
   // const { OPENID, APPID, UNIONID } = cloud.getWXContext();
@@ -64,6 +73,8 @@ exports.main = async (event, context) => {
     res = await deleteNotes(data);
   } else if (func === 'getNotes') {
     res = await getNotes(data);
+  } else if (func === 'getQuestions') {
+    res = await getQuestions(data);
   }
   return res;
 }

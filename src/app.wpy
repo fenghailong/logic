@@ -95,7 +95,11 @@ wepy.app({
       'pages/realpolitics/index',
       'pages/realpolitics/list',
       'pages/realpolitics/detail',
-      'pages/realpolitics/evaluation'
+      'pages/realpolitics/evaluation',
+      'pages/linetest/index',
+      'pages/linetest/list',
+      'pages/linetest/detail',
+      'pages/linetest/evaluation'
     ],
     window: {
       backgroundTextStyle: 'light',

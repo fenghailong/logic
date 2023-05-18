@@ -226,7 +226,6 @@
   import { getWordsDetail } from '@/api/words'
   import { getPersonList, getPersonDetail } from '@/api/person'
   import { getArticleList, getArticleDetail } from '@/api/article'
-
   wepy.page({
     store,
     computed: {

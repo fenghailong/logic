@@ -1,0 +1,445 @@
+<style lang="less">
+.page{
+  background-color: #eee;
+  .logic-index-box {
+    padding: 20px 20px;
+    .logic-index-list {
+      background-color: #fff;
+      height: 75vh;
+      border-radius: 10px;
+      padding: 20px;
+      overflow: auto;
+      font-size: 18px;
+    }
+    .logic-index-tips {
+      text-align: right;
+      font-size: 14px;
+      color: #d3d3d3;
+    }
+    .logic-index-item {
+      margin-bottom: 10px;
+      line-height: 34px;
+    }
+    .logic-index-item-line {
+      color: #d3d3d3;
+      display: inline;
+    }
+    .logic-index-item-line-current {
+      color: blue;
+      // animation: mydeamon 1s infinite;//1s值一秒内完成动画
+    }
+    @keyframes mydeamon {
+      0% {
+        transform:scale(1);//scale代表闪烁的体型变化，其他倾斜等样式自行搜索
+        opacity: 0.5;//透明程度
+      }
+
+      100% {
+        transform:scale(10);
+        color: blue;
+        opacity: 1;
+      }
+    }
+    .logic-index-item-text {
+      display: inline;
+    }
+    .logic-index-item-text-answer {
+      color: blue;
+    }
+    .logic-index-item-text-answer-error {
+      color: red;
+    }
+    .logic-index-footer{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      bottom: 30px;
+      left: 0;
+      right: 0;
+    }
+    .logic-detail-content-button {
+      width: 300px;
+      .van-button {
+        width: 100%;
+      }
+    }
+    .logic-index-footer-img{
+      flex: 0 0 50%;
+      text-align: center;
+      image {
+        width: 50px;
+        height: 50px;
+        box-shadow: 4rpx 4rpx 7rpx 2rpx #999;
+        border-radius: 50%;
+      }
+    }
+    .logic-index-footer-input {
+      text-align: center;
+      position: relative;
+      image {
+        width: 30px;
+        height: 30px;
+      }
+      input {
+        position: absolute;
+        top: 0;
+        height: 100%;
+      }
+    }
+    .logic-index-footer-next {
+      text-align: center;
+      image {
+        width: 30px;
+        height: 30px;
+      }
+    }
+    .logic-index-footer-text {
+      font-size: 14px;
+      color: #666;
+    }
+  }
+  .logic-index-input {
+      position: fixed;
+      top: -110rpx;
+      box-sizing: border-box;
+      width: 100%;
+      padding: 20rpx 30rpx;
+      background: #F8F8F8;
+      z-index: 1000;
+      input {
+        margin-top: 4rpx;
+        flex: 1;
+        font-size: 28rpx;
+        color: #050505;
+      }
+    }
+}
+</style>
+<template>
+  <div class="page">
+    <div v-if="subjectList.length > 0" class="logic-index-box">
+      <div class="logic-index-list">
+        <div class="logic-index-tips">
+          已掌握{{studyEvaluationCount}}/{{evaluationCount}}
+        </div>
+        <div v-for="(item, index) in subjectList" :key="index" class="logic-index-item">
+          <div class="logic-index-item-content">
+            <text>{{index+1}}.</text>
+            <div class="logic-index-item-text" v-for="(element, dindex) in item.finallData" :key="dindex">
+              <text v-if="element.isAnswer" class="'logic-index-item-line' {{element.isCurrent === 2 ? 'logic-index-item-line-current' : ''}}" @click="changCurrent(index, dindex)">
+                <text class="logic-index-item-text-answer {{!element.isAnwerRight ? 'logic-index-item-text-answer-error' : ''}}" v-if="element.isShowAnswer || element.isAnwerRight"> {{element.value}} </text>
+                <text v-else> _______ </text>
+              </text>
+              <div class="logic-index-item-text" v-else @click="changCurrent(index, dindex)">{{element.value}}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-if="!isSpeak" class="logic-index-footer">
+        <div class="logic-detail-content-button">
+          <van-button color="#4755EB" round @click="nextSubject">换一批</van-button>
+        </div>
+      </div>
+      <div v-else class="logic-index-footer">
+        <div class="logic-index-footer-input" @click="showInputBox">
+          <image src="../../assets/images/input.png" />
+          <div class="logic-index-footer-text">输入文字</div>
+          <!-- <input type="text" 	:adjust-position="false" 	@confirm="inputConfirm" /> -->
+        </div>
+        <div class="logic-index-footer-img" @touchstart="touchStart" @touchend="touchEnd">
+          <image src="../../assets/images/speak.png" />
+          <div class="logic-index-footer-text">长按说话</div>
+        </div>
+        <div class="logic-index-footer-next" @click="viewAnswer">
+          <image src="../../assets/images/next.png" />
+          <div class="logic-index-footer-text">查看答案</div>
+        </div>
+      </div>
+    </div>
+    <van-empty v-else description="没有更多题目了" />
+    <div
+        id="ctInput"
+        class="logic-index-input"
+        v-if="showComtBox"
+        style="top: {{ ctInput_top }}px;"
+      >
+        <input
+          v-model = "inputValue"
+          :focus="showComtBox"
+          bindblur="comtBlur"
+          maxlength="-1"
+          auto-height
+          bindfocus="ctFocus"
+          bindconfirm="inputConfirm"
+          :show-confirm-bar="false"
+          :adjust-position="true"
+          :confirm-hold = "true"
+        />
+      </div>
+  </div>
+</template>
+<config>
+  {
+    navigationBarTitleText: '马克思主义哲学',
+    usingComponents: {
+      "van-empty": "../../libs/vant/empty/index",
+      "van-button": "../../libs/vant/button/index"
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import { mapGetters } from '@wepy/x'
+  import eventHub from '@/common/eventHub'
+  import { getEvaluationById, addEvaluationRecord } from '@/api/knowledgeModule'
+  import { getSystemData, queryNodes } from '@/utils/util'
+  let plugin = requirePlugin("WechatSI")
+  let manager = plugin.getRecordRecognitionManager()
+  wepy.page({
+    store,
+    computed: {
+      // 用户信息
+      ...mapGetters(['_id'])
+    },
+    data: {
+      moudleId: '',
+      subjectList: [], //题目列表
+      evaluationCount: 10, // 总共的数量
+      studyEvaluationCount: 0, //已经掌握的数量
+      currentAnswer: {
+        speak: '',
+      },
+      currentIndex: 0,
+      currentDIndex: 0,
+
+      isSpeak: true,
+      // 显示输入框
+      showComtBox: false,
+      windowHeight: '',
+      ctInput_top: '',
+      inputValue: '' // 输入框的内容
+    },
+    async onLoad(options) {
+      await this.getWindowData()
+      this.moudleId = options.id
+      wx.setNavigationBarTitle({title: options.name})
+      await this.getEvaluationByIdData(true)
+      //识别语音
+      this.initRecord();
+    },
+    methods: {
+      // 获取模块题目列表
+      async getEvaluationByIdData(isShuffle = false, isInitIndex = true) {
+        wx.showLoading({title: '加载中'})
+        let result = await getEvaluationById({
+          module_id: this.moudleId,
+          user_id: this._id,
+          isShuffle,
+        })
+        this.evaluationCount = result.result.evaluationCount
+        this.studyEvaluationCount = result.result.studyEvaluationCount
+        if (result.result.resultEvaluation.length > 0 ) {
+          this.subjectList = result.result.resultEvaluation.map((item, subIndex )=> {
+            item.subjects = item.subject.split(/(#)/g)
+            item.subjects.forEach((element, dindex)=> {
+              if(element === ''){
+                item.subjects.splice(dindex, 1)
+              }
+            })
+            item.answers = item.answer.split('#')
+            let index = 0;
+            item.finallData = item.subjects.map((element, subsIndex)=> element === "#" ? {
+              isAnswer:true,
+              value: item.answers[index++],
+              isCurrent:1,
+              isShowAnswer: false,
+              isAnwerRight: false,
+              subIndex: subIndex,
+              answerIndex: subsIndex,
+            } : {
+              isAnswer:false,
+              value: element
+            })
+            return item
+          })
+          // 是否初始化定位
+          if (isInitIndex) {
+            let index = this.subjectList[0].finallData.map(o => o.isAnswer).indexOf(true)
+            this.subjectList[0].finallData[index].isCurrent = 2
+            this.currentIndex = 0
+            this.currentDIndex = index
+          }
+        }
+
+        wx.hideLoading()
+      },
+      changCurrent (index, dindex) {
+        this.subjectList.forEach(item => {
+          item.finallData.forEach(a => {
+            if(a.isCurrent){
+              a.isCurrent = 1
+            }
+          })
+        })
+        this.subjectList[index].finallData[dindex].isCurrent = 2
+        this.currentIndex = index
+        this.currentDIndex = dindex
+      },
+      touchStart () {
+        manager.start({
+          lang: 'zh_CN',// 识别的语言，目前支持zh_CN en_US zh_HK sichuanhua
+        })
+      },
+      touchEnd () {
+        manager.stop();
+        wx.hideLoading()
+      },
+      //识别语音 -- 初始化
+      initRecord () {
+        // 有新的识别内容返回，则会调用此事件
+        manager.onRecognize = (res) => {
+          console.log(res)
+        }
+        // 正常开始录音识别时会调用此事件
+        manager.onStart = (res) => {
+          console.log("成功开始录音识别", res)
+          wx.showLoading({title: '松开结束'})
+        }
+        // 识别错误事件
+        manager.onError = (res) => {
+          console.error("error msg", res)
+        }
+        //识别结束事件
+        manager.onStop = (res) => {
+          if (res.result == '') {
+            wx.showModal({
+              title: '提示',
+              content: '听不清楚，请重新说一遍！',
+              showCancel: false,
+              success: (res) => {}
+            })
+            return;
+          }
+          this.currentAnswer.speak = res.result.replace(/[。，\/#！$%\^&\*；：{}=\-_`~()]/g,"");
+          this.checkAnswer(this.currentAnswer.speak)
+        }
+      },
+      // 查看答案
+      async viewAnswer () {
+        wx.showLoading({title: '加载中'})
+        await this.isAllAnswerRight(this.subjectList)
+        this.subjectList.forEach(item => {
+          item.finallData.forEach(a => {
+              a.isShowAnswer = true
+          })
+        })
+        this.isSpeak = false
+        wx.hideLoading()
+      },
+      // 显示数字输入框
+      showInputBox () {
+        this.showComtBox = true
+      },
+      comtBlur () {
+        this.showComtBox = false
+      },
+      async getWindowData () {
+        let h = await getSystemData('windowHeight')
+        console.log(h)
+        this.windowHeight = h
+      },
+      async ctFocus (e) {
+        let keyboard_h = e.$wx.detail.height
+        let ctInput_top = this.windowHeight - keyboard_h
+        let ctInput_h = await queryNodes('#ctInput', 'height')
+        console.log(ctInput_h)
+        ctInput_top -= ctInput_h
+        this.ctInput_top = ctInput_top
+      },
+      // input输入框确认时
+      inputConfirm (e) {
+        let str = e.$wx.detail.value
+        this.checkAnswer(str)
+        this.inputValue = ''
+      },
+      // 换一批题目
+      async nextSubject () {
+        wx.showLoading({title: '加载中'})
+        await this.getEvaluationByIdData(true)
+        this.isSpeak = true
+        wx.hideLoading()
+      },
+      // 检查答案正误
+      async checkAnswer (answer) {
+        if (answer === this.subjectList[this.currentIndex].finallData[this.currentDIndex].value) {
+          // 过滤题干 获取一个anwer的新数组
+          let arr = this.getAnswerArr(this.subjectList)
+          // 获取下一个答案的index
+          let result = this.getNextAnswer(arr)
+          // 使下一个答案变为当前答案
+          this.subjectList[this.currentIndex].finallData[this.currentDIndex].isAnwerRight = true
+          // let isAllAnswerRight = await this.isAllAnswerRight(this.subjectList[this.currentIndex], this.subjectList[this.currentIndex].finallData)
+          this.changCurrent(result.subIndex, result.answerIndex)
+        } else {
+          wx.showToast({
+            title: '回答错误，再想想呢？'
+          })
+        }
+      },
+      // 查看是否所有答案都正确填写
+      async isAllAnswerRight (subjectList) {
+        let tasks = []
+        subjectList.forEach(item => {
+          let index = item.finallData.findIndex(element => element.isAnwerRight === false)
+          const promise = addEvaluationRecord({
+            evaluation_id: item._id,
+            user_id: this._id,
+            module_id: this.moudleId,
+            isRight: index < 0 ? '1' : '2'
+          })
+          tasks.push(promise)
+        })
+        // 等待所有
+        await Promise.all(tasks)
+      },
+      // 获取下一个答案的index
+      getNextAnswer (arr) {
+        let index = arr.findIndex(item => item.subIndex == this.currentIndex && item.answerIndex == this.currentDIndex)
+        index = index + 1
+        if (index <= arr.length-1) {
+          return {
+            subIndex: arr[index].subIndex,
+            answerIndex: arr[index].answerIndex
+          }
+        } else {
+          return {
+            subIndex: arr[0].subIndex,
+            answerIndex: arr[0].answerIndex
+          }
+        }
+      },
+      // 过滤数组得到一个只有答案的新数组
+      getAnswerArr (subjectList) {
+        let arr = []
+        subjectList.forEach(item => {
+          item.finallData.forEach(a => {
+            if(a.isAnswer && !a.isAnwerRight){
+              arr.push(a)
+            }
+          })
+        })
+        return arr
+      },
+    },
+    onShareAppMessage () {
+      return {
+        // 标题是话题标题
+        title: '知识要点',
+        // 路径为话题详情路径
+        path: '/pages/undertaking/detail?id=' + this.moudleId,
+      }
+    },
+  })
+</script>
