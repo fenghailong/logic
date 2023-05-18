@@ -341,19 +341,19 @@
       <div class="logic-index-undertaking-box">
         <div class="logic-index-undertaking-title">公考行测知识点</div>
         <div class="logic-index-undertaking-list">
-          <div class="logic-index-undertaking-item" @click="toLinetest()">
+          <div class="logic-index-undertaking-item" @click="toLinetest('9428a00a6464e553000f4715287f2f0d')">
             <image src="../../assets/images/collect.png" />
             <text>言语</text>
           </div>
-          <div class="logic-index-undertaking-item">
+          <div class="logic-index-undertaking-item" @click="toLinetest('93e4b6a06465cb440cfbbdee6be33b08')">
             <image src="../../assets/images/collect.png" />
             <text>判断</text>
           </div>
-          <div class="logic-index-undertaking-item">
+          <div class="logic-index-undertaking-item" @click="toLinetest('0122a5876465cc950cff7061728c652f')">
             <image src="../../assets/images/collect.png" />
             <text>数量</text>
           </div>
-          <div class="logic-index-undertaking-item">
+          <div class="logic-index-undertaking-item" @click="toLinetest('4f9a71986465cbd200151c1320b8cfc3')">
             <image src="../../assets/images/collect.png" />
             <text>资料</text>
           </div>
@@ -499,8 +499,7 @@
         }
       },
       // toKnowledgeModules
-      async toLinetest () {
-        let id = '9428a00a6464e553000f4715287f2f0d'
+      async toLinetest (id) {
         if (this.isLoggedIn) {
           wx.navigateTo({
             url: `/pages/linetest/index?id=${id}`,

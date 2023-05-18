@@ -3,6 +3,17 @@
   background-color: #eee;
   .logic-index-box {
     padding: 20px 20px;
+    .code {
+          background-color: #eee;
+          display: block;
+          padding: 10px 10px;
+        }
+        .p {
+          padding: 5px 0;
+          max-width: 100%;
+          text-align: justify;
+          white-space: normal;
+        }
     .logic-index-item {
       background-color: #fff;
       max-height: 70vh;
@@ -21,17 +32,6 @@
         padding: 0 10px;
         margin-top: 10px;
         color: #666;
-        .code {
-          background-color: #eee;
-          display: block;
-          padding: 10px 10px;
-        }
-        .p {
-          padding: 5px 0;
-          max-width: 100%;
-          text-align: justify;
-          white-space: normal;
-        }
       }
     }
     .logic-index-note-title {
@@ -85,50 +85,12 @@
       margin-top: 10px;
       background-color: #fff;
       font-size: 16px;
-      // border-radius: 5px;
       padding: 20px;
       transition: all 2s ease-in-out;
-      .logic-index-question-title {
-        margin-bottom: 10px;
-        max-width: 100%;
-        text-align: justify;
-        white-space: normal;
-      }
       .van-radio {
         padding: 5px 0;
         .van-radio__label {
           line-height: 26px;
-        }
-      }
-      .logic-index-question-answer {
-        padding: 5px 0;
-        border-top: 1px solid #eee;
-        margin-bottom: 5px;
-      }
-      .logic-index-question-analysis {
-        max-width: 100%;
-        text-align: justify;
-        white-space: normal;
-      }
-      .logic-index-question-options-isAnswer {
-        display: flex;
-        align-items: center;
-        padding: 5px 0;
-        .logic-index-question-options-key {
-          border: 1px solid #ddd9d9;
-          border-radius: 100%;
-          margin-right: 10px;
-          padding: 1px 8px;
-        }
-        .logic-index-question-options-key-answer {
-          background-color: rgb(95, 169, 93);
-          border: none;
-          color: #fff;
-        }
-        .logic-index-question-options-key-errAnswer {
-          background-color: rgb(206, 23, 23);
-          border: none;
-          color: #fff;
         }
       }
     }
@@ -149,26 +111,7 @@
       <van-empty v-else description="每日更新，敬请期待" />
       <div v-if="questionList.length > 0" class="logic-index-note-title">例题</div>
       <div v-if="questionList.length > 0" v-for="(item, index) in questionList" :key="index" class="logic-index-question-list {{item.isShowAnswer ? 'logic-index-question-list-an' : ''}}">
-        <div class="logic-index-question-item">
-          <div class="logic-index-question-title">{{index+1}}.{{item.title}}</div>
-          <div v-if="!item.isShowAnswer" class="logic-index-question-options">
-            <van-radio-group value="{{ item.youAnswer }}" @change="onChange($event, item, index)">
-              <van-radio custom-class="logic-index-question-van-radio" icon-size="24px" v-for="(value, key) in item.option" :name="key">{{key}}.{{value}}</van-radio>
-            </van-radio-group>
-          </div>
-          <div v-else class="logic-index-question-options">
-            <div class="logic-index-question-options-isAnswer" v-for="(value, key) in item.option">
-              <div class="logic-index-question-options-key {{item.answer === key ? 'logic-index-question-options-key-answer' : ''}} {{item.youAnswer === key && item.answer != key ? 'logic-index-question-options-key-errAnswer' : ''}}">{{key}}</div>
-              <div class="logic-index-question-options-value">{{value}}</div>
-            </div>
-          </div>
-          <div v-if="item.isShowAnswer" class="logic-index-question-answer">
-            正确答案是：{{item.answer}}
-          </div>
-          <div v-if="item.isShowAnswer" class="logic-index-question-analysis">
-            【解析】：{{item.analysis}}
-          </div>
-        </div>
+        <question-item :questionItem="item" :questionIndex="index" @onChange="onChange"></question-item>
       </div>
 
       <div v-if="notesList.length > 0" class="logic-index-note-title">我的笔记积累</div>
@@ -215,7 +158,8 @@
       "van-icon": "../../libs/vant/icon/index",
       "van-dialog": "../../libs/vant/dialog/index",
       "van-radio": "../../libs/vant/radio/index",
-      "van-radio-group": "../../libs/vant/radio-group/index"
+      "van-radio-group": "../../libs/vant/radio-group/index",
+      "question-item": "~@/components/question-item"
     }
   }
 </config>
@@ -249,6 +193,7 @@
       wx.setNavigationBarTitle({title: this.detail.title})
     },
     methods: {
+      // 选中题目
       onChange(event,item,index) {
         this.questionList[index].youAnswer = event.$wx.detail
         this.questionList[index].isShowAnswer = true
@@ -270,6 +215,8 @@
         }
         let data = await getQuestions(options)
         this.questionList = data.result.data.map(item => {
+          item.title =item.title.replace(/\<code/gi,'<code class="code"')
+          item.analysis =item.analysis.replace(/\<p/gi,'<p class="p"')
           item.youAnswer = ''
           item.isShowAnswer = false
           return item
