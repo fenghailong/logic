@@ -1,0 +1,152 @@
+<style lang="less">
+.logic-index-navigation-bar{
+  position: fixed;
+  top: 0;
+  width: 100%;
+  color: #fff;
+  z-index: 1000;
+  .logic-index-navigation-bar-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    image{
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+.logic-index-navigation-bar-content {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  .logic-index-navigation-bar-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333333;
+    margin: 0 15px;
+  }
+  .logic-index-navigation-bar-search {
+    width: 50%;
+    background: #fff;
+    border-radius: 50px;
+    padding-left: 14px;
+    font-size: 14px;
+    font-weight: 400;
+    color: #666666;
+  }
+}
+.logic-index-search-list {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background-color: #FFFFFF;
+  padding: 0 20px;
+  width: 100%;
+  z-index: 100;
+  .logic-index-search-item {
+    font-size: 16px;
+    color: #666;
+    margin-top: 5px;
+    padding: 10px;
+  }
+}
+</style>
+<template>
+  <div class="logic-index-navigation-bar" style="height:{{navBarHeight}}px;" >
+    <div class="logic-index-navigation-bar-bg">
+      <image src="../assets/images/bar-bg.png" />
+    </div>
+    <div class="logic-index-navigation-bar-content" style="bottom:{{menuBotton}}px;">
+      <div class="logic-index-navigation-bar-title">公考笔记</div>
+      <div class="logic-index-navigation-bar-search">
+        <input placeholder="搜索词语" @input="searchChange" style="height:{{menuHeight}}px; min-height:{{menuHeight}}px; line-height:{menuHeight}}px;"/>
+      </div>
+          <!-- <div class="logic-index-search">
+      <van-search value="{{ value }}" shape="round" background="#387ffb" placeholder="请输入搜索词语" @change="searchChange">
+      </van-search>
+      <div class="logic-index-search-list">
+        <div class="logic-index-search-item" v-for="(item, index) in searchList" :key="index"  @click.stop="sureCompany(item._id)">
+            {{item.name}}
+        </div>
+      </div>
+    </div> -->
+    </div>
+    <div class="logic-index-search-list" style="top:{{navBarHeight}}px;">
+        <div class="logic-index-search-item" v-for="(item, index) in searchList" :key="index"  @click.stop="sureCompany(item._id)">
+            {{item.name}}
+        </div>
+      </div>
+  </div>
+  <div class="content" style="margin-top:{{navBarHeight}}px;"></div>
+</template>
+<config>
+  {
+    usingComponents: {
+      "van-search": "../libs/vant/search/index",
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import { mapGetters } from '@wepy/x'
+  import { getWAllList } from '@/api/words'
+  wepy.component({
+    store,
+    computed: {
+      // 用户信息
+      ...mapGetters(['_id', 'user'])
+    },
+    props: {
+      // 父页面传入，请求参数
+      defaultData: {
+        type: Object,
+        value: {
+          title: "我是默认标题"
+        },
+        observer: function(newVal, oldVal) {}
+      }
+    },
+    data: {
+      listData: [],
+      searchList: [],
+      navBarHeight: 0,
+      menuRight: 0,
+      menuBotton: 0,
+      menuHeight: 0
+    },
+    async created () {
+      this.getListData()
+      this.navBarHeight = this.$app.$options.globalData.navBarHeight
+      this.menuRight = this.$app.$options.globalData.menuRight
+      this.menuBotton = this.$app.$options.globalData.menuBotton
+      this.menuHeight = this.$app.$options.globalData.menuHeight
+    },
+    methods: {
+      //获取搜索列表函数（这里是模拟数据）
+      async getListData() {
+        let data = await getWAllList()
+        this.listData = data.result.allWords
+      },
+      sureCompany(id) {
+        wx.navigateTo({
+          url: `/pages/index/searchDetail?_id=${id}`,
+        })
+      },
+      searchChange (e) {
+        console.log(e)
+         //执行函数
+        let value = e.$wx.detail.value
+        this.searchList=[]
+        if (value) {
+          this.listData.forEach(i=>{
+            //判断遍历是否包含输入字符
+            if(i.name.indexOf(value)!=-1){
+              this.searchList.push(i)
+            }
+          })
+        }
+      },
+    }
+  })
+</script>

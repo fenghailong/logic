@@ -3,17 +3,6 @@
   background-color: #eee;
   .logic-index-box {
     padding: 20px 20px;
-    .code {
-          background-color: #eee;
-          display: block;
-          padding: 10px 10px;
-        }
-        .p {
-          padding: 5px 0;
-          max-width: 100%;
-          text-align: justify;
-          white-space: normal;
-        }
     .logic-index-item {
       background-color: #fff;
       max-height: 70vh;
@@ -32,6 +21,17 @@
         padding: 0 10px;
         margin-top: 10px;
         color: #666;
+        .code {
+          background-color: #eee;
+          display: block;
+          padding: 10px 10px;
+        }
+        .p {
+          padding: 5px 0;
+          max-width: 100%;
+          text-align: justify;
+          white-space: normal;
+        }
       }
     }
     .logic-index-note-title {
@@ -215,8 +215,10 @@
         }
         let data = await getQuestions(options)
         this.questionList = data.result.data.map(item => {
-          item.title =item.title.replace(/\<code/gi,'<code class="code"')
-          item.analysis =item.analysis.replace(/\<p/gi,'<p class="p"')
+          item.title =item.title.replace(/\<code/gi,'<code class="logic-code"')
+          item.title =item.title.replace(/\<p/gi,'<p class="logic-p"')
+          item.analysis =item.analysis.replace(/\<code/gi,'<code class="logic-code"')
+          item.analysis =item.analysis.replace(/\<p/gi,'<p class="logic-p"')
           item.youAnswer = ''
           item.isShowAnswer = false
           return item

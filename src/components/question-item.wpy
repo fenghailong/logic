@@ -5,17 +5,17 @@
     overflow: auto;
     font-size: 16px;
     margin-bottom: 10px;
-    // .code {
-    //   background-color: #eee;
-    //   display: block;
-    //   padding: 10px 10px;
-    // }
-    // .p {
-    //   padding: 5px 0;
-    //   max-width: 100%;
-    //   text-align: justify;
-    //   white-space: normal;
-    // }
+    .logic-code {
+      background-color: #eee;
+      display: block;
+      padding: 10px 10px;
+    }
+    .logic-p {
+      padding: 5px 0;
+      // max-width: 100%;
+      // text-align: justify;
+      // white-space: normal;
+    }
   }
   .logic-index-question-images {
     display: flex;
@@ -29,7 +29,18 @@
     margin: 10px 0;
   }
   .logic-index-question-analysis {
-
+    .logic-code {
+      background-color: #eee;
+      display: block;
+      padding: 10px 10px;
+    }
+    .logic-p {
+      padding: 5px 0;
+      // max-width: 100%;
+      // text-align: justify;
+      // white-space: normal;
+    }
+    // width: 80%;
   }
   .logic-index-question-options-isAnswer {
     display: flex;
