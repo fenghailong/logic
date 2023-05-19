@@ -72,6 +72,18 @@ export async function getNotes(data) {
   })
 }
 
+// 获取知识详情的例题
+export async function getQuestions(data) {
+  return await wx.cloud.callFunction({
+    name: 'knowledgeDetail',
+    data: {
+      func: 'getQuestions',
+      data
+    },
+  })
+}
+
+
 export async function getEvaluationById(data) {
   return await wx.cloud.callFunction({
     name: 'knowledgeModule',

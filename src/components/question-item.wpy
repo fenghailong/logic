@@ -1,0 +1,138 @@
+<style lang="less">
+.logic-index-question-item {
+  .logic-index-question-title{
+    max-height: 70vh;
+    overflow: auto;
+    font-size: 16px;
+    margin-bottom: 10px;
+    .logic-code {
+      background-color: #eee;
+      display: block;
+      padding: 10px 10px;
+    }
+    .logic-p {
+      padding: 5px 0;
+      // max-width: 100%;
+      // text-align: justify;
+      // white-space: normal;
+    }
+  }
+  .logic-index-question-images {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 80vw;
+  }
+  .logic-index-question-answer {
+    padding: 5px 0;
+    border-top: 1px solid #eee;
+    margin: 10px 0;
+  }
+  .logic-index-question-analysis {
+    .logic-code {
+      background-color: #eee;
+      display: block;
+      padding: 10px 10px;
+    }
+    .logic-p {
+      padding: 5px 0;
+      // max-width: 100%;
+      // text-align: justify;
+      // white-space: normal;
+    }
+    // width: 80%;
+  }
+  .logic-index-question-options-isAnswer {
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+    .logic-index-question-options-key {
+      border: 1px solid #ddd9d9;
+      border-radius: 100%;
+      margin-right: 10px;
+      padding: 1px 8px;
+    }
+    .logic-index-question-options-key-answer {
+      background-color: rgb(95, 169, 93);
+      border: none;
+      color: #fff;
+    }
+    .logic-index-question-options-key-errAnswer {
+      background-color: rgb(206, 23, 23);
+      border: none;
+      color: #fff;
+    }
+  }
+}
+</style>
+<template>
+  <div class="logic-index-question-item">
+    <div class="logic-index-question-title">
+      <rich-text nodes="{{ questionItem.title }}"></rich-text>
+    </div>
+    <div v-if="!questionItem.isShowAnswer" class="logic-index-question-options">
+      <van-radio-group value="{{ questionItem.youAnswer }}" @change="onChange($event, questionItem, questionIndex)">
+        <van-radio icon-size="24px" v-for="(value, key) in questionItem.option" :name="key">{{key}}.{{value}}</van-radio>
+      </van-radio-group>
+    </div>
+    <div v-else class="logic-index-question-options">
+      <div class="logic-index-question-options-isAnswer" v-for="(value, key) in questionItem.option">
+        <div class="logic-index-question-options-key {{questionItem.answer === key ? 'logic-index-question-options-key-answer' : ''}} {{questionItem.youAnswer === key && questionItem.answer != key ? 'logic-index-question-options-key-errAnswer' : ''}}">{{key}}</div>
+        <div class="logic-index-question-options-value">{{value}}</div>
+      </div>
+    </div>
+    <div v-if="questionItem.isShowAnswer" class="logic-index-question-answer">
+      正确答案是：{{questionItem.answer}}
+    </div>
+    <div v-if="questionItem.isShowAnswer" class="logic-index-question-analysis">
+      【解析】：
+      <rich-text nodes="{{ questionItem.analysis }}"></rich-text>
+    </div>
+  </div>
+</template>
+<config>
+  {
+    usingComponents: {
+      "van-radio": "../libs/vant/radio/index",
+      "van-radio-group": "../libs/vant/radio-group/index",
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import { mapGetters } from '@wepy/x'
+  import { addActivateRecord } from '@/api/activate'
+  import { getPhoneNum } from '@/api/auth'
+  import { doPay } from '@/api/pay'
+  wepy.component({
+    store,
+    computed: {
+      // 用户信息
+      ...mapGetters(['_id', 'user'])
+    },
+    props: {
+      // 父页面传入，请求参数
+      questionIndex: {
+        type: Number,
+        default: ''
+      },
+      // 父页面传入，请求参数
+      questionItem: {
+        type: Object,
+        default: {}
+      }
+    },
+    data: {
+    },
+    created () {
+    },
+    methods: {
+      onChange(event,item,index) {
+        this.$emit('onChange',event,item,index)
+        // this.questionList[index].youAnswer = event.$wx.detail
+        // this.questionList[index].isShowAnswer = true
+      },
+    }
+  })
+</script>

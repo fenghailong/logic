@@ -125,12 +125,26 @@
       },
       studyCount: 0,
       starValue: 0,
+      currentId: '',
+      wordsList: []
     },
     // 计算的属性
     computed: {
       ...mapGetters(['_id', 'user']),
     },
     onLoad(options) {
+      eventHub.$on('refresh-words-info', (...args) => {
+        console.log('app-launch event emitted, the params are:');
+        console.log(args, '=========')
+        this.wordsList = JSON.parse(JSON.stringify(args[0].wordsList))
+        this.currentId = JSON.parse(JSON.stringify(args[0].currentWord_id))
+        let count = 0
+        this.wordsList.forEach(element => {
+          if(element.isStudyed)count = count + 1
+        });
+        this.studyCount = count
+      });
+
       this.detail.type = options.type
       this.detail.user_id = this._id
       if (this.detail.type === '国考高频成语'){
@@ -150,6 +164,8 @@
         this.studyCount = result.result.studyCount
         this.starValue = result.result.starValue
         this.detail.count = result.result.wordCount
+        this.currentId = result.result.currentWordId
+        this.wordsList = result.result.wordsList
         wx.hideLoading()
       },
       async getPersonStudyCount(options) {
@@ -173,8 +189,9 @@
         if (this.user.messageCount < 1) {
           await this.onSubscribe()
         }
+        let wordsList = encodeURIComponent(JSON.stringify(this.wordsList))
         wx.navigateTo({
-          url: `/pages/index/list?type=${this.detail.type}`,
+          url: `/pages/index/list?type=${this.detail.type}&currentId=${this.currentId}&wordsList=${wordsList}`,
         })
       }
     },

@@ -1,96 +1,179 @@
 <style lang="less">
   .page {
-    background-color: rgb(245, 244, 244);
-    .logic-index-search {
-      position: relative;
-      .van-search {
-        height: 60px;
-      }
-      .logic-index-search-list {
-        position: absolute;
-        top: 60px;
-        display: flex;
-        flex-direction: column;
-        background-color: #FFFFFF;
-        padding: 0 20px;
-        width: 100%;
-        z-index: 100;
-        .logic-index-search-item {
-          font-size: 16px;
-          color: #666;
-          margin-top: 5px;
-          padding: 10px;
-        }
-      }
-    }
+      background-image: url('https://7072-prod-2gzhco766f4e1e27-1304834920.tcb.qcloud.la/index/index-bg.png?sign=c0a04d439d28057eae72424de5b43242&t=1684489430');
+      background-repeat:no-repeat;
+      background-size: contain;
+      background-color: #F5F7FB;
     .logic-index-box {
-      padding: 0 10px;
-    }
-    .logic-index-box-middle {
-      display: flex;
-      justify-content: space-between;
-      padding: 0 10px;
-      margin-top: 10px;
-      .logic-index-box-middle-left{
-        flex: 1;
-        background-color: #4881F3;
-        color: #FFFFFF;
-        border-radius: 10px;
-        padding: 20px 20px;
-        .logic-index-box-middle-left-title{
-          display: flex;
-          align-items: center;
-          margin-bottom: 10px;
-        }
-        .logic-index-box-middle-left-icon{
-          display: flex;
-          align-items: center;
-          border: 1px solid #EE7878;
-          background-color: #EE7878;
-          border-radius: 20px;
-          font-size: 12px;
-          padding: 0 5px;
-          margin-left: 10px;
-          height: 18px;
-          text{
-            line-height: 1;
-            margin-left: 3px;
-            font-size: 10px;
-            font-style:italic;
-            font-weight: 800;
+      padding: 0 15px;
+      .logic-index-box-user {
+        display: flex;
+        align-items: center;
+        padding: 24px 0;
+        .logic-index-box-user-avatar {
+          width: 50px;
+          height: 50px;
+          margin-right: 15px;
+          image {
+            width: 100%;
+            height: 100%;
           }
         }
-        .logic-index-box-middle-left-text {
-          font-size: 14px;
-          display: block;
-          font-weight: 300;
+        .logic-index-box-user-right {
+          .logic-index-box-user-message {
+            display: flex;
+            align-items: center;
+            .logic-index-box-user-name {
+              font-size: 18px;
+              font-family: PingFangSC-Medium, PingFang SC;
+              font-weight: 500;
+              color: #333333;
+              margin-right: 5px;
+              line-height: 1;
+            }
+            .logic-index-box-user-member {
+              width: 54px;
+              height: 19px;
+              image {
+                width: 100%;
+                height: 100%;
+              }
+            }
+          }
+          .logic-index-box-user-count {
+            margin-top: 10px;
+            font-size: 10px;
+            font-family: PingFangSC-Regular, PingFang SC;
+            font-weight: 400;
+            color: #333333;
+            line-height: 1;
+          }
         }
       }
-      .logic-index-box-middle-right {
-        display: flex;
-        flex-direction: column;
-        font-size: 14px;
-        font-weight: 800;
-        font-weight: middle;
-        margin-left: 10px;
-        color: #FFFFFF;
-        .logic-index-box-middle-right-article {
-          background-color: #fb9b6c;
-          padding: 10px 10px;
-          border-radius: 10px;
-          text {
-            font-size: 12px;
-            font-weight: 400;
+      .logic-index-box-basic {
+        width: 100%;
+        .logic-index-box-basic-header {
+          position: relative;
+          height: 55px;
+          .logic-index-box-basic-header-bg {
+            width: 100%;
+            position: absolute;
+            z-index: 0;
+          }
+          .logic-index-box-basic-header-text {
+            position: absolute;
+            z-index: 1;
+            display: flex;
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            .logic-index-box-basic-header-title {
+              display: inline;
+              flex: 1;
+              text-align: center;
+              font-size: 12px;
+              font-weight: 500;
+              color: #FFFFFF;
+              line-height: 1;
+              padding-bottom: 10px;
+            }
+            .active {
+              font-size: 16px;
+              font-weight: 600;
+              color: #333333;
+            }
           }
         }
-        .logic-index-box-middle-right-person {
-          background-color: #2fcebe;
-          padding: 10px 10px;
+        .logic-index-box-basic-content {
+          background-color: #fff;
+          border-radius: 0 0 10px 10px;
+          .logic-index-box-basic-content-list {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 10px 0 20px;
+            .logic-index-box-basic-content-item {
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              align-items: center;
+              flex: 25%;
+              text-align: center;
+              padding: 5px 0;
+              image {
+                width: 30px;
+                height: 30px;
+              }
+              text {
+                margin-top: 5px;
+              }
+            }
+          }
+        }
+      }
+      .logic-index-box-middle {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+        .logic-index-box-middle-left{
+          flex: 1;
+          background-color: #1663FF;
+          color: #FFFFFF;
           border-radius: 10px;
-          margin-top: 5px;
-          text {
-            font-size: 12px;
+          padding: 37px 15px;
+          position: relative;
+          .logic-index-box-middle-left-title{
+            font-size: 20px;
+            font-weight: 600;
+            color: #FFFFFF;
+            line-height: 22px;
+            letter-spacing: 1px;
+            margin-bottom: 25px;
+            position: relative;
+          }
+          .logic-index-box-middle-left-text {
+            display: block;
+            font-size: 11px;
             font-weight: 400;
+            color: #FFFFFF;
+            line-height: 11px;
+            margin-bottom: 8px;
+            position: relative;
+          }
+          image {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            z-index: 0;
+          }
+        }
+        .logic-index-box-middle-right {
+          display: flex;
+          flex-direction: column;
+          font-size: 14px;
+          font-weight: 800;
+          font-weight: middle;
+          margin-left: 10px;
+          color: #FFFFFF;
+          .logic-index-box-middle-right-item {
+            background-color: #03B5FF;
+            padding: 17px 15px;
+            border-radius: 10px;
+            .item-name {
+              font-size: 18px;
+              font-weight: 600;
+              color: #FFFFFF;
+              line-height: 18px;
+            }
+            .item-tips {
+              font-size: 11px;
+              font-weight: 400;
+              line-height: 11px;
+              padding-top: 8px;
+            }
+          }
+          .logic-index-box-middle-right-item-othher {
+            background-color: #7BDDBA;
+            margin-top: 10px;
           }
         }
       }
@@ -272,37 +355,73 @@
 </style>
 <template>
   <div class="page">
-    <div class="logic-index-search">
-      <van-search value="{{ value }}" shape="round" background="#387ffb" placeholder="请输入搜索词语" @change="searchChange">
-      </van-search>
-      <div class="logic-index-search-list">
-        <div class="logic-index-search-item" v-for="(item, index) in searchList" :key="index"  @click.stop="sureCompany(item._id)">
-            {{item.name}}
-        </div>
-      </div>
-    </div>
-    <van-notice-bar scrollable left-icon="volume-o" text="新上公基（笔记）、常识、考点评测功能" />
+    <navigation-bar :defaultData="defaultData"></navigation-bar>
     <div class="logic-index-box">
-      <div class="logic-index-box-middle">
-        <div class="logic-index-box-middle-left" @click="toDetail('国考高频成语')">
-          <div class="logic-index-box-middle-left-title">
-            <text>高频成语</text>
-            <div class="logic-index-box-middle-left-icon">
-              <van-icon name="fire" />
-              <text>HOT</text>
+      <div class="logic-index-box-user">
+        <div class="logic-index-box-user-avatar">
+          <image src="../../assets/images/avatar.png" />
+        </div>
+        <div class="logic-index-box-user-right">
+          <div class="logic-index-box-user-message">
+            <div class="logic-index-box-user-name">新手小白用户</div>
+            <div class="logic-index-box-user-member">
+              <image src="../../assets/images/noMember.png" />
             </div>
           </div>
+          <div class="logic-index-box-user-count">已有2980人正在刷题</div>
+        </div>
+      </div>
+      <div class="logic-index-box-basic">
+        <div class="logic-index-box-basic-header">
+          <image v-if="chooseType === '1'" class="logic-index-box-basic-header-bg" src="../../assets/images/linetest-bg.png" />
+          <image v-else class="logic-index-box-basic-header-bg" src="../../assets/images/undertaking-bg.png" />
+          <div class="logic-index-box-basic-header-text">
+            <div class="logic-index-box-basic-header-title {{chooseType === '1' ? 'active' : ''}}" @click="changeType('1')">行测知识点</div>
+            <div class="logic-index-box-basic-header-title {{chooseType === '2' ? 'active' : ''}}" @click="changeType('2')">公基知识点</div>
+          </div>
+        </div>
+        <div class="logic-index-box-basic-content">
+          <div v-if="chooseType === '1'" class="logic-index-box-basic-content-list">
+            <div class="logic-index-box-basic-content-item" @click="toLinetest('9428a00a6464e553000f4715287f2f0d')">
+              <image src="../../assets/images/speech.png" />
+              <text>言语</text>
+            </div>
+            <div class="logic-index-box-basic-content-item" @click="toLinetest('93e4b6a06465cb440cfbbdee6be33b08')">
+              <image src="../../assets/images/judgement.png" />
+              <text>判断</text>
+            </div>
+            <div class="logic-index-box-basic-content-item" @click="toLinetest('0122a5876465cc950cff7061728c652f')">
+              <image src="../../assets/images/quantity.png" />
+              <text>数量</text>
+            </div>
+            <div class="logic-index-box-basic-content-item" @click="toLinetest('4f9a71986465cbd200151c1320b8cfc3')">
+              <image src="../../assets/images/dataany.png" />
+              <text>资料</text>
+            </div>
+          </div>
+          <div v-else class="logic-index-box-basic-content-list">
+            <div v-for="(item, index) in undertaking" :key="index" class="logic-index-box-basic-content-item" @click="toUndertaking(item._id)">
+              <image src="{{item.icon}}" />
+              <text>{{item.name}}</text>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="logic-index-box-middle">
+        <div class="logic-index-box-middle-left" @click="toDetail('国考高频成语')">
+          <image src="../../assets/images/words-bg.png" />
+          <div class="logic-index-box-middle-left-title">高频成语</div>
           <text class="logic-index-box-middle-left-text">词语日常积累</text>
           <text class="logic-index-box-middle-left-text">轻松搞定逻辑填空</text>
         </div>
         <div class="logic-index-box-middle-right">
-          <div class="logic-index-box-middle-right-article" @click="toGeneral">
-            <div>常识积累</div>
-            <text>不积跬步，无以至千里</text>
+          <div class="logic-index-box-middle-right-item" @click="toGeneral">
+            <div class="item-name">常识积累</div>
+            <div class="item-tips">不积跬步，无以至千里</div>
           </div>
-          <div class="logic-index-box-middle-right-person" @click="toRealpolitics">
-            <div>时事政治</div>
-            <text>不积小流，无以成江海</text>
+          <div class="logic-index-box-middle-right-item logic-index-box-middle-right-item-other" @click="toRealpolitics">
+            <div class="item-name">时事政治</div>
+            <div class="item-tips">不积小流，无以成江海</div>
           </div>
         </div>
       </div>
@@ -337,40 +456,6 @@
         </div>
       </div>
     </div>
-    <!-- <div class="logic-index-undertaking">
-      <div class="logic-index-undertaking-box">
-        <div class="logic-index-undertaking-title">公考行测知识点</div>
-        <div class="logic-index-undertaking-list">
-          <div class="logic-index-undertaking-item">
-            <image src="../../assets/images/collect.png" />
-            <text>言语</text>
-          </div>
-          <div class="logic-index-undertaking-item">
-            <image src="../../assets/images/collect.png" />
-            <text>判断</text>
-          </div>
-          <div class="logic-index-undertaking-item">
-            <image src="../../assets/images/collect.png" />
-            <text>数量</text>
-          </div>
-          <div class="logic-index-undertaking-item">
-            <image src="../../assets/images/collect.png" />
-            <text>资料</text>
-          </div>
-        </div>
-      </div>
-    </div> -->
-    <div class="logic-index-undertaking logic-index-undertaking-other">
-      <div class="logic-index-undertaking-box">
-        <div class="logic-index-undertaking-title">事业单位公基知识点</div>
-        <div class="logic-index-undertaking-list">
-          <div v-for="(item, index) in undertaking" :key="index" class="logic-index-undertaking-item" @click="toUndertaking(item._id)">
-            <image src="{{item.icon}}" />
-            <text>{{item.name}}</text>
-          </div>
-        </div>
-      </div>
-    </div>
     <div class="logic-index-footer">
       <div class="logic-index-footer-box">
         <van-button custom-class="no-style" open-type="contact" @contact="onCustomerServiceButtonClick">
@@ -389,9 +474,11 @@
     </div>
   </div>
 </template>
+<!-- navigationStyle: 'custom', -->
 <config>
   {
     navigationBarTitleText: '逻辑填空',
+    navigationStyle: 'custom',
     enablePullDownRefresh: true,
     usingComponents: {
       "van-search": "../../libs/vant/search/index",
@@ -399,6 +486,7 @@
       "van-tag": "../../libs/vant/tag/index",
       "van-icon": "../../libs/vant/icon/index",
       "van-button": "../../libs/vant/button/index",
+      "navigation-bar": "~@/components/navigation-bar"
     }
   }
 </config>
@@ -416,6 +504,10 @@
     store,
     // mixins: [ syncBadge ],
     data: {
+      defaultData: {
+        title: "我的主页", // 导航栏标题
+      },
+      chooseType: '1', // 1为公考 2为事业单位
       // 词语数量
       words: [],
       // 申论人物素材数量
@@ -423,8 +515,8 @@
       // 是否在加载中
       isLoading: false,
 
-      searchList: [],
-      listData: [],
+      // searchList: [],
+      // listData: [],
       // 事业单位模块
       undertaking: []
     },
@@ -433,14 +525,19 @@
     },
     async onLoad() {
       await this.$store.dispatch('login')
-      this.getListData()
+      // this.getListData()
       this.getAllModulesData()
+      console.log(this,'========')
+      console.log(this.$app.$options.globalData,'========')
       // await sendMessage() //调用模版消息
     },
     async onPullDownRefresh() {
       wx.stopPullDownRefresh()
     },
     methods: {
+      changeType (type) {
+        this.chooseType = type
+      },
       toDetail (type) {
         if (this.isLoggedIn) {
           wx.navigateTo({
@@ -494,6 +591,14 @@
         if (this.isLoggedIn) {
           wx.navigateTo({
             url: `/pages/undertaking/index?id=${id}`,
+          })
+        }
+      },
+      // toKnowledgeModules
+      async toLinetest (id) {
+        if (this.isLoggedIn) {
+          wx.navigateTo({
+            url: `/pages/linetest/index?id=${id}`,
           })
         }
       },
