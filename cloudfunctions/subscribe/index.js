@@ -48,10 +48,10 @@ const sendMessageItem = async (item) => {
       "lang": 'zh_CN',
       "data": {
         "thing1": {
-          "value": '常识、时政更新'
+          "value": '时政更新'
         },
         "thing2": {
-          "value": '常识知识点更新，新开时政模块。'
+          "value": '时政模块考点评测功能已上线，内容已更新。'
         },
         "thing5": {
           "value": '点击此处查看更新内容'
