@@ -134,14 +134,14 @@ const addEvaluationRecord = async (options) => {
   }
 }
 
-// 获取所有模块
+// 获取所有知识点模块
 const getAllModules = async (data) => {
   const result = await collection.where({ type: data.type, isTopParent: true }).get();
   return result
 }
 // 获取单个模块下面的子集
 const getModulesById = async (id) => {
-  const result = await collection.where({ parent_id: id, isTopParent: false }).get();
+  const result = await collection.where({ parent_id: id, isTopParent: false, module_type: db.command.neq('2') }).get();
   return result
 }
 
