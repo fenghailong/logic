@@ -1,53 +1,117 @@
 <style lang="less">
+.logic-index-box {
+  display: flex;
+  justify-content: center;
+}
+.logic-index-box-user-avatar {
+  width: 60px;
+  height: 60px;
+  margin: 50px 0;
+  padding: 0;
+  border: 0 !important;
+  image {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.avatar {
+  display: block;
+  width: 56px;
+  height: 56px;
+}
+.container {
+  display: flex;
+}
+.logic-index-box-user-input{
+  border-top: 1px solid rgb(235, 227, 227);
+  border-bottom: 1px solid rgb(235, 227, 227);
+  display: flex;
+  align-items: center;
+  height: 80rpx;
+  padding-left: 20rpx;
+}
+.text1{
+    flex: 2;
+}
+.weui-input{
+    flex: 6;
+}
 </style>
 <template>
   <div class="page">
-    <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-      <image class="avatar" src="{{avatarUrl}}"></image>
-    </button> 
-    <input type="nickname" class="weui-input" placeholder="请输入昵称"/>
+    <div class="logic-index-box">
+      <button class="logic-index-box-user-avatar" plain open-type="chooseAvatar" @chooseavatar="onChooseAvatar">
+        <image src="{{ user.avatarUrl ? user.avatarUrl : avatarUrl ? avatarUrl : '../../assets/images/nologin-avatar.png'}}" />
+      </button> 
+    </div>
+    <form catchsubmit="formSubmit">
+      <div class="logic-index-box-user-input">
+        <div class="text1">昵称：</div>
+        <input type="nickname" class="weui-input" name="nickname" placeholder="请输入昵称" :value="user.nickName ? user.nickName : ''"/>
+      </div>
+      <button type="primary" style="margin-top: 100px;width: 70% ;" form-type="submit">提交</button>
+    </form>
+    <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
   </div>
 </template>
 <config>
   {
-  navigationBarTitleText: '登录',
+    navigationBarTitleText: '登录',
+    usingComponents: {
+      "van-dialog": "../../libs/vant/dialog/index"
+    }
   }
 </config>
 <script>
   import wepy from '@wepy/core'
   import store from '@/store'
   import WeValidator from 'we-validator'
-
+  import { mapGetters } from '@wepy/x'
+  import {  updateUser } from '@/api/auth'
+  import Dialog from '../../libs/vant/dialog/dialog';
   wepy.page({
     store,
     data: {
       // 头像
-      avatarUrl = 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0',
+      avatarUrl:'',
+      nickName: '',
       // 是否有错
       errors: {},
       // 错误信息
       errorMessage: '',
       validatorInstance: null
     },
+    computed: {
+      ...mapGetters([ '_id', 'user' ])
+    },
     onReady() {
-      this.initValidator()
+      // this.initValidator()
     },
     methods: {
-      onChooseAvatar(e) {
-        const { avatarUrl } = e.detail 
-        this.setData({
-          avatarUrl,
+      async onChooseAvatar(e) {
+        const avatarUrl = e.$wx.detail.avatarUrl
+        this.avatarUrl = avatarUrl
+        console.log("avatarUrl", avatarUrl)
+        Dialog.confirm({
+          message: '头像上传成功，由于微信审核，会延迟几分钟显示。'
         })
+        let result = await wx.cloud.uploadFile({
+            cloudPath: `avatar/${this._id}.png`, // 上传至云端的路径
+            filePath: avatarUrl, // 小程序临时文件路径
+        })
+        this.avatarUrl = result.fileID
+        // wx.showToast({ title: '头像上传成功，由于微信审核，会延迟几分钟显示' })
       },
       // 表单提交
-      async submit() {
+      async formSubmit(e) {
         // 提交时重置错误
-        this.error = {}
-        if (!this.validatorInstance.checkData(this.form)) {
-          return
-        }
-
+        this.nickName = e.$wx.detail.value.nickname
         try {
+          await updateUser({
+            avatarUrl: this.avatarUrl,
+            nickName: this.nickName
+          })
           await this.$store.dispatch('login', this.form)
           wx.navigateBack()
         } catch (err) {

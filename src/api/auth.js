@@ -23,6 +23,27 @@ export async function getPhoneNum(data) {
   })
 }
 
+export async function updateUser(data) {
+  return await wx.cloud.callFunction({
+    name: 'login',
+    data: {
+      func: 'updateUser',
+      data
+    }
+  })
+}
+
+export async function getUserCount(data) {
+  return await wx.cloud.callFunction({
+    name: 'login',
+    data: {
+      func: 'getUserCount',
+      data
+    }
+  })
+}
+
+
 export function refresh(token) {
   return request('authorizations/current', {
     method: 'put',

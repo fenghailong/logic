@@ -149,7 +149,7 @@
 </template>
 <config>
   {
-    navigationBarTitleText: '言语理解',
+    navigationBarTitleText: '知识点',
     usingComponents: {
       "van-button": "../../libs/vant/button/index",
       "van-empty": "../../libs/vant/empty/index",

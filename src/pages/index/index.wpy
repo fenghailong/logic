@@ -2,7 +2,7 @@
   .page {
       background-image: url('https://7072-prod-2gzhco766f4e1e27-1304834920.tcb.qcloud.la/index/index-bg.png?sign=c0a04d439d28057eae72424de5b43242&t=1684489430');
       background-repeat:no-repeat;
-      background-size: contain;
+      background-size: 100%;
       background-color: #F5F7FB;
     .logic-index-box {
       padding: 0 15px;
@@ -14,6 +14,11 @@
           width: 50px;
           height: 50px;
           margin-right: 15px;
+          margin-left: 0;
+          padding: 0;
+          overflow: auto;
+          background: none;
+          border: 0;
           image {
             width: 100%;
             height: 100%;
@@ -28,12 +33,13 @@
               font-family: PingFangSC-Medium, PingFang SC;
               font-weight: 500;
               color: #333333;
-              margin-right: 5px;
+              margin-right: 10px;
               line-height: 1;
             }
             .logic-index-box-user-member {
               width: 54px;
               height: 19px;
+              padding-bottom: 5px;
               image {
                 width: 100%;
                 height: 100%;
@@ -43,7 +49,6 @@
           .logic-index-box-user-count {
             margin-top: 10px;
             font-size: 10px;
-            font-family: PingFangSC-Regular, PingFang SC;
             font-weight: 400;
             color: #333333;
             line-height: 1;
@@ -87,10 +92,13 @@
         .logic-index-box-basic-content {
           background-color: #fff;
           border-radius: 0 0 10px 10px;
+          box-shadow: 0px 5px 25px 0px rgba(164,204,217,0.2);
+          transition: all 0.3s ease-in-out;
+          overflow: hidden;
           .logic-index-box-basic-content-list {
             display: flex;
             flex-wrap: wrap;
-            padding: 10px 0 20px;
+            padding: 10px 0 15px;
             .logic-index-box-basic-content-item {
               display: flex;
               flex-direction: column;
@@ -121,6 +129,8 @@
           border-radius: 10px;
           padding: 37px 15px;
           position: relative;
+          overflow: hidden;
+          box-shadow: 0px 10px 15px 0px rgba(35,59,204,0.35);
           .logic-index-box-middle-left-title{
             font-size: 20px;
             font-weight: 600;
@@ -143,12 +153,17 @@
             position: absolute;
             right: 0;
             bottom: 0;
+            left: 0;
+            top: 0;
             z-index: 0;
+            width: 100%;
+            height: 100%;
           }
         }
         .logic-index-box-middle-right {
           display: flex;
           flex-direction: column;
+          justify-content: space-between;
           font-size: 14px;
           font-weight: 800;
           font-weight: middle;
@@ -158,6 +173,7 @@
             background-color: #03B5FF;
             padding: 17px 15px;
             border-radius: 10px;
+            box-shadow: 0px 10px 15px 0px rgba(3,181,255,0.35);
             .item-name {
               font-size: 18px;
               font-weight: 600;
@@ -168,164 +184,51 @@
               font-size: 11px;
               font-weight: 400;
               line-height: 11px;
-              padding-top: 8px;
+              padding-top: 10px;
             }
           }
-          .logic-index-box-middle-right-item-othher {
-            background-color: #7BDDBA;
+          .logic-index-box-middle-right-item-other {
+            background-color: #17CB8B;
             margin-top: 10px;
+            box-shadow: 0px 10px 15px 0px rgba(123,221,186,0.6);
           }
         }
       }
-    }
-    .logic-index-box-hot {
-      display: flex;
-      justify-content: space-between;
-      padding: 0 10px;
-      margin-top: 20px;
-      .logic-index-box-hot-left {
-        position: relative;
-        height: 150px;
-        border-radius: 10px;
-        overflow: hidden;
-        padding: 20px 20px;
-        width: 50%;
-        image {
-          position: absolute;
-          left: 0;
-          bottom: 0;
-          width: 100%;
-          height: 100%;
-          z-index: 0;
-        }
-        .logic-index-box-hot-left-content {
-          position: relative;
-          z-index: 1;
-        }
-        .logic-index-box-hot-left-title{
-          display: flex;
-          align-items: center;
-          margin-bottom: 10px;
-          font-size: 16px;
-          font-weight: bold;
-        }
-        .logic-index-box-hot-left-text {
-          font-size: 14px;
-          display: block;
-          font-weight: 500;
-        }
-      }
-      // .logic-index-box-hot-left-title {
-      //   font-size: 16px;
-      //   font-weight: bold;
-      // }
-      // .logic-index-box-hot-left-title {
-      //   font-size: 16px;
-      //   font-weight: bold;
-      // }
-      // .logic-index-box-hot-content {
-      //   margin-top: 10px;
-      //   display: flex;
-      //   flex-wrap: wrap;
-      //   justify-content: center;
-      // }
-      .logic-index-box-hot-content-item {
+      .logic-index-box-hot {
         display: flex;
-        justify-content: center;
-        flex-direction: column;
-        align-items: center;
-        padding: 5px 20px;
-        background-color: #2fcebe;
-        margin-bottom: 10px;
-        font-size: 16px;
-        color: #FFFFFF;
-        border-radius: 10px;
-        margin-right: 20px;
-        width: 30%;
-        height: 60px;
-        text {
-          font-size: 14px;
-        }
-      }
-      .logic-index-box-hot-right {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin-left: 10px;
-        padding: 20px;
-        background-color: #FFFFFF;
-        border-radius: 10px;
-        .logic-index-box-hot-right-item {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          flex-direction: column;
-          image {
-            width: 40px;
-            height: 40px;
-          }
-          text {
-            font-size: 14px;
-            color: #666;
-          }
-        }
-      }
-    }
-    .logic-index-undertaking {
-      padding: 0 20px;
-      margin-top: 20px;
-      border-radius: 10px;
-      .logic-index-undertaking-box {
-        background-color: #FFFFFF;
-        text-align: center;
-        border-radius: 10px;
-        font-size: 14px;
-        font-weight: 800;
-        font-weight: middle;
-      }
-      .logic-index-undertaking-title {
-        text-align: center;
-        padding: 10px 0;
-      }
-      .logic-index-undertaking-list {
-        display: flex;
-        flex-wrap: wrap;
-        padding: 0 10px 10px;
-        .logic-index-undertaking-item {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          flex: 25%;
+        justify-content: space-between;
+        margin-top: 20px;
+        .logic-index-box-hot-item {
+          padding: 20px 0;
+          background-color: #FFFFFF;
+          border-radius: 10px;
           text-align: center;
-          padding: 5px 0;
+          width: 30%;
           image {
-            width: 25px;
-            height: 25px;
+            width: 30px;
+            height: 30px;
           }
-          text {
-            margin-top: 5px;
+          .logic-index-box-hot-item-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333333;
+            line-height: 14px;
           }
         }
       }
-    }
-    .logic-index-undertaking-other {
-      padding: 0 20px 120px;
     }
     .logic-index-footer {
-      padding: 0 20px;
+      padding: 0 15px;
       position: fixed;
       left: 0;
       right: 0;
       margin: 0 auto;
-      bottom: 30px;
+      bottom: 40px;
       .logic-index-footer-box {
         background-color: #FFFFFF;
         display: flex;
-        font-size: 14px;
-        font-weight: 800;
-        font-weight: middle;
-        padding: 10px 10px;
+        align-items: center;
+        padding: 5px;
         border-radius: 10px;
         van-button {
           flex: 1;
@@ -338,14 +241,25 @@
           border: none !important;
           background-color: #fff;
         }
+        .logic-index-footer-line {
+          width: 1px;
+          height: 30px;
+          background-color: #E7E7E7;
+        }
         .logic-index-footer-share {
           display: flex;
-          flex-direction: column;
           justify-content: center;
           align-items: center;
           image {
             width: 20px;
             height: 20px;
+            margin-right: 10px;
+          }
+          text {
+            font-size: 14px;
+            font-weight: 400;
+            color: #333333;
+            line-height: 14px;
           }
         }
       }
@@ -355,20 +269,23 @@
 </style>
 <template>
   <div class="page">
-    <navigation-bar :defaultData="defaultData"></navigation-bar>
+    <navigation-bar></navigation-bar>
     <div class="logic-index-box">
-      <div class="logic-index-box-user">
+      <div class="logic-index-box-user" @click="toLogin()">
         <div class="logic-index-box-user-avatar">
-          <image src="../../assets/images/avatar.png" />
+          <image v-if="user.avatarUrl" :src="user.avatarUrl" />
+          <image v-else src="../../assets/images/avatar.png" />
         </div>
         <div class="logic-index-box-user-right">
           <div class="logic-index-box-user-message">
-            <div class="logic-index-box-user-name">新手小白用户</div>
-            <div class="logic-index-box-user-member">
-              <image src="../../assets/images/noMember.png" />
+            <div v-if="user.nickName" class="logic-index-box-user-name">{{user.nickName}}</div>
+            <div v-else class="logic-index-box-user-name">登录/注册</div>
+            <div class="logic-index-box-user-member" v-if="user.nickName">
+              <image v-if="user.isMember === '1'"  src="../../assets/images/member.png" />
+              <image v-else src="../../assets/images/noMember.png" />
             </div>
           </div>
-          <div class="logic-index-box-user-count">已有2980人正在刷题</div>
+          <div class="logic-index-box-user-count">已有{{ userCount }}人加入学习</div>
         </div>
       </div>
       <div class="logic-index-box-basic">
@@ -380,7 +297,7 @@
             <div class="logic-index-box-basic-header-title {{chooseType === '2' ? 'active' : ''}}" @click="changeType('2')">公基知识点</div>
           </div>
         </div>
-        <div class="logic-index-box-basic-content">
+        <div class="logic-index-box-basic-content" id="logic-index-box-basic-content-id" style="height:{{listBoxHeight}};">
           <div v-if="chooseType === '1'" class="logic-index-box-basic-content-list">
             <div class="logic-index-box-basic-content-item" @click="toLinetest('9428a00a6464e553000f4715287f2f0d')">
               <image src="../../assets/images/speech.png" />
@@ -426,33 +343,17 @@
         </div>
       </div>
       <div class="logic-index-box-hot">
-        <div class="logic-index-box-hot-left" @click="toDetail('申论范文', personCount)">
-          <image src="../../assets/images/index-hot-item-bg.png" />
-          <div class="logic-index-box-hot-left-content">
-            <div class="logic-index-box-hot-left-title">
-              <text>申论范文</text>
-            </div>
-            <text class="logic-index-box-hot-left-text">每日一篇</text>
-            <text class="logic-index-box-hot-left-text">申论轻松上80+</text>
-          </div>
+        <div class="logic-index-box-hot-item" @click="toDetail('申论范文', personCount)">
+          <image src="../../assets/images/realpolitics.png" />
+          <div class="logic-index-box-hot-item-text">申论范文</div>
         </div>
-        <div class="logic-index-box-hot-right">
-          <div class="logic-index-box-hot-right-item" @click="toDetail('人物素材', personCount)">
-            <image src="../../assets/images/index-hot-item-one.png" />
-            <text>人物素材</text>
-          </div>
-          <!-- <div class="logic-index-box-hot-right-item">
-            <image src="../../assets/images/index-hot-item-two.png" />
-            <text>学习交流</text>
-          </div> -->
-          <!-- <div class="logic-index-box-hot-right-item">
-            <image src="../../assets/images/index-hot-item-three.png" />
-            <text>敬请期待</text>
-          </div>
-          <div class="logic-index-box-hot-right-item">
-            <image src="../../assets/images/index-hot-item-four.png" />
-            <text>敬请期待</text>
-          </div> -->
+        <div class="logic-index-box-hot-item" @click="toDetail('人物素材', personCount)">
+          <image src="../../assets/images/person.png" />
+          <div class="logic-index-box-hot-item-text">人物素材</div>
+        </div>
+        <div class="logic-index-box-hot-item">
+          <image src="../../assets/images/studytalk.png" />
+          <div class="logic-index-box-hot-item-text">学习交流</div>
         </div>
       </div>
     </div>
@@ -460,10 +361,11 @@
       <div class="logic-index-footer-box">
         <van-button custom-class="no-style" open-type="contact" @contact="onCustomerServiceButtonClick">
           <div class="logic-index-footer-share">
-            <image src="../../assets/images/collect.png" />
+            <image src="../../assets/images/contact.png" />
             <text>联系客服</text>
           </div>
         </van-button>
+        <div class="logic-index-footer-line"></div>
         <van-button custom-class="no-style" open-type="share">
           <div class="logic-index-footer-share">
             <image src="../../assets/images/share.png" />
@@ -492,8 +394,9 @@
 </config>
 <script>
   import wepy from '@wepy/core'
-  import { importWords, refreshSynonym, addWordsList, getWAllList } from '@/api/words'
+  import { getWAllList } from '@/api/words'
   import { getAllModules } from '@/api/knowledgeModule'
+  import { getUserCount } from '@/api/auth'
   import { sendMessage } from '@/api/subscribe'
   import eventHub from '@/common/eventHub'
   import store from '@/store'
@@ -504,39 +407,46 @@
     store,
     // mixins: [ syncBadge ],
     data: {
-      defaultData: {
-        title: "我的主页", // 导航栏标题
-      },
       chooseType: '1', // 1为公考 2为事业单位
+      listBoxHeight: '95px',
       // 词语数量
       words: [],
       // 申论人物素材数量
       personCount: 0,
       // 是否在加载中
       isLoading: false,
-
+      userCount: 0,
       // searchList: [],
       // listData: [],
       // 事业单位模块
       undertaking: []
     },
     computed: {
-      ...mapGetters([ 'isLoggedIn' ])
+      ...mapGetters([ 'isLoggedIn', 'user' ])
     },
     async onLoad() {
       await this.$store.dispatch('login')
-      // this.getListData()
+      this.getUserCount()
       this.getAllModulesData()
-      console.log(this,'========')
-      console.log(this.$app.$options.globalData,'========')
       // await sendMessage() //调用模版消息
     },
     async onPullDownRefresh() {
       wx.stopPullDownRefresh()
     },
     methods: {
+      async getUserCount () {
+        let result = await getUserCount()
+        this.userCount = result.result.total
+        console.log(result, '=============')
+      },
+      toLogin () {
+        wx.navigateTo({
+          url: `/pages/auth/login`,
+        })
+      },
       changeType (type) {
         this.chooseType = type
+        this.listBoxHeight = this.chooseType== '2' ? '165px' : '95px'
       },
       toDetail (type) {
         if (this.isLoggedIn) {
@@ -620,13 +530,13 @@
     },
     onShareAppMessage() {
       return {
-        title: '逻辑填空-你的好助手',
+        title: '公考学习-你的好助手',
         path: '/pages/index/index'
       }
     },
     onShareTimeline() {
       return {
-        title: '逻辑填空-你的好助手',
+        title: '公考学习-你的好助手',
         query: '/pages/index/index'
       }
     }

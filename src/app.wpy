@@ -105,7 +105,8 @@ wepy.app({
       'pages/linetest/index',
       'pages/linetest/list',
       'pages/linetest/detail',
-      'pages/linetest/evaluation'
+      'pages/linetest/evaluation',
+      'pages/auth/login'
     ],
     window: {
       backgroundTextStyle: 'light',

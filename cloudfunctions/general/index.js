@@ -84,7 +84,7 @@ const getAllGeneralInfo = async (data) => {
   let generalList = result.data
   let recordList = resultRecord.data
   let resList = []
-  if (recordList.length > 0 && generalList.length > 0){
+  if (generalList.length > 0){
     generalList = generalList.map(element => {
       element.isStudyed = false
       recordList.forEach(item => {

@@ -66,15 +66,42 @@ const getPhoneNum = async (options, OPENID) => {
   }
 }
 
+// 更新用户的资料
+const updateUser = async (options, OPENID) => {
+  let hasUser = await collection.where({ wechat_openid: OPENID }).get();
+  if (Array.isArray(hasUser.data) && hasUser.data.length === 0) {
+    return '用户不存在'
+  } else {
+    await collection.doc(hasUser.data[0]._id).update({
+      data: {
+        nickName: options.nickName,
+        avatarUrl: options.avatarUrl
+      }
+    })
+    return '用户名已经更新'
+  }
+}
+
+//获取人数
+const getUserCount = async (options, OPENID) => {
+  let userCount = await collection.count();
+  userCount.total =  Number(userCount.total) + 20000
+  return userCount
+}
+
 
 exports.main = async (event, context) => {
   const { func, data } = event;
-  const { OPENID, APPID, UNIONID } = cloud.getWXContext();
+  const { OPENID } = cloud.getWXContext();
   let res;
   if (func === 'login') {
     res = await login(OPENID);
   } else if (func === 'getPhoneNum') {
     res = await getPhoneNum(data, OPENID);
-  }
+  } else if (func === 'updateUser') {
+    res = await updateUser(data, OPENID);
+  } else if (func === 'getUserCount') {
+    res = await getUserCount(data, OPENID);
+  } 
   return res;
 }
