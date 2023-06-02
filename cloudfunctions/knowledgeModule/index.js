@@ -8,6 +8,8 @@ const db = cloud.database();
 const collection = db.collection('knowledgeModule');
 const evaluationCollection = db.collection('evaluation');
 const evaluationRCollection = db.collection('evaluation_record');
+const questionCollection = db.collection('question');
+// const questionRCollection = db.collection('evaluation_record');
 
 // 获取某个模块下的所有题目
 const getAllEvaluation = async (options) => {

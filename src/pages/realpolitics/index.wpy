@@ -17,9 +17,17 @@
       color: #999;
     }
     .logic-detail-content-title {
-      text-align: left;
-      font-size: 18px;
-      font-weight: 500;
+      display: flex;
+      align-items: center;
+      .logic-detail-content-title-text {
+        text-align: left;
+        font-size: 18px;
+        font-weight: 500;
+        flex: 1;
+      }
+      .logic-detail-content-title-button {
+        color: #666;
+      }
     }
     .logic-detail-content-describe {
       text-align: left;
@@ -71,12 +79,11 @@
     <div class="logic-detail-box">
       <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content {{ index != 1 && user.isMember != '1' ? 'logic-detail-content-opticty' : ''}}" @click="{{ index != 1 && user.isMember != '1' ? openPayTipPopup() : ''}}">
         <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->
-        <div class="logic-detail-content-title">{{item.name}}</div>
-        <div class="logic-detail-content-describe">总结{{item.name}}模块的知识点，需要掌握熟记，学习完后最好配合FB对应的刷题模块。</div>
-        <!-- <div class="logic-detail-content-message">
-          <div class="logic-detail-content-message-practice">已练习 {{studyCount}}/{{detail.count}}</div>
-          <van-rate readonly value="{{ starValue }}" allow-half/>
-        </div> -->
+        <div class="logic-detail-content-title">
+          <div class="logic-detail-content-title-text">{{item.name}}</div>
+          <div class="logic-detail-content-title-button" @click="{{index != 1 && user.isMember != '1' ? '' : toQuestion(item._id, item.name)}}">去刷题 ></div>
+        </div>
+        <div class="logic-detail-content-describe">总结{{item.name}}模块的知识点，需要掌握熟记，学习完后最好配合对应的刷题模块。</div>
         <div class="logic-detail-content-footer">
           <van-button class="logic-detail-content-button" color="#4755EB" round @click="{{index != 1 && user.isMember != '1' ? '' : toList(item._id, item.name)}}">开始学习</van-button>
           <van-button class="logic-detail-content-button" color="#54BBCB" round @click="{{index != 1 && user.isMember != '1' ? '' : toEvaluation(item._id, item.name)}}">考点评测</van-button>
@@ -152,6 +159,11 @@
       toEvaluation (id, name) {
         wx.navigateTo({
           url: `/pages/realpolitics/evaluation?id=${id}&name=${name}`,
+        })
+      },
+      toQuestion (id, name) {
+        wx.navigateTo({
+          url: `/pages/realpolitics/question?id=${id}&name=${name}`,
         })
       },
     },

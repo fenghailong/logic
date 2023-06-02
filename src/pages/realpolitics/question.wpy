@@ -1,0 +1,92 @@
+<style lang="less">
+.page{
+  background-color: #eee;
+  .logic-index-box {
+    padding: 20px 20px;
+    .logic-index-question-list {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+      background-color: #fff;
+      font-size: 16px;
+      padding: 20px;
+      transition: all 2s ease-in-out;
+      .van-radio {
+        padding: 5px 0;
+        .van-radio__label {
+          line-height: 26px;
+        }
+      }
+    }
+    .logic-index-question-list-an {
+      height: auto;
+    }
+  }
+}
+</style>
+<template>
+  <div class="page">
+    <div class="logic-index-box">
+      <div v-if="questionList.length > 0" class="logic-index-note-title">例题</div>
+      <div v-if="questionList.length > 0" v-for="(item, index) in questionList" :key="index" class="logic-index-question-list {{item.isShowAnswer ? 'logic-index-question-list-an' : ''}}">
+        <question-item :questionItem="item" :questionIndex="index" @onChange="onChange"></question-item>
+      </div>
+    </div>
+  </div>
+</template>
+<config>
+  {
+    navigationBarTitleText: '专项刷题',
+    usingComponents: {
+      "question-item": "~@/components/question-item"
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import { mapGetters } from '@wepy/x'
+  import eventHub from '@/common/eventHub'
+  import { getQuestionById } from '@/api/question'
+
+  wepy.page({
+    store,
+    computed: {
+      // 用户信息
+      ...mapGetters(['_id'])
+    },
+    data: {
+      moudleId: '',
+      questionList: []
+    },
+    async onLoad(options) {
+      wx.showLoading({title: '加载中'})
+      this.moudleId = options.id
+      wx.setNavigationBarTitle({title: options.name})
+      await this.getQuestionsList()
+      wx.hideLoading()
+    },
+    methods: {
+      // 选中题目
+      onChange(event,item,index) {
+        this.questionList[index].youAnswer = event.$wx.detail
+      },
+      async getQuestionsList () {
+        let options = {
+          module_id: this.moudleId,
+        }
+        let data = await getQuestionById(options)
+        this.questionList = data.result.data.map(item => {
+          item.title =item.title.replace(/\<code/gi,'<code class="logic-code"')
+          item.title =item.title.replace(/\<p/gi,'<p class="logic-p"')
+          item.analysis =item.analysis.replace(/\<code/gi,'<code class="logic-code"')
+          item.analysis =item.analysis.replace(/\<p/gi,'<p class="logic-p"')
+          item.youAnswer = ''
+          item.isShowAnswer = false
+          return item
+        })
+        console.log(this.questionList, '========')
+      }
+    }
+  })
+</script>
