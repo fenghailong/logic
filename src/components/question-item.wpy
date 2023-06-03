@@ -15,6 +15,7 @@
       // max-width: 100%;
       // text-align: justify;
       // white-space: normal;
+      letter-spacing: 2px !important;
     }
   }
   .logic-index-question-images {
@@ -36,6 +37,7 @@
     }
     .logic-p {
       padding: 5px 0;
+      letter-spacing: 2px !important;
       // max-width: 100%;
       // text-align: justify;
       // white-space: normal;
@@ -71,14 +73,14 @@
       <rich-text nodes="{{ questionItem.title }}"></rich-text>
     </div>
     <div v-if="doType == 'immediately' && questionItem.isShowAnswer" class="logic-index-question-options">
-      <div class="logic-index-question-options-isAnswer" v-for="(value, key) in questionItem.option">
+      <div class="logic-index-question-options-isAnswer" v-for="(value, key) in questionItem.option" :key="key">
         <div class="logic-index-question-options-key {{questionItem.answer === key ? 'logic-index-question-options-key-answer' : ''}} {{questionItem.youAnswer === key && questionItem.answer != key ? 'logic-index-question-options-key-errAnswer' : ''}}">{{key}}</div>
         <div class="logic-index-question-options-value">{{value}}</div>
       </div>
     </div>
     <div v-else class="logic-index-question-options">
       <van-radio-group value="{{ questionItem.youAnswer }}" @change="onChange($event, questionItem, questionIndex)">
-        <van-radio icon-size="24px" v-for="(value, key) in questionItem.option" :name="key">{{key}}.{{value}}</van-radio>
+        <van-radio icon-size="24px" v-for="(value, key) in questionItem.option" :name="key" :key="key">{{key}}.{{value}}</van-radio>
       </van-radio-group>
     </div>
     <div v-if="doType == 'immediately' && questionItem.isShowAnswer" class="logic-index-question-answer">

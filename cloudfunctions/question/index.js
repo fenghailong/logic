@@ -7,17 +7,18 @@ cloud.init({
 const db = cloud.database();
 const questionCollection = db.collection('question');
 const questionRCollection = db.collection('question_record');
+const practiseCollection = db.collection('practise');
 
 // 获取某个模块下的所有题目
 const getAllQuestion = async (options) => {
-  const countResult = await questionCollection.where({ knowledgeModule_id: options.module_id}).count()
+  const countResult = await questionCollection.where({ module_id: options.module_id}).count()
   const total = countResult.total
   // 计算需分几次取
   const batchTimes = Math.ceil(total / 100)
   // 承载所有读操作的 promise 的数组
   const tasks = []
   for (let i = 0; i < batchTimes; i++) {
-    const promise = questionCollection.where({ knowledgeModule_id: options.module_id}).skip(i * 100).limit(100).get()
+    const promise = questionCollection.where({ module_id: options.module_id}).skip(i * 100).limit(100).get()
     tasks.push(promise)
   }
   // 等待所有
@@ -66,11 +67,13 @@ const getQuestionById = async (data) => {
   let allStudyQuestion = []
   console.log(allQuestion)
   console.log(resultRecord.data)
+  // 过滤已经回答正确的题目
   let resultQuestion = allQuestion.filter(item => {
     return !resultRecord.data.find(element => {
       return element.question_id == item._id
     })
   })
+  // 将回答正确的题目保存到allStudyQuestion
   if (resultRecord.data.length > 0 && allQuestion.length > 0){
     allQuestion.forEach(element => {
       resultRecord.data.forEach(item => {
@@ -80,12 +83,50 @@ const getQuestionById = async (data) => {
       })
     });
   }
+  resultQuestion = data.isShuffle ? shuffle(resultQuestion).slice(0,10) : resultQuestion.slice(0,10)
+  // 保存一条练习记录
+  let tempQuestion = []
+  tempQuestion = resultQuestion.map(item => {
+    item.isRight = ''
+    return item
+  })
+  console.log(tempQuestion, '=========')
+  await addPractiseCollection(data, tempQuestion)
   let res = {
-    resultQuestion: data.isShuffle ? shuffle(resultQuestion).slice(0,10) : resultQuestion.slice(0,10),
-    evaluationCount: allQuestion.length,
-    studyQuestionCount: allStudyQuestion.length
+    resultQuestion
   }
   return res;
+}
+
+// 增加刷题练习记录
+const addPractiseCollection = async (options, questions) => {
+  console.log(options)
+  let hasRecord = await practiseCollection.where({ user_id: options.user_id, module_id: options.module_id}).get();
+  if (Array.isArray(hasRecord.data) && hasRecord.data.length === 0) {
+    await practiseCollection.add({
+      data: {
+        user_id: options.user_id,
+        module_id: options.module_id,
+        isComplete: '2',
+        questions: questions,
+        useTime: '00:00',
+        _createTime: Date.now(),
+        _updateTime: Date.now()
+      }
+    })
+    return '增加记录成功'
+  } else {
+    await practiseCollection.where({ user_id: options.user_id, module_id: options.module_id}).update({
+      // data 传入需要局部更新的数据
+      data: {
+        isComplete: options.isComplete,
+        questions: options.questions,
+        useTime: options.useTime,
+        _updateTime: Date.now()
+      }
+    })
+    return '已更新记录'
+  }
 }
 
 // 数组乱序
@@ -117,9 +158,15 @@ const addQuestionRecord = async (options) => {
     })
     return '增加记录成功'
   } else {
+    // 错误次数
+    let count = hasRecord.data[0].count || 0
+    if (options.isRight === '2') {
+      count = count + 1
+    }
     await questionRCollection.where({ user_id: options.user_id, question_id: options.question_id}).update({
       // data 传入需要局部更新的数据
       data: {
+        count: count,
         isRight: options.isRight
       }
     })

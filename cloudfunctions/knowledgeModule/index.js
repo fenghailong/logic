@@ -126,9 +126,15 @@ const addEvaluationRecord = async (options) => {
     })
     return '增加记录成功'
   } else {
+    // 错误次数
+    let count = hasRecord.data[0].count || 0
+    if (options.isRight === '2') {
+      count = count + 1
+    }
     await evaluationRCollection.where({ user_id: options.user_id, evaluation_id: options.evaluation_id}).update({
       // data 传入需要局部更新的数据
       data: {
+        count: count,
         isRight: options.isRight
       }
     })

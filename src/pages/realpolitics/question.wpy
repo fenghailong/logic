@@ -1,15 +1,41 @@
 <style lang="less">
 .page{
   background-color: #eee;
-  .logic-index-box {
-    padding: 20px 20px;
-    .logic-index-question-list {
+  .logic-index-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #387ffb;
+    padding: 5px 15px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    color: #fff;
+    line-height: 1;
+    .logic-index-header-left {
+    }
+    .logic-index-header-middle {
       display: flex;
       align-items: center;
+      .logic-index-header-time {
+        margin-left: 10px;
+      }
+    }
+    .logic-index-header-right {
+    }
+  }
+  .logic-index-box {
+    // padding: 20px 20px;
+    padding-top: 30px;
+    .logic-index-question-list {
+      display: flex;
+      flex-direction: column;
+      // align-items: center;
       margin-top: 10px;
       background-color: #fff;
       font-size: 16px;
-      padding: 20px;
+      padding: 15px;
       transition: all 2s ease-in-out;
       .van-radio {
         padding: 5px 0;
@@ -26,9 +52,17 @@
 </style>
 <template>
   <div class="page">
+    <div class="logic-index-header">
+      <div class="logic-index-header-left">专项练习</div>
+      <div class="logic-index-header-middle">
+        <van-icon name="underway-o" size="16px" />
+        <div class="logic-index-header-time">{{nowTime}}</div>
+      </div>
+      <div class="logic-index-header-right">共 {{questionList.length}} 题</div>
+    </div>
     <div class="logic-index-box">
-      <div v-if="questionList.length > 0" class="logic-index-note-title">例题</div>
       <div v-if="questionList.length > 0" v-for="(item, index) in questionList" :key="index" class="logic-index-question-list {{item.isShowAnswer ? 'logic-index-question-list-an' : ''}}">
+        <van-tag type="primary" size="large" style="margin-bottom: 5px">{{index+1}}.单选题</van-tag>
         <question-item :questionItem="item" :questionIndex="index" @onChange="onChange"></question-item>
       </div>
     </div>
@@ -38,6 +72,8 @@
   {
     navigationBarTitleText: '专项刷题',
     usingComponents: {
+      "van-tag": "../../libs/vant/tag/index",
+      "van-icon": "../../libs/vant/icon/index",
       "question-item": "~@/components/question-item"
     }
   }
@@ -57,14 +93,46 @@
     },
     data: {
       moudleId: '',
-      questionList: []
+      title: '',
+      questionList: [],
+      timer2: null,
+      nowTime: '00:00', // 计时
+      minutes: 0,
+      seconds: 0
     },
     async onLoad(options) {
       wx.showLoading({title: '加载中'})
       this.moudleId = options.id
+      this.title = options.name
       wx.setNavigationBarTitle({title: options.name})
       await this.getQuestionsList()
       wx.hideLoading()
+    },
+    onShow() {
+      console.log(3)
+      if (this.timer2) {
+        clearInterval(this.timer2)
+      }
+      // let that = this
+      this.timer2 = setInterval(() => {
+        this.seconds += 1
+        if (this.seconds >= 60) {
+          this.seconds = 0
+          this.minutes = this.minutes + 1
+        }
+        this.nowTime = `${this.toZero(this.minutes) + ':' + this.toZero(this.seconds)}`
+      }, 1000)
+    },
+    onHide() {
+      console.log(1)
+      clearInterval(this.timer2) // 清空计时器
+      // this.nowTime = '00:00:00'
+      // this.minutes = 0
+      // this.seconds = 0
+    },
+    onUnload() {
+      clearInterval(this.timer2)
+      console.log(2)
     },
     methods: {
       // 选中题目
@@ -73,10 +141,12 @@
       },
       async getQuestionsList () {
         let options = {
+          user_id: this._id,
           module_id: this.moudleId,
         }
         let data = await getQuestionById(options)
-        this.questionList = data.result.data.map(item => {
+        console.log(data)
+        this.questionList = data.result.resultQuestion.map(item => {
           item.title =item.title.replace(/\<code/gi,'<code class="logic-code"')
           item.title =item.title.replace(/\<p/gi,'<p class="logic-p"')
           item.analysis =item.analysis.replace(/\<code/gi,'<code class="logic-code"')
@@ -86,7 +156,11 @@
           return item
         })
         console.log(this.questionList, '========')
-      }
+      },
+      // 添0 
+      toZero(timeNumber) {
+        return timeNumber < 10 ? '0' + timeNumber : timeNumber
+      },
     }
   })
 </script>

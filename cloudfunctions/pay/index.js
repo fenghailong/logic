@@ -33,7 +33,7 @@ const doPay = async (event, context) => {
   let tempStamp = parseInt(Date.now() / 1000)
   let tradeType = 'JSAPI'
   let outTradeNo = 'test' + tempStamp + nonceStr;
-  let spbillCreateIp = wxContext.CLIENTIP;
+  let spbillCreateIp = wxContext.CLIENTIP ? wxContext.CLIENTIP : wxContext.CLIENTIPV6;
   let functionName = 'backPay'
 
 	const res = await cloud.cloudPay.unifiedOrder({
@@ -55,6 +55,7 @@ const doPay = async (event, context) => {
       outTradeNo,
 			totalFee,
       status: 0,
+      orderRes: res,
       _createTime: Date.now(),
       _updateTime: Date.now()
 		}
