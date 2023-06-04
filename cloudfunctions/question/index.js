@@ -65,8 +65,6 @@ const getQuestionById = async (data) => {
   const resultRecord = await getAllStudyQuestionById(data)
   let allQuestion = result.data
   let allStudyQuestion = []
-  console.log(allQuestion)
-  console.log(resultRecord.data)
   // 过滤已经回答正确的题目
   let resultQuestion = allQuestion.filter(item => {
     return !resultRecord.data.find(element => {
@@ -80,53 +78,52 @@ const getQuestionById = async (data) => {
         if (item.question_id == element._id) {
           allStudyQuestion.push(element)
         }
-      })
+      }) 
     });
   }
   resultQuestion = data.isShuffle ? shuffle(resultQuestion).slice(0,10) : resultQuestion.slice(0,10)
-  // 保存一条练习记录
-  let tempQuestion = []
-  tempQuestion = resultQuestion.map(item => {
-    item.isRight = ''
-    return item
-  })
-  console.log(tempQuestion, '=========')
-  await addPractiseCollection(data, tempQuestion)
   let res = {
-    resultQuestion
+    resultQuestion,
   }
   return res;
 }
 
-// 增加刷题练习记录
-const addPractiseCollection = async (options, questions) => {
-  console.log(options)
+// 获取刷题练习记录
+const getPractise = async (options) => {
   let hasRecord = await practiseCollection.where({ user_id: options.user_id, module_id: options.module_id}).get();
   if (Array.isArray(hasRecord.data) && hasRecord.data.length === 0) {
-    await practiseCollection.add({
-      data: {
-        user_id: options.user_id,
-        module_id: options.module_id,
-        isComplete: '2',
-        questions: questions,
-        useTime: '00:00',
-        _createTime: Date.now(),
-        _updateTime: Date.now()
-      }
-    })
-    return '增加记录成功'
+    return []
   } else {
-    await practiseCollection.where({ user_id: options.user_id, module_id: options.module_id}).update({
-      // data 传入需要局部更新的数据
-      data: {
-        isComplete: options.isComplete,
-        questions: options.questions,
-        useTime: options.useTime,
-        _updateTime: Date.now()
-      }
-    })
-    return '已更新记录'
+    return hasRecord.data[0]
   }
+}
+
+// 增加刷题练习记录
+const addPractise = async (options) => {
+  await practiseCollection.add({
+    data: {
+      user_id: options.user_id,
+      module_id: options.module_id,
+      isComplete: '2',
+      questions: options.questions,
+      useTime: '00:00',
+      _createTime: Date.now(),
+      _updateTime: Date.now()
+    }
+  })
+}
+
+// 更新刷题记录
+const updatePractise = async (options) => {
+  await practiseCollection.where({ user_id: options.user_id, module_id: options.module_id}).update({
+    // data 传入需要局部更新的数据
+    data: {
+      isComplete: options.isComplete,
+      questions: options.questions,
+      useTime: options.useTime,
+      _updateTime: Date.now()
+    }
+  })
 }
 
 // 数组乱序
@@ -182,6 +179,12 @@ exports.main = async (event, context) => {
     res = await getQuestionById(data);
   } else if (func === 'addQuestionRecord') {
     res = await addQuestionRecord(data);
+  } else if (func === 'getPractise') {
+    res = await getPractise(data);
+  } else if (func === 'addPractise') {
+    res = await addPractise(data);
+  } else if (func === 'updatePractise') {
+    res = await updatePractise(data);
   }
   return res;
 }

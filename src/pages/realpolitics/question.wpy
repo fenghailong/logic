@@ -48,6 +48,55 @@
       height: auto;
     }
   }
+  .logic-index-complete {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    color: #fff;
+    background-color: #387ffb;
+    border-radius: 50px;
+  }
+  .logic-index-popup-box {
+    padding: 20px;
+    text-align: center;
+  .logic-index-popup-title{
+    padding: 0 0 10px;
+  }
+  .logic-index-popup-list {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    .logic-index-popup-item {
+      width: 30px;
+      height: 30px;
+      line-height: 30px;
+      text-align: center;
+      color: #fff;
+      background-color: #387ffb;
+      border-radius: 30px;
+      margin-right: 10px;
+    }
+    .logic-index-popup-item-empty {
+      width: 30px;
+      height: 30px;
+      line-height: 30px;
+      text-align: center;
+      background-color: #666;
+      border-radius: 30px;
+      margin-right: 10px;
+    }
+  }
+  .logic-index-popup-button{
+    margin-top: 20px;
+    .van-button {
+      width: 60%;
+    }
+  }
+}
 }
 </style>
 <template>
@@ -66,6 +115,18 @@
         <question-item :questionItem="item" :questionIndex="index" @onChange="onChange"></question-item>
       </div>
     </div>
+    <div class="logic-index-complete" @click="openCompletePopup">交卷</div>
+    <van-popup get-container="#app" @click-overlay="closeCompletePopup" :show="isCompleteShow" position="bottom">
+      <div class="logic-index-popup-box" :style="{ height: '30vh' }">
+        <div class="logic-index-popup-title">交卷提示</div>
+        <div class="logic-index-popup-list">
+          <div v-for="(item, index) in questionList" :key="index" class="logic-index-popup-item {{item.youAnswer ? '' : 'logic-index-popup-item-empty'}}">{{index + 1}}</div>
+        </div>
+        <div class="logic-index-popup-button">
+          <van-button round type="info" @click="doSubmit">立刻交卷</van-button>
+        </div>
+      </div>
+    </van-popup>
   </div>
 </template>
 <config>
@@ -74,6 +135,8 @@
     usingComponents: {
       "van-tag": "../../libs/vant/tag/index",
       "van-icon": "../../libs/vant/icon/index",
+      "van-button": "../../libs/vant/button/index",
+      "van-popup": "../../libs/vant/popup/index",
       "question-item": "~@/components/question-item"
     }
   }
@@ -83,7 +146,7 @@
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
   import eventHub from '@/common/eventHub'
-  import { getQuestionById } from '@/api/question'
+  import { getQuestionById, getPractise, addPractise, updatePractise } from '@/api/question'
 
   wepy.page({
     store,
@@ -92,24 +155,27 @@
       ...mapGetters(['_id'])
     },
     data: {
-      moudleId: '',
-      title: '',
-      questionList: [],
-      timer2: null,
+      moudleId: '', //传入参数 模块id
+      title: '', //传入参数 模块名
+      questionList: [], //题目列表
+      isComplete: '2', //是否已完成
+      isCompleteShow: false, //是否交卷弹窗
+      timer2: null, // 计时器
       nowTime: '00:00', // 计时
       minutes: 0,
       seconds: 0
     },
     async onLoad(options) {
-      wx.showLoading({title: '加载中'})
       this.moudleId = options.id
       this.title = options.name
       wx.setNavigationBarTitle({title: options.name})
-      await this.getQuestionsList()
-      wx.hideLoading()
     },
-    onShow() {
-      console.log(3)
+    async onShow() {
+      wx.showLoading({title: '加载中'})
+      let result = await this.getQuestionsList()
+      // let result = await this.getQuestionsList()
+      wx.hideLoading()
+      console.log(result)
       if (this.timer2) {
         clearInterval(this.timer2)
       }
@@ -123,39 +189,91 @@
         this.nowTime = `${this.toZero(this.minutes) + ':' + this.toZero(this.seconds)}`
       }, 1000)
     },
-    onHide() {
-      console.log(1)
+    async onHide() {
+      await updatePractise ({
+        user_id: this._id,
+        module_id: this.moudleId,
+        isComplete: this.isComplete,
+        questions: this.questionList,
+        useTime: this.nowTime,
+      })
       clearInterval(this.timer2) // 清空计时器
-      // this.nowTime = '00:00:00'
-      // this.minutes = 0
-      // this.seconds = 0
     },
-    onUnload() {
+    async onUnload() {
+      await updatePractise ({
+        user_id: this._id,
+        module_id: this.moudleId,
+        isComplete: this.isComplete,
+        questions: this.questionList,
+        useTime: this.nowTime,
+      })
       clearInterval(this.timer2)
-      console.log(2)
     },
     methods: {
+      openCompletePopup () {
+        this.isCompleteShow = true
+      },
+      closeCompletePopup() {
+        this.isCompleteShow = false
+      },
       // 选中题目
       onChange(event,item,index) {
         this.questionList[index].youAnswer = event.$wx.detail
+        this.checkAnswer(this.questionList)
+        console.log(this.questionList)
+      },
+      checkAnswer(questionList) {
+        let arr = questionList.map(item => {
+          item.isRight = item.youAnswer === item.answer
+          return item
+        })
+        return arr
+      },
+      // 交卷
+      async doSubmit () {
+        wx.showLoading({title: '加载中'})
+        await updatePractise ({
+          user_id: this._id,
+          module_id: this.moudleId,
+          isComplete: '1',
+          questions: this.questionList,
+          useTime: this.nowTime,
+        })
+        wx.hideLoading()
       },
       async getQuestionsList () {
         let options = {
           user_id: this._id,
           module_id: this.moudleId,
         }
-        let data = await getQuestionById(options)
-        console.log(data)
-        this.questionList = data.result.resultQuestion.map(item => {
+        let result = await getPractise(options)
+        let questionList = []
+        if(result.result && result.result.isComplete === '2') {
+          questionList = result.result.questions
+          this.nowTime = result.result.useTime
+          this.isComplete = '2'
+          this.seconds = Number(result.result.useTime.slice(3,5))
+          this.minutes = Number(result.result.useTime.slice(0,2))
+        } else {
+          let data = await getQuestionById(options)
+          questionList = data.result.resultQuestion
+          this.nowTime = '00:00'
+          this.isComplete = '2'
+          options.questions = questionList.map(item => {
+            item.isRight = false
+            item.youAnswer = ''
+            item.isShowAnswer = false
+            return item
+          })
+          await addPractise(options)
+        }
+        this.questionList = questionList.map(item => {
           item.title =item.title.replace(/\<code/gi,'<code class="logic-code"')
           item.title =item.title.replace(/\<p/gi,'<p class="logic-p"')
           item.analysis =item.analysis.replace(/\<code/gi,'<code class="logic-code"')
           item.analysis =item.analysis.replace(/\<p/gi,'<p class="logic-p"')
-          item.youAnswer = ''
-          item.isShowAnswer = false
           return item
         })
-        console.log(this.questionList, '========')
       },
       // 添0 
       toZero(timeNumber) {
