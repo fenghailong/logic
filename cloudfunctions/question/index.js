@@ -98,6 +98,17 @@ const getPractise = async (options) => {
   }
 }
 
+
+// 获取刷题练习记录
+const getPractiseById = async (options) => {
+  let hasRecord = await practiseCollection.where({ _id: options.practise_id}).get();
+  if (Array.isArray(hasRecord.data) && hasRecord.data.length === 0) {
+    return []
+  } else {
+    return hasRecord.data[0]
+  }
+}
+
 // 增加刷题练习记录
 const addPractise = async (options) => {
   await practiseCollection.add({
@@ -182,6 +193,8 @@ exports.main = async (event, context) => {
     res = await addQuestionRecord(data);
   } else if (func === 'getPractise') {
     res = await getPractise(data);
+  } else if (func === 'getPractiseById') {
+    res = await getPractiseById(data);
   } else if (func === 'addPractise') {
     res = await addPractise(data);
   } else if (func === 'updatePractise') {

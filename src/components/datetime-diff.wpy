@@ -9,10 +9,11 @@
     props: {
       // 父页面传入，需要格式化的时间
       datetime: Number,
+      format: String,
     },
     computed: {
       formatDatetime: function() {
-        return diffForHumans(this.datetime)
+        return diffForHumans(this.datetime, this.format)
       }
     },
   })

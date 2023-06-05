@@ -32,6 +32,16 @@ export async function getPractise(data) {
 }
 
 // 获取一次刷题题目
+export async function getPractiseById(data) {
+  return await wx.cloud.callFunction({
+    name: 'question',
+    data: {
+      func: 'getPractiseById',
+      data
+    },
+  })
+}
+// 获取一次刷题题目
 export async function addPractise(data) {
   return await wx.cloud.callFunction({
     name: 'question',

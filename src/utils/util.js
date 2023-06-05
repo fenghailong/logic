@@ -3,7 +3,7 @@ import 'moment/locale/zh-cn'
 
 export function diffForHumans(date, format = 'YYYYMMDD H:mm:ss') {
   moment.locale('zh-cn')
-  return moment(date).fromNow()
+  return moment(date).format(format)
 }
 
 export function getSystemData (attr) {

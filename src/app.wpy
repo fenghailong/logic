@@ -103,6 +103,7 @@ wepy.app({
       'pages/realpolitics/detail',
       'pages/realpolitics/evaluation',
       'pages/realpolitics/question',
+      'pages/realpolitics/questionResult',
       'pages/linetest/index',
       'pages/linetest/list',
       'pages/linetest/detail',

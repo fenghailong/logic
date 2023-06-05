@@ -1,5 +1,5 @@
 {
-  "libVersion": "2.26.2",
+  "libVersion": "2.32.0",
   "projectname": "larabbs",
   "description": "项目私有配置文件。此文件中的内容将覆盖 project.config.json 中的相同字段。项目的改动优先同步到此文件中。详见文档：https://developers.weixin.qq.com/miniprogram/dev/devtools/projectconfig.html",
   "setting": {
@@ -26,6 +26,13 @@
           "name": "pages/index/list",
           "pathName": "pages/index/list",
           "query": "type='国考高频成语'",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "",
+          "pathName": "pages/realpolitics/questionResult",
+          "query": "id=3f194111647da82e00c221e25030877e&title=言语理解",
           "launchMode": "default",
           "scene": null
         }

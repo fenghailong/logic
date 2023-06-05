@@ -77,7 +77,7 @@
     <div class="logic-index-question-title">
       <rich-text nodes="{{ questionItem.title }}"></rich-text>
     </div>
-    <div v-if="doType == 'immediately' && questionItem.isShowAnswer" class="logic-index-question-options">
+    <div v-if="questionItem.isShowAnswer" class="logic-index-question-options">
       <div class="logic-index-question-options-isAnswer" v-for="(value, key) in questionItem.option" :key="key">
         <div class="logic-index-question-options-key {{questionItem.answer === key ? 'logic-index-question-options-key-answer' : ''}} {{questionItem.youAnswer === key && questionItem.answer != key ? 'logic-index-question-options-key-errAnswer' : ''}}">{{key}}</div>
         <div class="logic-index-question-options-value">{{value}}</div>
@@ -93,10 +93,10 @@
         <van-radio icon-size="24px" v-for="(value, key) in questionItem.option" :name="key">{{key}}.{{value}}</van-radio>
       </van-radio-group> -->
     </div>
-    <div v-if="doType == 'immediately' && questionItem.isShowAnswer" class="logic-index-question-answer">
+    <div v-if="questionItem.isShowAnswer" class="logic-index-question-answer">
       正确答案是：{{questionItem.answer}}
     </div>
-    <div v-if="doType == 'immediately' &&  questionItem.isShowAnswer" class="logic-index-question-analysis">
+    <div v-if="questionItem.isShowAnswer" class="logic-index-question-analysis">
       【解析】：
       <rich-text nodes="{{ questionItem.analysis }}"></rich-text>
     </div>
@@ -135,11 +135,6 @@
         default: {
           youAnswer: ''
         }
-      },
-      // 父页面传入，immediately 立刻显示答案 gather 不限时答案
-      doType: {
-        type: String,
-        default: 'immediately'
       }
     },
     data: {

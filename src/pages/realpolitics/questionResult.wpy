@@ -1,0 +1,201 @@
+<style lang="less">
+.page{
+  background-color: #eee;
+  padding: 15px;
+  .logic-index-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    // justify-content: space-between;
+    background-color: #fff;
+    padding: 15px;
+    line-height: 1;
+    border-radius: 10px;
+    .logic-index-header-top {
+      margin-bottom: 20px;
+    }
+    .logic-index-header-middle {
+      display: flex;
+      align-items: center;
+      align-self: start;
+      color: #888;
+      margin-top: 10px;
+      width: 100%;
+      .logic-index-header-text {
+        flex: 1;
+        margin-left: 5px;
+      }
+    }
+    .logic-index-header-right {
+    }
+  }
+  .logic-index-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-top: 20px;
+    .van-button {
+      width: 100px;
+    }
+  }
+  .logic-index-box {
+    // padding: 20px 20px;
+    padding-top: 20px;
+    .logic-index-question-list {
+      display: flex;
+      flex-direction: column;
+      // align-items: center;
+      margin-top: 10px;
+      background-color: #fff;
+      font-size: 16px;
+      padding: 15px;
+      transition: all 2s ease-in-out;
+      .van-radio {
+        padding: 5px 0;
+        .van-radio__label {
+          line-height: 26px;
+        }
+      }
+    }
+  }
+}
+</style>
+<template>
+  <div class="page">
+    <div class="logic-index-header">
+      <div class="logic-index-header-top">
+        <van-circle
+          value="{{rightPercent}}"
+          layer-color="#cccccc"
+          color="#387ffb"
+          clockwise="{{ false }}"
+          stroke-width="8"
+          size="120"
+          text="答对{{rightCount}}/{{questionList.length}}题"
+        />
+      </div>
+      <div class="logic-index-header-middle">
+        <van-icon name="shop-o" size="16px"/>
+        <div class="logic-index-header-text">练习模块</div>
+        <div class="logic-index-header-time">{{title}}</div>
+      </div>
+      <div class="logic-index-header-middle">
+        <van-icon name="shop-o" size="16px"/>
+        <div class="logic-index-header-text">使用时间</div>
+        <div class="logic-index-header-time">{{minutes>0 ? minutes + '分' : ''}}{{seconds>0 ? seconds + '秒' : ''}}</div>
+      </div>
+      <div class="logic-index-header-middle">
+        <van-icon name="underway-o" size="16px" />
+        <div class="logic-index-header-text">交卷时间</div>
+        <div class="logic-index-header-time">
+          <datetime-diff :datetime="practiseData._updateTime" format="YYYY年MM月DD日 HH:mm"></datetime-diff>
+          <!-- {{practiseData._updateTime}} -->
+        </div>
+      </div>
+    </div>
+    <div class="logic-index-button">
+      <van-button round type="info" @click="toIndex">返回首页</van-button>
+      <van-button round type="info" @click="toQuestion">继续刷题</van-button>
+    </div>
+    <div class="logic-index-box">
+      <div v-if="questionList.length > 0" v-for="(item, index) in questionList" :key="index" class="logic-index-question-list {{item.isShowAnswer ? 'logic-index-question-list-an' : ''}}">
+        <van-tag type="primary" size="large" style="margin-bottom: 5px">{{index+1}}.单选题</van-tag>
+        <question-item :questionItem="item" :questionIndex="index" @onChange="onChange"></question-item>
+      </div>
+    </div>
+    <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
+  </div>
+</template>
+<config>
+  {
+    navigationBarTitleText: '专项刷题',
+    usingComponents: {
+      "van-tag": "../../libs/vant/tag/index",
+      "van-icon": "../../libs/vant/icon/index",
+      "van-button": "../../libs/vant/button/index",
+      "van-circle": "../../libs/vant/circle/index",
+      "van-dialog": "../../libs/vant/dialog/index",
+      "question-item": "~@/components/question-item",
+      "datetime-diff": "~@/components/datetime-diff"
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import { mapGetters } from '@wepy/x'
+  import eventHub from '@/common/eventHub'
+  import { getPractiseById} from '@/api/question'
+  import Dialog from '../../libs/vant/dialog/dialog';
+
+  wepy.page({
+    store,
+    computed: {
+      // 用户信息
+      ...mapGetters(['_id'])
+    },
+    data: {
+      practise_id: '', //传入参数 练习id
+      practiseData: {},
+      title: '', //模块名称
+      questionList: [], //题目列表
+      minutes: 0, //用时
+      seconds: 0, //用时
+      rightCount: 0,
+      rightPercent: 0,
+    },
+    async onLoad(options) {
+      this.practise_id = options.id
+      this.title = options.title
+      this.moudleId = options.moudleId
+      wx.showLoading({title: '加载中'})
+      await this.getQuestionsList()
+      wx.hideLoading()
+      // this.questionList = JSON.parse((decodeURIComponent(options.questionList)))
+      wx.setNavigationBarTitle({title: options.title})
+    },
+    onShow() {
+      wx.hideHomeButton()
+    },
+    methods: {
+      async getQuestionsList () {
+        let options = {
+          practise_id: this.practise_id
+        }
+        // 获取一条联系记录
+        let result = await getPractiseById(options)
+        this.practiseData = result.result
+        console.log(result,'============')
+        if(result.result && result.result.questions.length > 0) {
+          this.seconds = Number(result.result.useTime.slice(3,5))
+          this.minutes = Number(result.result.useTime.slice(0,2))
+          let rightCount = 0
+          this.questionList = result.result.questions.map(item => {
+            item.title =item.title.replace(/\<code/gi,'<code class="logic-code"')
+            item.title =item.title.replace(/\<p/gi,'<p class="logic-p"')
+            item.analysis =item.analysis.replace(/\<code/gi,'<code class="logic-code"')
+            item.analysis =item.analysis.replace(/\<p/gi,'<p class="logic-p"')
+            item.isShowAnswer = true
+            if (item.isRight) {
+              rightCount += 1
+            }
+            return item
+          })
+          console.log(rightCount)
+          this.rightCount = rightCount
+          this.rightPercent = parseInt((rightCount/this.questionList.length)*100)
+        }
+      },
+      toQuestion () {
+        wx.navigateTo({
+          url: `/pages/realpolitics/question?id=${this.moudleId}&name=${this.title}`,
+        })
+      },
+      toIndex () {
+        wx.navigateTo({
+          url: `/pages/index/index`,
+        })
+      },
+    }
+  })
+</script>
