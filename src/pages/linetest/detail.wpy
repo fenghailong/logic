@@ -193,10 +193,20 @@
       wx.setNavigationBarTitle({title: this.detail.title})
     },
     methods: {
+      // // 选中题目
+      // onChange(event,item,index) {
+      //   this.questionList[index].youAnswer = event.$wx.detail
+      //   this.questionList[index].isShowAnswer = true
+      // },
       // 选中题目
-      onChange(event,item,index) {
-        this.questionList[index].youAnswer = event.$wx.detail
-        this.questionList[index].isShowAnswer = true
+      onChange(item,key,index) {
+        this.$set(this.questionList[index], 'youAnswer', key)
+        this.$set(this.questionList[index], 'isShowAnswer', true)
+        this.$set(this.questionList[index], 'isRight', key === item.answer)
+        // this.questionList[index].youAnswer = event.$wx.detail
+        // this.questionList[index].isRight = event.$wx.detail === item.answer
+        // this.checkAnswer(this.questionList)
+        console.log(this.questionList)
       },
       // 获取模块词语列表
       async getKnowledgeDetailData(options) {

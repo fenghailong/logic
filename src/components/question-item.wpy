@@ -54,14 +54,19 @@
       margin-right: 10px;
       padding: 1px 8px;
     }
+    .logic-index-question-options-key-youAnswer {
+      background-color: #387ffb;
+      // border: none;
+      color: #fff;
+    }
     .logic-index-question-options-key-answer {
       background-color: rgb(95, 169, 93);
-      border: none;
+      // border: none;
       color: #fff;
     }
     .logic-index-question-options-key-errAnswer {
       background-color: rgb(206, 23, 23);
-      border: none;
+      // border: none;
       color: #fff;
     }
   }
@@ -79,9 +84,14 @@
       </div>
     </div>
     <div v-else class="logic-index-question-options">
-      <van-radio-group value="{{ questionItem.youAnswer }}" @change="onChange($event, questionItem, questionIndex)">
-        <van-radio icon-size="24px" v-for="(value, key) in questionItem.option" :name="key" :key="key">{{key}}.{{value}}</van-radio>
-      </van-radio-group>
+      <div class="logic-index-question-options-isAnswer" v-for="(value, key) in questionItem.option" :key="key" @click="onChange(questionItem, key, questionIndex)">
+        <div class="logic-index-question-options-key {{questionItem.youAnswer === key ? 'logic-index-question-options-key-youAnswer' : ''}}">{{key}}</div>
+        <div class="logic-index-question-options-value">{{value}}</div>
+      </div>
+
+      <!-- <van-radio-group value="{{ questionItem.youAnswer }}" @change="onChange($event, questionItem, questionIndex)">
+        <van-radio icon-size="24px" v-for="(value, key) in questionItem.option" :name="key">{{key}}.{{value}}</van-radio>
+      </van-radio-group> -->
     </div>
     <div v-if="doType == 'immediately' && questionItem.isShowAnswer" class="logic-index-question-answer">
       正确答案是：{{questionItem.answer}}
@@ -122,7 +132,9 @@
       // 父页面传入，请求参数
       questionItem: {
         type: Object,
-        default: {}
+        default: {
+          youAnswer: ''
+        }
       },
       // 父页面传入，immediately 立刻显示答案 gather 不限时答案
       doType: {
@@ -135,9 +147,13 @@
     created () {
     },
     methods: {
-      onChange(event,item,index) {
-        this.$emit('onChange',event,item,index)
+      onChange(item, key, index) {
+        this.questionItem.youAnswer = key
+        this.$emit('onChange',item,key,index)
       },
+      // onChange(event,item,index) {
+      //   this.$emit('onChange',event,item,index)
+      // },
     }
   })
 </script>

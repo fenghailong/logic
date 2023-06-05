@@ -78,7 +78,7 @@ const getQuestionById = async (data) => {
         if (item.question_id == element._id) {
           allStudyQuestion.push(element)
         }
-      }) 
+      })
     });
   }
   resultQuestion = data.isShuffle ? shuffle(resultQuestion).slice(0,10) : resultQuestion.slice(0,10)
@@ -90,7 +90,7 @@ const getQuestionById = async (data) => {
 
 // 获取刷题练习记录
 const getPractise = async (options) => {
-  let hasRecord = await practiseCollection.where({ user_id: options.user_id, module_id: options.module_id}).get();
+  let hasRecord = await practiseCollection.where({ user_id: options.user_id, module_id: options.module_id, isComplete: '2'}).get();
   if (Array.isArray(hasRecord.data) && hasRecord.data.length === 0) {
     return []
   } else {
@@ -115,7 +115,7 @@ const addPractise = async (options) => {
 
 // 更新刷题记录
 const updatePractise = async (options) => {
-  await practiseCollection.where({ user_id: options.user_id, module_id: options.module_id}).update({
+  await practiseCollection.where({ _id: options.practise_id}).update({
     // data 传入需要局部更新的数据
     data: {
       isComplete: options.isComplete,
@@ -139,8 +139,9 @@ const shuffle = (array) => {
 }
 
 
-// 增加考点评测记录
+// 增加刷题记录
 const addQuestionRecord = async (options) => {
+  console.log(options)
   let hasRecord = await questionRCollection.where({ user_id: options.user_id, question_id: options.question_id}).get();
   if (Array.isArray(hasRecord.data) && hasRecord.data.length === 0) {
     await questionRCollection.add({

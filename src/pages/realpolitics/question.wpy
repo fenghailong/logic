@@ -146,7 +146,7 @@
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
   import eventHub from '@/common/eventHub'
-  import { getQuestionById, getPractise, addPractise, updatePractise } from '@/api/question'
+  import { getQuestionById, getPractise, addPractise, updatePractise, addQuestionRecord} from '@/api/question'
 
   wepy.page({
     store,
@@ -160,6 +160,7 @@
       questionList: [], //题目列表
       isComplete: '2', //是否已完成
       isCompleteShow: false, //是否交卷弹窗
+      practiseData: {},
       timer2: null, // 计时器
       nowTime: '00:00', // 计时
       minutes: 0,
@@ -191,8 +192,7 @@
     },
     async onHide() {
       await updatePractise ({
-        user_id: this._id,
-        module_id: this.moudleId,
+        practise_id: this.practiseData._id,
         isComplete: this.isComplete,
         questions: this.questionList,
         useTime: this.nowTime,
@@ -201,8 +201,7 @@
     },
     async onUnload() {
       await updatePractise ({
-        user_id: this._id,
-        module_id: this.moudleId,
+        practise_id: this.practiseData._id,
         isComplete: this.isComplete,
         questions: this.questionList,
         useTime: this.nowTime,
@@ -217,36 +216,60 @@
         this.isCompleteShow = false
       },
       // 选中题目
-      onChange(event,item,index) {
-        this.questionList[index].youAnswer = event.$wx.detail
-        this.checkAnswer(this.questionList)
+      onChange(item,key,index) {
+        this.$set(this.questionList[index], 'youAnswer', key)
+        this.$set(this.questionList[index], 'isRight', key === item.answer)
+        // this.questionList[index].youAnswer = event.$wx.detail
+        // this.questionList[index].isRight = event.$wx.detail === item.answer
+        // this.checkAnswer(this.questionList)
         console.log(this.questionList)
       },
-      checkAnswer(questionList) {
-        let arr = questionList.map(item => {
-          item.isRight = item.youAnswer === item.answer
-          return item
-        })
-        return arr
-      },
+      // checkAnswer(questionList) {
+      //   let arr = questionList.map(item => {
+      //     item.isRight = item.youAnswer === item.answer
+      //     return item
+      //   })
+      //   return arr
+      // },
       // 交卷
       async doSubmit () {
-        wx.showLoading({title: '加载中'})
+        wx.showLoading({title: '提交中'})
+        clearInterval(this.timer2)
         await updatePractise ({
-          user_id: this._id,
-          module_id: this.moudleId,
+          practise_id: this.practiseData._id,
           isComplete: '1',
           questions: this.questionList,
           useTime: this.nowTime,
         })
+        this.isComplete = '1'
+        await this.addQuestionRecord(this.questionList)
         wx.hideLoading()
+      },
+      // 提交刷题记录
+      async addQuestionRecord(subjectList) {
+        let tasks = []
+        subjectList.forEach(item => {
+          const promise = addQuestionRecord({
+            question_id: item._id,
+            user_id: this._id,
+            module_id: item.module_id,
+            isRight: item.isRight ? '1' : '2'
+          })
+          tasks.push(promise)
+        })
+        console.log(tasks)
+        // 等待所有
+        await Promise.all(tasks)
       },
       async getQuestionsList () {
         let options = {
           user_id: this._id,
           module_id: this.moudleId,
         }
+        // 获取一条联系记录
         let result = await getPractise(options)
+        this.practiseData = result.result
+
         let questionList = []
         if(result.result && result.result.isComplete === '2') {
           questionList = result.result.questions
@@ -266,6 +289,8 @@
             return item
           })
           await addPractise(options)
+          let resultP = await getPractise(options)
+          this.practiseData = resultP.result
         }
         this.questionList = questionList.map(item => {
           item.title =item.title.replace(/\<code/gi,'<code class="logic-code"')
@@ -275,7 +300,7 @@
           return item
         })
       },
-      // 添0 
+      // 添0
       toZero(timeNumber) {
         return timeNumber < 10 ? '0' + timeNumber : timeNumber
       },

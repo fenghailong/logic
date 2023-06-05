@@ -10,6 +10,17 @@ export async function getQuestionById(data) {
 }
 
 // 获取一次刷题题目
+export async function addQuestionRecord(data) {
+  return await wx.cloud.callFunction({
+    name: 'question',
+    data: {
+      func: 'addQuestionRecord',
+      data
+    },
+  })
+}
+
+// 获取一次刷题题目
 export async function getPractise(data) {
   return await wx.cloud.callFunction({
     name: 'question',
