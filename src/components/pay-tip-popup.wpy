@@ -1,67 +1,141 @@
 <style lang="less">
 .logic-index-popup-box {
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
   .logic-index-popup-title{
     text-align: center;
     padding: 0 0 10px;
   }
   .logic-index-popup-input{
-    margin: 20px 0 0;
+    width: 100%;
     border: 1px solid #eee;
   }
   .logic-index-popup-tip {
-    margin-top: 5px;
-    color: #ccc;
+    color: #666;
     font-size: 12px;
-    margin-bottom: 20px;
-    image {
-      // width: 100%;
-      // height: 100%;
-    }
   }
-  .logic-index-popup-button{
+  .logic-index-popup-tip-two {
+    color: #666;
+    font-size: 12px;
+    text-align: center;
+  }
+  .logic-index-popup-footer{
     display: flex;
     justify-content: space-around;
     margin-top: 20px;
-    .van-button {
-      width: 30%;
-    }
+    width: 100%;
+  }
+  .logic-index-popup-button{
+    // width: 50%;
   }
 }
 .logic-index-popup-member-box {
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
   .logic-index-popup-member-title {
     text-align: center;
     padding: 0 0 10px;
   }
   .logic-index-popup-member-text {
-    margin-top: 5px;
-    color: #ccc;
+    color: #666;
     font-size: 12px;
     padding: 0 20px;
-    margin-bottom: 20px;
   }
   .logic-index-popup-member-tip {
-    margin-top: 5px;
-    color: #ccc;
+    color: #666;
     font-size: 12px;
-    margin-bottom: 20px;
     // position: relative;
   }
-  .logic-index-popup-button{
-      display: flex;
-      justify-content: space-around;
-      margin-top: 20px;
-      .van-button {
-        width: 50%;
-      }
-    } 
+  .logic-index-popup-member-button {
+    width: 100%;
+  }
+}
+.logic-index-popup-userpower {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-bottom: 20px;
+  background-color: #eee;
+  border-radius: 5px;
+  width: 100%;
+  padding: 10px 0;
+  .logic-index-popup-userpower-text {
+    width: 100%;
+    padding: 0 0 15px;
+    text-align: center;
+  }
+  .logic-index-popup-userpower-list {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 100%;
+    // padding: 0 15px 15px;
+  }
+  .logic-index-popup-userpower-item {
+    text-align: center;
+    margin-right: 5px;
+  }
+  .logic-index-popup-userpower-icon {
+    width: 30px;
+    height: 30px;
+  }
+  .logic-index-popup-userpower-name {
+
+  }
 }
 </style>
 <template>
   <div class="logic-index-popup">
     <van-popup get-container="#app" @click-overlay="closePopup" :show="tipsShow" position="bottom">
-      <div v-if="isIOS" class="logic-index-popup-box" :style="{ height: '30vh' }">
+      <div v-if="isIOS" class="logic-index-popup-box" :style="{ height: '70vh' }">
+        <div class="logic-index-popup-userpower">
+          <div class="logic-index-popup-userpower-text">普通用户(权限)</div>
+          <div class="logic-index-popup-userpower-list">
+            <div class="logic-index-popup-userpower-item">
+              <image class="logic-index-popup-userpower-icon" src="../assets/images/judgement.png" />
+              <div class="logic-index-popup-userpower-name">高频成语</div>
+            </div>
+            <div class="logic-index-popup-userpower-item">
+              <image class="logic-index-popup-userpower-icon" src="../assets/images/quantity.png" />
+              <div class="logic-index-popup-userpower-name">申论规范</div>
+            </div>
+            <div class="logic-index-popup-userpower-item">
+              <image class="logic-index-popup-userpower-icon" src="../assets/images/dataany.png" />
+              <div class="logic-index-popup-userpower-name">人物素材</div>
+            </div>
+            <div class="logic-index-popup-userpower-item">
+              <image class="logic-index-popup-userpower-icon" src="../assets/images/person.png" />
+              <div class="logic-index-popup-userpower-name">行测模块</div>
+            </div>
+          </div>
+        </div>
+        <div class="logic-index-popup-userpower">
+          <div class="logic-index-popup-userpower-text">会员用户(权限)</div>
+          <div class="logic-index-popup-userpower-list">
+            <div class="logic-index-popup-userpower-item">
+              <image class="logic-index-popup-userpower-icon" src="../assets/images/studytalk.png" />
+              <div class="logic-index-popup-userpower-name">公基模块</div>
+            </div>
+            <div class="logic-index-popup-userpower-item">
+              <image class="logic-index-popup-userpower-icon" src="../assets/images/speech.png" />
+              <div class="logic-index-popup-userpower-name">时事政治</div>
+            </div>
+            <div class="logic-index-popup-userpower-item">
+              <image class="logic-index-popup-userpower-icon" src="../assets/images/reply.png" />
+              <div class="logic-index-popup-userpower-name">常识积累</div>
+            </div>
+            <div class="logic-index-popup-userpower-item">
+              <image class="logic-index-popup-userpower-icon" src="../assets/images/index-selected.png" />
+              <div class="logic-index-popup-userpower-name">刷题计划</div>
+            </div>
+          </div>
+        </div>
         <div class="logic-index-popup-title">激活提示</div>
         <div class="logic-index-popup-input">
           <van-field
@@ -71,25 +145,70 @@
             @change = "codeChange"
           />
         </div>
-        <div class="logic-index-popup-tip">Tips: 激活后，可立即解锁小程序所有功能。</div>
-        <div class="logic-index-popup-tip">激活码获取，请联系客服。</div>
-        <div class="logic-index-popup-button">
-          <van-button round type="info" open-type="contact" @contact="onCustomerServiceButtonClick">联系客服</van-button>
-          <van-button v-if="user.phoneNumber" round type="info" @click="doActivate">立刻激活</van-button>
-          <van-button v-else round type="info" @getphonenumber="getphonenumber"  open-type="getPhoneNumber">立刻激活</van-button>
-        </div>
-      </div>
-      <div v-else class="logic-index-popup-member-box" :style="{ height: '30vh' }">
-        <div class="logic-index-popup-member-title">解锁提示</div>
-        <div class="logic-index-popup-member-tip">
-          <div class="logic-index-popup-member-text">Tips: 该功能未会员专享功能，需要开通会员，开通会员后，可立即解锁小程序所有功能。</div>
-          <!-- <image src="../assets/images/member.png" /> -->
-          <div class="logic-index-popup-member-button">
-            <!-- <van-button round type="info" open-type="contact" @contact="onCustomerServiceButtonClick">联系客服</van-button> -->
-            <van-button v-if="user.phoneNumber" round type="info" block @click="pay">开通会员</van-button>
-            <van-button v-else round type="info" block @getphonenumber="getphonenumber"  open-type="getPhoneNumber">开通会员</van-button>
+        <div class="logic-index-popup-tip">Tips: 活动期间，激活会员永久有效，「行测模块」后续可能移入会员权益,「刷题计划」即将上线！(激活码获取，请联系客服)</div>
+        <!-- <div class="logic-index-popup-tip-two"></div> -->
+        <div class="logic-index-popup-footer">
+          <div class="logic-index-popup-button">
+            <van-button round type="info" open-type="contact" @contact="onCustomerServiceButtonClick">联系客服</van-button>
+          </div>
+          <div class="logic-index-popup-button">
+            <van-button v-if="user.phoneNumber" round type="info" @click="doActivate">立刻激活</van-button>
+            <van-button v-else round type="info" @getphonenumber="getphonenumber"  open-type="getPhoneNumber">立刻激活</van-button>
           </div>
         </div>
+      </div>
+      <div v-else class="logic-index-popup-member-box" :style="{ height: '70vh' }">
+        <div class="logic-index-popup-userpower">
+          <div class="logic-index-popup-userpower-text">普通用户(权限)</div>
+          <div class="logic-index-popup-userpower-list">
+            <div class="logic-index-popup-userpower-item">
+              <image class="logic-index-popup-userpower-icon" src="../assets/images/judgement.png" />
+              <div class="logic-index-popup-userpower-name">高频成语</div>
+            </div>
+            <div class="logic-index-popup-userpower-item">
+              <image class="logic-index-popup-userpower-icon" src="../assets/images/quantity.png" />
+              <div class="logic-index-popup-userpower-name">申论规范</div>
+            </div>
+            <div class="logic-index-popup-userpower-item">
+              <image class="logic-index-popup-userpower-icon" src="../assets/images/dataany.png" />
+              <div class="logic-index-popup-userpower-name">人物素材</div>
+            </div>
+            <div class="logic-index-popup-userpower-item">
+              <image class="logic-index-popup-userpower-icon" src="../assets/images/person.png" />
+              <div class="logic-index-popup-userpower-name">行测模块</div>
+            </div>
+          </div>
+        </div>
+        <div class="logic-index-popup-userpower">
+          <div class="logic-index-popup-userpower-text">会员用户(权限)</div>
+          <div class="logic-index-popup-userpower-list">
+            <div class="logic-index-popup-userpower-item">
+              <image class="logic-index-popup-userpower-icon" src="../assets/images/studytalk.png" />
+              <div class="logic-index-popup-userpower-name">公基模块</div>
+            </div>
+            <div class="logic-index-popup-userpower-item">
+              <image class="logic-index-popup-userpower-icon" src="../assets/images/speech.png" />
+              <div class="logic-index-popup-userpower-name">时事政治</div>
+            </div>
+            <div class="logic-index-popup-userpower-item">
+              <image class="logic-index-popup-userpower-icon" src="../assets/images/reply.png" />
+              <div class="logic-index-popup-userpower-name">常识积累</div>
+            </div>
+            <div class="logic-index-popup-userpower-item">
+              <image class="logic-index-popup-userpower-icon" src="../assets/images/index-selected.png" />
+              <div class="logic-index-popup-userpower-name">刷题计划</div>
+            </div>
+          </div>
+        </div>
+        <div class="logic-index-popup-member-title">解锁提示</div>
+        <div class="logic-index-popup-member-text">Tips: 活动期间，开通会员永久有效，「行测模块」后续可能移入会员权益,「刷题计划」即将上线！</div>
+        <!-- <image src="../assets/images/member.png" /> -->
+        <div class="logic-index-popup-member-button">
+          <!-- <van-button round type="info" open-type="contact" @contact="onCustomerServiceButtonClick">联系客服</van-button> -->
+          <van-button v-if="user.phoneNumber" round type="info" block @click="pay">开通会员</van-button>
+          <van-button v-else round type="info" block @getphonenumber="getphonenumber"  open-type="getPhoneNumber">开通会员</van-button>
+        </div>
+
       </div>
     </van-popup>
   </div>

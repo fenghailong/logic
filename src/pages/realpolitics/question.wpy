@@ -108,7 +108,8 @@
     </div>
     <div class="logic-index-box">
       <div v-if="questionList.length > 0" v-for="(item, index) in questionList" :key="index" class="logic-index-question-list">
-        <van-tag type="primary" size="large" style="margin-bottom: 5px">{{index+1}}.单选题</van-tag>
+        <van-tag v-if="item.exa_type === '1'" type="primary" size="large" style="margin-bottom: 5px">{{index+1}}.单选题</van-tag>
+        <van-tag v-else-if="item.exa_type === '2'" type="primary" size="large" style="margin-bottom: 5px">{{index+1}}.多选题</van-tag>
         <question-item :questionItem="item" :questionIndex="index" @onChange="onChange"></question-item>
       </div>
     </div>

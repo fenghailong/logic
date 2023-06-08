@@ -73,32 +73,54 @@
 }
 </style>
 <template>
-  <div class="logic-index-question-item">
-    <div class="logic-index-question-title">
-      <rich-text nodes="{{ questionItem.title }}"></rich-text>
-    </div>
-    <div v-if="questionItem.isShowAnswer" class="logic-index-question-options">
-      <div class="logic-index-question-options-isAnswer" v-for="(value, key) in questionItem.option" :key="key">
-        <div class="logic-index-question-options-key {{questionItem.answer === key ? 'logic-index-question-options-key-answer' : ''}} {{questionItem.youAnswer === key && questionItem.answer != key ? 'logic-index-question-options-key-errAnswer' : ''}}">{{key}}</div>
-        <div class="logic-index-question-options-value">{{value}}</div>
+  <div>
+    <div v-if="questionItem.exa_type === '1'" class="logic-index-question-item">
+      <div class="logic-index-question-title">
+        <rich-text nodes="{{ questionItem.title }}"></rich-text>
+      </div>
+      <div v-if="questionItem.isShowAnswer" class="logic-index-question-options">
+        <div class="logic-index-question-options-isAnswer" v-for="(value, key) in questionItem.option" :key="key">
+          <div class="logic-index-question-options-key {{questionItem.answer === key ? 'logic-index-question-options-key-answer' : ''}} {{questionItem.youAnswer === key && questionItem.answer != key ? 'logic-index-question-options-key-errAnswer' : ''}}">{{key}}</div>
+          <div class="logic-index-question-options-value">{{value}}</div>
+        </div>
+      </div>
+      <div v-else class="logic-index-question-options">
+        <div class="logic-index-question-options-isAnswer" v-for="(value, key) in questionItem.option" :key="key" @click="onChange(questionItem, key, questionIndex)">
+          <div class="logic-index-question-options-key {{questionItem.youAnswer === key ? 'logic-index-question-options-key-youAnswer' : ''}}">{{key}}</div>
+          <div class="logic-index-question-options-value">{{value}}</div>
+        </div>
+      </div>
+      <div v-if="questionItem.isShowAnswer" class="logic-index-question-answer">
+        正确答案是：{{questionItem.answer}}
+      </div>
+      <div v-if="questionItem.isShowAnswer" class="logic-index-question-analysis">
+        【解析】：
+        <rich-text nodes="{{ questionItem.analysis }}"></rich-text>
       </div>
     </div>
-    <div v-else class="logic-index-question-options">
-      <div class="logic-index-question-options-isAnswer" v-for="(value, key) in questionItem.option" :key="key" @click="onChange(questionItem, key, questionIndex)">
-        <div class="logic-index-question-options-key {{questionItem.youAnswer === key ? 'logic-index-question-options-key-youAnswer' : ''}}">{{key}}</div>
-        <div class="logic-index-question-options-value">{{value}}</div>
+    <div v-else-if="questionItem.exa_type === '2'" class="logic-index-question-item">
+      <div class="logic-index-question-title">
+        <rich-text nodes="{{ questionItem.title }}"></rich-text>
       </div>
-
-      <!-- <van-radio-group value="{{ questionItem.youAnswer }}" @change="onChange($event, questionItem, questionIndex)">
-        <van-radio icon-size="24px" v-for="(value, key) in questionItem.option" :name="key">{{key}}.{{value}}</van-radio>
-      </van-radio-group> -->
-    </div>
-    <div v-if="questionItem.isShowAnswer" class="logic-index-question-answer">
-      正确答案是：{{questionItem.answer}}
-    </div>
-    <div v-if="questionItem.isShowAnswer" class="logic-index-question-analysis">
-      【解析】：
-      <rich-text nodes="{{ questionItem.analysis }}"></rich-text>
+      <div v-if="questionItem.isShowAnswer" class="logic-index-question-options">
+        <div class="logic-index-question-options-isAnswer" v-for="(value, key) in questionItem.option" :key="key">
+          <div class="logic-index-question-options-key {{questionItem.answer === key ? 'logic-index-question-options-key-answer' : ''}} {{questionItem.youAnswer === key && questionItem.answer != key ? 'logic-index-question-options-key-errAnswer' : ''}}">{{key}}</div>
+          <div class="logic-index-question-options-value">{{value}}</div>
+        </div>
+      </div>
+      <div v-else class="logic-index-question-options">
+        <div class="logic-index-question-options-isAnswer" v-for="(value, key) in questionItem.option" :key="key" @click="onMoreChange(questionItem, key, questionIndex)">
+          <div class="logic-index-question-options-key {{questionItem.youAnswer === key ? 'logic-index-question-options-key-youAnswer' : ''}}">{{key}}</div>
+          <div class="logic-index-question-options-value">{{value}}</div>
+        </div>
+      </div>
+      <div v-if="questionItem.isShowAnswer" class="logic-index-question-answer">
+        正确答案是：{{questionItem.answer}}
+      </div>
+      <div v-if="questionItem.isShowAnswer" class="logic-index-question-analysis">
+        【解析】：
+        <rich-text nodes="{{ questionItem.analysis }}"></rich-text>
+      </div>
     </div>
   </div>
 </template>
@@ -142,10 +164,15 @@
     created () {
     },
     methods: {
+      // 单选
       onChange(item, key, index) {
         this.questionItem.youAnswer = key
         this.$emit('onChange',item,key,index)
       },
+      onMoreChange (item, key, index) {
+        let temp = this.questionItem.youAnswer ? this.questionItem.youAnswer.split(',') : []
+        console.log(temp)
+      }
       // onChange(event,item,index) {
       //   this.$emit('onChange',event,item,index)
       // },

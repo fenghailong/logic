@@ -4,8 +4,9 @@
       background-repeat:no-repeat;
       background-size: 100%;
       background-color: #F5F7FB;
+      height: auto;
     .logic-index-box {
-      padding: 0 15px;
+      padding: 0 15px 120px;
       .logic-index-box-user {
         display: flex;
         align-items: center;
@@ -52,6 +53,52 @@
             font-weight: 400;
             color: #333333;
             line-height: 1;
+          }
+        }
+      }
+      .logic-index-box-member {
+        margin-bottom: 20px;
+        position: relative;
+        height: 50px;
+        .logic-index-box-member-bg {
+          width: 100%;
+          position: absolute;
+          z-index: 0;
+        }
+        .logic-index-box-member-content {
+          width: 100%;
+          position: absolute;
+          z-index: 1;
+          top: 0;
+          bottom: 0;
+          margin: auto 0;
+          display: flex;
+          align-items: center;
+        }
+        .logic-index-box-member-icon {
+          width: 37px;
+          height: 33px;
+          margin-right: 10px;
+          padding-left: 15px;
+        }
+        .logic-index-box-member-tips {
+          font-size: 13px;
+          font-weight: 400;
+          color: #6A4F2B;
+          line-height: 1;
+          flex: 1;
+        }
+        .logic-index-box-member-button {
+          width: 84px;
+          height: 28px;
+          background: #675A48;
+          border-radius: 14px;
+          margin-right: 15px;
+          .van-button {
+            height: 28px;
+            font-size: 12px;
+            font-weight: 400;
+            color: #F2CEA3;
           }
         }
       }
@@ -288,6 +335,19 @@
           <div class="logic-index-box-user-count">已有{{ userCount }}人加入学习</div>
         </div>
       </div>
+      <div v-if="user.isMember != '1'" class="logic-index-box-member">
+        <image class="logic-index-box-member-bg" src="../../assets/images/member-bg.png" />
+        <div class="logic-index-box-member-content">
+          <image class="logic-index-box-member-icon" src="../../assets/images/member-icon.png" />
+          <div class="logic-index-box-member-tips">
+            开通会员，享受更多特权
+          </div>
+          <div class="logic-index-box-member-button">
+            <van-button v-if="isIOS" round type="info" color="#675A48" @click="openPayTipPopup">立即激活</van-button>
+            <van-button v-else round type="info" color="#675A48" @click="openPayTipPopup">开通会员</van-button>
+          </div>
+        </div>
+      </div>
       <div class="logic-index-box-basic">
         <div class="logic-index-box-basic-header">
           <image v-if="chooseType === '1'" class="logic-index-box-basic-header-bg" src="../../assets/images/linetest-bg.png" />
@@ -374,6 +434,7 @@
         </van-button>
       </div>
     </div>
+    <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
   </div>
 </template>
 <!-- navigationStyle: 'custom', -->
@@ -388,7 +449,8 @@
       "van-tag": "../../libs/vant/tag/index",
       "van-icon": "../../libs/vant/icon/index",
       "van-button": "../../libs/vant/button/index",
-      "navigation-bar": "~@/components/navigation-bar"
+      "navigation-bar": "~@/components/navigation-bar",
+      "pay-tip-popup": "~@/components/pay-tip-popup"
     }
   }
 </config>
@@ -419,13 +481,16 @@
       // searchList: [],
       // listData: [],
       // 事业单位模块
-      undertaking: []
+      undertaking: [],
+      isIOS: false,
+      tipsShow: false
     },
     computed: {
       ...mapGetters([ 'isLoggedIn', 'user' ])
     },
     async onLoad() {
       await this.$store.dispatch('login')
+      this.getSystemInfo()
       this.getUserCount()
       this.getAllModulesData()
       // await sendMessage() //调用模版消息
@@ -434,6 +499,21 @@
       wx.stopPullDownRefresh()
     },
     methods: {
+      openPayTipPopup () {
+        this.tipsShow = true
+      },
+      closePayPopup (e) {
+        this.tipsShow = e
+      },
+      getSystemInfo () {
+        let that = this
+        wx.getSystemInfo({
+          success (res) {
+            that.isIOS = res.platform === 'ios'
+            // that.isIOS = true
+          }
+        })
+      },
       async getUserCount () {
         let result = await getUserCount()
         this.userCount = result.result.total
