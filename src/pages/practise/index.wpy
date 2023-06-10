@@ -1,0 +1,157 @@
+<style lang="less">
+.page{
+  background-color: #eee;
+  .logic-detail-box {
+    padding: 10px;
+  }
+  .logic-detail-content {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    .logic-detail-content-title {
+      text-align: left;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .logic-detail-content-body {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .logic-detail-content-time {
+      font-size: 14px;
+      color: #999;
+      flex: 1;
+    }
+    .logic-detail-content-message {
+      font-size: 14px;
+      color: #999;
+      .logic-detail-content-span {
+        color: #387ffb;
+      }
+    }
+  }
+}
+</style>
+<template>
+  <div class="page">
+    <div class="logic-detail-box">
+      <div v-for="(item, index) in practiseList" :key="index" class="logic-detail-content" @click="toQuestion(item)">
+        <div class="logic-detail-content-title">{{item.module.name}}</div>
+        <div class="logic-detail-content-body">
+          <div class="logic-detail-content-time">
+            <datetime-diff :datetime="item._updateTime" format="YYYY年MM月DD日"></datetime-diff>
+          </div>
+          <div v-if="item.isComplete === '1'" class="logic-detail-content-message">
+            共<span class="logic-detail-content-span">{{item.questions.length}}</span>道，做对<span class="logic-detail-content-span">{{item.rightCount}}</span>道
+          </div>
+          <div v-else class="logic-detail-content-tag">
+            <van-tag type="primary" plain size="large">未完成</van-tag>
+          </div>
+        </div>
+      </div>
+      <div class="weui-loadmore weui-loadmore_line" v-if="noMoreData">
+        <div class="weui-loadmore__tips weui-loadmore__tips_in-line">没有更多数据</div>
+      </div>
+    </div>
+  </div>
+</template>
+<config>
+  {
+    navigationBarTitleText: '练习记录',
+    enablePullDownRefresh: true,
+    backgroundColorContent: '#eeeeee',
+    backgroundColor: '#eeeeee',
+    usingComponents: {
+      "van-tag": "../../libs/vant/tag/index",
+      "datetime-diff": "~@/components/datetime-diff"
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import subscribe from '@/mixins/subscribe.js'
+  import { mapGetters } from '@wepy/x'
+  import { getPractiseList } from '@/api/question'
+  import eventHub from '@/common/eventHub'
+
+  wepy.page({
+    store,
+    mixins: [ subscribe ],
+    data: {
+      currPage: 1,
+      pageSize: 10,
+      practiseList: [],
+      noMoreData: false
+    },
+    // 计算的属性
+    computed: {
+      ...mapGetters(['_id', 'user']),
+    },
+    onLoad() {
+      this.getPractiseList()
+    },
+    async onPullDownRefresh() {
+      this.currPage = 1
+      this.practiseList = []
+      await this.getPractiseList()
+      wx.stopPullDownRefresh()
+    },
+    async onReachBottom () {
+      if(!this.noMoreData) {
+        this.currPage = this.currPage + 1
+        await this.getPractiseList()
+      }
+    },
+    methods: {
+      // 获取已学习
+      async getPractiseList() {
+        this.noMoreData = false
+        let params = {
+          currPage: this.currPage,
+          pageSize: this.pageSize,
+          user_id: this._id
+        }
+        wx.showLoading({title: '加载中'})
+        let result = await getPractiseList(params)
+        let list = result.result.data.list.map((item) => {
+          item.rightCount = 0
+          item.questions.forEach(ele => {
+            if (ele.isRight) {
+              item.rightCount += 1
+            }
+          })
+          return item
+        })
+        if (list.length > 0) {
+          this.practiseList = this.practiseList.length > 0 ? this.practiseList.concat(list) : list
+        } else {
+          this.noMoreData = true
+        }
+        wx.hideLoading(this.practiseList)
+      },
+      toQuestion (item) {
+        if (item.isComplete === '1') {
+          wx.navigateTo({
+            url: `/pages/realpolitics/questionResult?id=${item._id}&title=${item.module.name}&moudleId=${item.module._id}&ishiddenButton=${true}`,
+          })
+        } else {
+          wx.navigateTo({
+            url: `/pages/realpolitics/question?id=${item.module._id}&name=${item.module.name}`,
+          })
+        }
+
+      },
+    },
+    onShareAppMessage () {
+      return {
+        // 标题是话题标题
+        title: '知识模块',
+        // 路径为话题详情路径
+        path: '/pages/realpolitics/index?id=' + this.moudleId,
+      }
+    },
+  })
+</script>

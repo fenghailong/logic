@@ -110,7 +110,7 @@
       <div v-if="questionList.length > 0" v-for="(item, index) in questionList" :key="index" class="logic-index-question-list">
         <van-tag v-if="item.exa_type === '1'" type="primary" size="large" style="margin-bottom: 5px">{{index+1}}.单选题</van-tag>
         <van-tag v-else-if="item.exa_type === '2'" type="primary" size="large" style="margin-bottom: 5px">{{index+1}}.多选题</van-tag>
-        <question-item :questionItem="item" :questionIndex="index" @onChange="onChange"></question-item>
+        <question-item :questionItem="item" :questionIndex="index" @onChange="onChange" @onMoreChange="onMoreChange"></question-item>
       </div>
     </div>
     <div class="logic-index-complete" @click="openCompletePopup">交卷</div>
@@ -226,13 +226,19 @@
       },
       // 选中题目
       onChange(item,key,index) {
-        console.log(key)
+        // console.log(key)
         this.questionList[index].youAnswer = key
         this.questionList[index].isRight = key === item.answer
         this.questionList = JSON.parse(JSON.stringify(this.questionList))
-        // this.$set(this.questionList[index], 'youAnswer', key)
-        // this.$set(this.questionList[index], 'isRight', key === item.answer)
-        console.log(this.questionList)
+        // console.log(this.questionList)
+      },
+      // 选中题目
+      onMoreChange(item,index) {
+        // console.log(key)
+        this.questionList[index].youAnswer = item.youAnswer
+        this.questionList[index].isRight = item.youAnswer === item.answer
+        this.questionList = JSON.parse(JSON.stringify(this.questionList))
+        // console.log(this.questionList)
       },
       // 交卷
       async doSubmit () {
@@ -249,7 +255,7 @@
         this.isComplete = '1'
         await this.addQuestionRecord(this.questionList)
         wx.reLaunch({
-          url: `/pages/realpolitics/questionResult?id=${this.practiseData._id}&title=${this.title}&moudleId=${this.moudleId}`,
+          url: `/pages/realpolitics/questionResult?id=${this.practiseData._id}&title=${this.title}&moudleId=${this.moudleId}&ishiddenButton=${false}`,
         })
         wx.hideLoading()
       },
@@ -286,6 +292,8 @@
           this.seconds = Number(result.result.useTime.slice(3,5))
           this.minutes = Number(result.result.useTime.slice(0,2))
         } else {
+          // 获取乱序题目
+          options.isShuffle = true
           let data = await getQuestionById(options)
           console.log(data,'============')
           if(data.result.resultQuestion.length > 0) {

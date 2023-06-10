@@ -48,10 +48,10 @@ const sendMessageItem = async (item) => {
       "lang": 'zh_CN',
       "data": {
         "thing1": {
-          "value": '行测模块'
+          "value": '刷题来啦'
         },
         "thing2": {
-          "value": '新增行测模块，公考笔记已更新'
+          "value": '新增时事政治刷题1、2、3月共600道题'
         },
         "thing5": {
           "value": '点击此处查看更新内容'
@@ -61,6 +61,7 @@ const sendMessageItem = async (item) => {
       "miniprogramState": 'formal'
       // formal/正式版（默认）；trial/体验版；developer/开发版
     })
+    console.log(result)
     await db.collection('messages').where({
       wechat_openid: item.wechat_openid,
       _id: item._id

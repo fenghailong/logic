@@ -108,6 +108,7 @@ wepy.app({
       'pages/linetest/list',
       'pages/linetest/detail',
       'pages/linetest/evaluation',
+      'pages/practise/index',
       'pages/auth/login'
     ],
     window: {

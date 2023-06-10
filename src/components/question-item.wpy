@@ -72,6 +72,7 @@
   }
 }
 </style>
+<wxs module="util" src="../wxs/util.wxs"></wxs>
 <template>
   <div>
     <div v-if="questionItem.exa_type === '1'" class="logic-index-question-item">
@@ -91,7 +92,7 @@
         </div>
       </div>
       <div v-if="questionItem.isShowAnswer" class="logic-index-question-answer">
-        正确答案是：{{questionItem.answer}}
+        {{questionItem.youAnswer==='' ? '你未选择答案，' : ''}}正确答案是：{{questionItem.answer}}
       </div>
       <div v-if="questionItem.isShowAnswer" class="logic-index-question-analysis">
         【解析】：
@@ -104,18 +105,24 @@
       </div>
       <div v-if="questionItem.isShowAnswer" class="logic-index-question-options">
         <div class="logic-index-question-options-isAnswer" v-for="(value, key) in questionItem.option" :key="key">
-          <div class="logic-index-question-options-key {{questionItem.answer === key ? 'logic-index-question-options-key-answer' : ''}} {{questionItem.youAnswer === key && questionItem.answer != key ? 'logic-index-question-options-key-errAnswer' : ''}}">{{key}}</div>
+          <div v-if="questionItem.isRight">
+            <div class="logic-index-question-options-key logic-index-question-options-key-answer {{!util.includes(questionItem.youAnswer, key) && !util.includes(questionItem.answer, key) ? 'logic-index-question-options-key-errAnswer' : ''}}">{{key}}</div>
+          </div>
+          <div v-else>
+            <div class="logic-index-question-options-key {{util.includes(questionItem.youAnswer, key) ? 'logic-index-question-options-key-errAnswer' : ''}}">{{key}}</div>
+          </div>
+          <!-- <div class="logic-index-question-options-key {{ util.includes(questionItem.answer, key) ? 'logic-index-question-options-key-answer' : ''}} {{!util.includes(questionItem.youAnswer, key) && !util.includes(questionItem.answer, key) ? 'logic-index-question-options-key-errAnswer' : ''}}">{{key}}</div> -->
           <div class="logic-index-question-options-value">{{value}}</div>
         </div>
       </div>
       <div v-else class="logic-index-question-options">
         <div class="logic-index-question-options-isAnswer" v-for="(value, key) in questionItem.option" :key="key" @click="onMoreChange(questionItem, key, questionIndex)">
-          <div class="logic-index-question-options-key {{questionItem.youAnswer === key ? 'logic-index-question-options-key-youAnswer' : ''}}">{{key}}</div>
+          <div class="logic-index-question-options-key" :class="{ 'logic-index-question-options-key-youAnswer': util.includes(questionItem.youAnswer, key)}">{{key}}</div>
           <div class="logic-index-question-options-value">{{value}}</div>
         </div>
       </div>
       <div v-if="questionItem.isShowAnswer" class="logic-index-question-answer">
-        正确答案是：{{questionItem.answer}}
+        {{questionItem.youAnswer==='' ? '你未选择答案，' : ''}}正确答案是：{{questionItem.answer}}
       </div>
       <div v-if="questionItem.isShowAnswer" class="logic-index-question-analysis">
         【解析】：
@@ -129,6 +136,8 @@
     usingComponents: {
       "van-radio": "../libs/vant/radio/index",
       "van-radio-group": "../libs/vant/radio-group/index",
+      "van-checkbox": "../libs/vant/checkbox/index",
+      "van-checkbox-group": "../libs/vant/checkbox-group/index",
     }
   }
 </config>
@@ -136,9 +145,6 @@
   import wepy from '@wepy/core'
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
-  import { addActivateRecord } from '@/api/activate'
-  import { getPhoneNum } from '@/api/auth'
-  import { doPay } from '@/api/pay'
   wepy.component({
     store,
     computed: {
@@ -170,8 +176,20 @@
         this.$emit('onChange',item,key,index)
       },
       onMoreChange (item, key, index) {
-        let temp = this.questionItem.youAnswer ? this.questionItem.youAnswer.split(',') : []
-        console.log(temp)
+        let temp = item.youAnswer ? item.youAnswer.split(',') : []
+        let tempIndex = temp.findIndex(ele => ele === key)
+        if (tempIndex > -1) {
+          temp.splice(tempIndex, 1)
+        } else {
+          temp.push(key)
+        }
+        temp.sort((a,b)=>{
+          if (a < b) return -1;
+          if (a > b) return 1;
+          return 0;
+        })
+        this.questionItem.youAnswer = temp.join(',')
+        this.$emit('onMoreChange',item,index)
       }
       // onChange(event,item,index) {
       //   this.$emit('onChange',event,item,index)

@@ -93,7 +93,7 @@
         </div>
       </div>
     </div>
-    <div class="logic-index-button">
+    <div v-if="!ishiddenButton" class="logic-index-button">
       <van-button round type="info" @click="toIndex">返回首页</van-button>
       <van-button round type="info" @click="toQuestion">继续刷题</van-button>
     </div>
@@ -143,11 +143,13 @@
       seconds: 0, //用时
       rightCount: 0,
       rightPercent: 0,
+      ishiddenButton: false
     },
     async onLoad(options) {
       this.practise_id = options.id
       this.title = options.title
       this.moudleId = options.moudleId
+      this.ishiddenButton = options.ishiddenButton
       wx.showLoading({title: '加载中'})
       await this.getQuestionsList()
       wx.hideLoading()

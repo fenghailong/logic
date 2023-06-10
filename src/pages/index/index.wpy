@@ -244,6 +244,7 @@
       .logic-index-box-hot {
         display: flex;
         justify-content: space-between;
+        flex-wrap: wrap;
         margin-top: 20px;
         .logic-index-box-hot-item {
           padding: 20px 0;
@@ -251,6 +252,7 @@
           border-radius: 10px;
           text-align: center;
           width: 30%;
+          margin-bottom: 20px;
           image {
             width: 30px;
             height: 30px;
@@ -412,9 +414,13 @@
           <div class="logic-index-box-hot-item-text">人物素材</div>
         </div>
         <div class="logic-index-box-hot-item">
-          <image src="../../assets/images/studytalk.png" />
-          <div class="logic-index-box-hot-item-text">学习交流</div>
+          <image src="../../assets/images/studytalk.png" @click="toPractise()"/>
+          <div class="logic-index-box-hot-item-text">练习记录</div>
         </div>
+        <!-- <div class="logic-index-box-hot-item">
+          <image src="../../assets/images/studytalk.png" />
+          <div class="logic-index-box-hot-item-text">我的错题</div>
+        </div> -->
       </div>
     </div>
     <div class="logic-index-footer">
@@ -589,6 +595,14 @@
         if (this.isLoggedIn) {
           wx.navigateTo({
             url: `/pages/linetest/index?id=${id}`,
+          })
+        }
+      },
+      // 跳转我的练习记录页面
+      async toPractise () {
+        if (this.isLoggedIn) {
+          wx.navigateTo({
+            url: `/pages/practise/index`,
           })
         }
       },

@@ -1,0 +1,6 @@
+module.exports = {
+  text: 'This is from wxs',
+  includes: function (array,searchElement) {
+    return array.indexOf(searchElement) !== -1
+  }
+};

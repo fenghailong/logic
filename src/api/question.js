@@ -31,6 +31,17 @@ export async function getPractise(data) {
   })
 }
 
+// 获取练习记录列表
+export async function getPractiseList(data) {
+  return await wx.cloud.callFunction({
+    name: 'question',
+    data: {
+      func: 'getPractiseList',
+      data
+    },
+  })
+}
+
 // 获取一次刷题题目
 export async function getPractiseById(data) {
   return await wx.cloud.callFunction({

@@ -115,15 +115,3 @@ export async function getEvaluationRecordCount(data) {
     },
   })
 }
-
-
-// 获取一次刷题题目
-export async function getAllQuestion(data) {
-  return await wx.cloud.callFunction({
-    name: 'knowledgeModule',
-    data: {
-      func: 'getAllQuestion',
-      data
-    },
-  })
-}

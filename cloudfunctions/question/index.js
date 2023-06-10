@@ -8,6 +8,8 @@ const db = cloud.database();
 const questionCollection = db.collection('question');
 const questionRCollection = db.collection('question_record');
 const practiseCollection = db.collection('practise');
+const moduleCollection = db.collection('knowledgeModule');
+const $ = db.command.aggregate
 
 // 获取某个模块下的所有题目
 const getAllQuestion = async (options) => {
@@ -98,6 +100,35 @@ const getPractise = async (options) => {
   }
 }
 
+// 获取刷题练习记录(联表查询)
+const getPractiseList = async (options) => {
+  const skipCount = (options.currPage - 1) * options.pageSize
+  const countResult = await practiseCollection.where({ user_id: options.user_id}).count();
+  const totalCount = countResult.total
+  const totalPage = totalCount === 0 ? 0 : totalCount <= options.pageSize ? 1 : parseInt(totalCount / options.pageSize) + 1
+  const aggregateInstance = practiseCollection.aggregate()
+  .lookup({
+    from: 'knowledgeModule',
+    localField: 'module_id',
+    foreignField: '_id',
+    as: 'moduleList',
+  })
+  const data = await aggregateInstance
+  .match({
+    user_id: options.user_id
+  })
+  .addFields({
+    module: $.arrayElemAt(['$moduleList', 0]),
+  })
+  .project({
+    moduleList: 0
+  })
+  .sort({'_updateTime': -1})
+  .skip(skipCount)
+  .limit(options.pageSize)
+  .end()
+  return {currPage: options.currPage, pageSize: options.pageSize, totalPage, totalCount, data}
+}
 
 // 获取刷题练习记录
 const getPractiseById = async (options) => {
@@ -155,12 +186,14 @@ const addQuestionRecord = async (options) => {
   console.log(options)
   let hasRecord = await questionRCollection.where({ user_id: options.user_id, question_id: options.question_id}).get();
   if (Array.isArray(hasRecord.data) && hasRecord.data.length === 0) {
+    let count = options.isRight === '2' ? 1 : 0
     await questionRCollection.add({
       data: {
         user_id: options.user_id,
         question_id: options.question_id,
         module_id: options.module_id,
         isRight: options.isRight,
+        count: count,
         _createTime: Date.now(),
         _updateTime: Date.now()
       }
@@ -176,7 +209,8 @@ const addQuestionRecord = async (options) => {
       // data 传入需要局部更新的数据
       data: {
         count: count,
-        isRight: options.isRight
+        isRight: options.isRight,
+        _updateTime: Date.now()
       }
     })
     return '已更新记录'
@@ -191,6 +225,8 @@ exports.main = async (event, context) => {
     res = await getQuestionById(data);
   } else if (func === 'addQuestionRecord') {
     res = await addQuestionRecord(data);
+  } else if (func === 'getPractiseList') {
+    res = await getPractiseList(data);
   } else if (func === 'getPractise') {
     res = await getPractise(data);
   } else if (func === 'getPractiseById') {
