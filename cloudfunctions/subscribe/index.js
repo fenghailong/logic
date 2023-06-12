@@ -48,10 +48,10 @@ const sendMessageItem = async (item) => {
       "lang": 'zh_CN',
       "data": {
         "thing1": {
-          "value": '刷题来啦'
+          "value": '刷题记录'
         },
         "thing2": {
-          "value": '新增时事政治刷题1、2、3月共600道题'
+          "value": '新增刷题记录，随时查看自己的练习历史'
         },
         "thing5": {
           "value": '点击此处查看更新内容'
