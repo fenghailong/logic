@@ -135,7 +135,7 @@
       toQuestion (item) {
         if (item.isComplete === '1') {
           wx.navigateTo({
-            url: `/pages/realpolitics/questionResult?id=${item._id}&title=${item.module.name}&moudleId=${item.module._id}&ishiddenButton=${true}`,
+            url: `/pages/realpolitics/questionResult?id=${item._id}&title=${item.module.name}&moudleId=${item.module._id}&ishiddenButton=2`,
           })
         } else {
           wx.navigateTo({

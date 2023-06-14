@@ -1,0 +1,138 @@
+<style lang="less">
+.page{
+  background-color: #eee;
+  .logic-detail-box {
+    padding: 10px;
+  }
+  .logic-detail-content {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 20px;
+    .logic-detail-content-title {
+      text-align: left;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .logic-detail-content-body {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .logic-detail-content-time {
+      font-size: 14px;
+      color: #999;
+      flex: 1;
+    }
+    .logic-detail-content-message {
+      font-size: 14px;
+      color: #999;
+      .logic-detail-content-span {
+        color: #387ffb;
+      }
+    }
+  }
+}
+</style>
+<template>
+  <div class="page">
+    <div class="logic-detail-box" v-if="realplitics.count > 0">
+      <div class="logic-detail-content">
+        <van-collapse accordion :border="false" value="{{ activeName }}" bind:change="onChange">
+          <van-collapse-item v-if="realplitics.count > 0" title="{{realplitics.name}}" name="1" value="{{ realplitics.count }} 道">
+            <van-cell v-for="item in realplitics.children" v-if="item.count > 0" :title="item.name" is-link value="{{ item.count }} 道" @click="toQuestion(item)" />
+          </van-collapse-item>
+        </van-collapse>
+      </div>
+    </div>
+    <van-empty v-else description="你还没有错题，快去刷题吧！" />
+  </div>
+</template>
+<config>
+  {
+    navigationBarTitleText: '错题记录',
+    enablePullDownRefresh: true,
+    backgroundColorContent: '#eeeeee',
+    backgroundColor: '#eeeeee',
+    usingComponents: {
+      "van-tag": "../../libs/vant/tag/index",
+      "van-empty": "../../libs/vant/empty/index",
+      "van-collapse": "../../libs/vant/collapse/index",
+      "van-collapse-item": "../../libs/vant/collapse-item/index",
+      "van-cell": "../../libs/vant/cell/index",
+      "datetime-diff": "~@/components/datetime-diff"
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import subscribe from '@/mixins/subscribe.js'
+  import { mapGetters } from '@wepy/x'
+  import { getAllErrQuestionById } from '@/api/question'
+  import eventHub from '@/common/eventHub'
+
+  wepy.page({
+    store,
+    mixins: [ subscribe ],
+    data: {
+      activeName: '1',
+      resultCount: {},
+      realplitics: {
+        id: '2cc84e26645f47100c48bab504de9717',
+        count: 0,
+        name: '时事政治',
+        children: [
+          { id: '5fd74860645f4e55000a79dd5633ffa8', count: 0, name: '2023年1月'},
+          { id: '88d7257b645f4a6f0000d8534c67d08b', count: 0, name: '2023年2月'},
+          { id: '2cc84e26645f4a510c48e3572d6311e3', count: 0, name: '2023年3月'}
+        ]
+      }
+    },
+    // 计算的属性
+    computed: {
+      ...mapGetters(['_id', 'user']),
+    },
+    onLoad() {
+      this.getAllErrQuestion()
+    },
+    async onPullDownRefresh() {
+      await this.getAllErrQuestion()
+      wx.stopPullDownRefresh()
+    },
+    methods: {
+      onChange (e) {
+        this.activeName = e.$wx.detail
+      },
+      // 获取错题数量
+      async getAllErrQuestion() {
+        this.noMoreData = false
+        let params = {
+          user_id: this._id
+        }
+        wx.showLoading({title: '加载中'})
+        let result = await getAllErrQuestionById(params)
+        this.resultCount = result.result
+        this.realplitics.count = this.resultCount[this.realplitics.id]
+        this.realplitics.children = this.realplitics.children.map(item => {
+          item.count = this.resultCount[item.id]
+          return item
+        })
+        wx.hideLoading()
+      },
+      toQuestion (item) {
+        wx.navigateTo({
+          url: `/pages/errorquestion/list?id=${item.id}&name=${item.name}`,
+        })
+      },
+    },
+    onShareAppMessage () {
+      return {
+        // 标题是话题标题
+        title: '知识模块',
+        // 路径为话题详情路径
+        path: '/pages/errorquestion/index?id=' + this.moudleId,
+      }
+    },
+  })
+</script>

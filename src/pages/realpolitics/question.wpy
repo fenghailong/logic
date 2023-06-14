@@ -2,17 +2,23 @@
 .page{
   background-color: #eee;
   .logic-index-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #387ffb;
-    padding: 5px 15px;
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
+    background-color: #387ffb;
+    padding: 5px 15px;
     color: #fff;
     line-height: 1;
+  }
+  .logic-index-header-title {
+    margin-bottom: 10px;
+  }
+  .logic-index-header-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 5px;
     .logic-index-header-left {
     }
     .logic-index-header-middle {
@@ -27,7 +33,7 @@
   }
   .logic-index-box {
     // padding: 20px 20px;
-    padding-top: 30px;
+    padding-top: 60px;
     .logic-index-question-list {
       display: flex;
       flex-direction: column;
@@ -99,12 +105,17 @@
 <template>
   <div class="page">
     <div class="logic-index-header">
-      <div class="logic-index-header-left">专项练习</div>
-      <div class="logic-index-header-middle">
-        <van-icon name="underway-o" size="16px" />
-        <div class="logic-index-header-time">{{nowTime}}</div>
+      <div class="logic-index-header-title">
+        该模块共 {{ questionCount.questionCount }} 题，已答对 {{ questionCount.questionStudyCount }} 题， 进度 {{ questionCount.percent }}%
       </div>
-      <div class="logic-index-header-right">共 {{questionList.length}} 题</div>
+      <div class="logic-index-header-box">
+        <div class="logic-index-header-left">专项练习</div>
+        <div class="logic-index-header-middle">
+          <van-icon name="underway-o" size="16px" />
+          <div class="logic-index-header-time">{{nowTime}}</div>
+        </div>
+        <div class="logic-index-header-right">共 {{questionList.length}} 题</div>
+      </div>
     </div>
     <div class="logic-index-box">
       <div v-if="questionList.length > 0" v-for="(item, index) in questionList" :key="index" class="logic-index-question-list">
@@ -150,7 +161,7 @@
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
   import eventHub from '@/common/eventHub'
-  import { getQuestionById, getPractise, addPractise, updatePractise, addQuestionRecord} from '@/api/question'
+  import { getQuestionById, getQuestionCountById, getPractise, addPractise, updatePractise, addQuestionRecord} from '@/api/question'
   import Dialog from '../../libs/vant/dialog/dialog';
 
   wepy.page({
@@ -163,6 +174,7 @@
       moudleId: '', //传入参数 模块id
       title: '', //传入参数 模块名
       questionList: [], //题目列表
+      questionCount: {}, //题目数量
       isComplete: '2', //是否已完成
       isCompleteShow: false, //是否交卷弹窗
       practiseData: {},
@@ -178,10 +190,9 @@
     },
     async onShow() {
       wx.showLoading({title: '加载中'})
-      let result = await this.getQuestionsList()
-      // let result = await this.getQuestionsList()
+      await this.getQuestionCount()
+      await this.getQuestionsList()
       wx.hideLoading()
-      console.log(result)
       if (this.timer2) {
         clearInterval(this.timer2)
       }
@@ -255,7 +266,7 @@
         this.isComplete = '1'
         await this.addQuestionRecord(this.questionList)
         wx.reLaunch({
-          url: `/pages/realpolitics/questionResult?id=${this.practiseData._id}&title=${this.title}&moudleId=${this.moudleId}&ishiddenButton=${false}`,
+          url: `/pages/realpolitics/questionResult?id=${this.practiseData._id}&title=${this.title}&moudleId=${this.moudleId}&ishiddenButton=1`,
         })
         wx.hideLoading()
       },
@@ -274,6 +285,15 @@
         console.log(tasks)
         // 等待所有
         await Promise.all(tasks)
+      },
+      async getQuestionCount () {
+        let options = {
+          user_id: this._id,
+          module_id: this.moudleId,
+        }
+        let data = await getQuestionCountById(options)
+        this.questionCount = data.result
+        this.questionCount.percent = parseFloat(data.result.questionStudyCount * 100 / data.result.questionCount).toFixed(2)
       },
       async getQuestionsList () {
         let options = {

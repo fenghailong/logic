@@ -61,31 +61,125 @@ const getAllStudyQuestionById = async (options) => {
   return result
 }
 
+// 分页获取错题
+const getErrQuestionQueryPage = async (options) => {
+  const skipCount = (options.currPage - 1) * options.pageSize
+  const countResult = await questionRCollection.where({ user_id: options.user_id, module_id: options.module_id, isRight: '2' }).count();
+  const totalCount = countResult.total
+  const totalPage = totalCount === 0 ? 0 : totalCount <= options.pageSize ? 1 : parseInt(totalCount / options.pageSize) + 1
+  const aggregateInstance = questionRCollection.aggregate()
+  .lookup({
+    from: 'question',
+    localField: 'question_id',
+    foreignField: '_id',
+    as: 'questionList',
+  })
+  const data = await aggregateInstance
+  .match({
+    user_id: options.user_id,
+    module_id: options.module_id,
+    isRight: '2'
+  })
+  .addFields({
+    question: $.arrayElemAt(['$questionList', 0]),
+  })
+  .project({
+    questionList: 0
+  })
+  .sort({'_updateTime': -1})
+  .skip(skipCount)
+  .limit(options.pageSize)
+  .end()
+  return {currPage: options.currPage, pageSize: options.pageSize, totalPage, totalCount, data}
+}
+
+// 分页获取错题
+// const getErrQuestionQueryPage = async (options) => {
+//   const skipCount = (options.currPage - 1) * options.pageSize
+//   const countResult = await questionRCollection.where({ user_id: options.user_id, module_id: options.module_id, isRight: '2' }).count();
+//   const totalCount = countResult.total
+//   const totalPage = totalCount === 0 ? 0 : totalCount <= options.pageSize ? 1 : parseInt(totalCount / options.pageSize) + 1
+//   let result = await questionRCollection
+//   .where({ user_id: options.user_id, module_id: options.module_id, isRight: '2'})
+//   .orderBy('_updateTime', 'asc')
+//   .skip(skipCount)
+//   .limit(options.pageSize)
+//   .get()
+//   return {currPage: options.currPage, pageSize: options.pageSize, totalPage, totalCount, data: result.data}
+// }
+
+// 获取某个模块下的所有错题数量
+const getAllErrQuestionById = async (options) => {
+  const countResult = await questionRCollection.where({ user_id: options.user_id, isRight: '2'}).count()
+  const total = countResult.total
+  // 计算需分几次取
+  const batchTimes = Math.ceil(total / 100)
+  // 承载所有读操作的 promise 的数组
+  const tasks = []
+  for (let i = 0; i < batchTimes; i++) {
+    const promise = questionRCollection.where({ user_id: options.user_id, isRight: '2'}).skip(i * 100).limit(100).get()
+    tasks.push(promise)
+  }
+  // 等待所有
+  let result = (await Promise.all(tasks)).reduce((acc, cur) => {
+    if(acc.length <= 0) acc.data = []
+    if(cur.length <= 0) cur.data = []
+    return {
+      data: acc.data.concat(cur.data),
+      errMsg: acc.errMsg,
+    }
+  },[])
+  result.data = result.data || [] // 处理 没有数据时 reduce 结果 undefined 的情况
+  console.log(result.data)
+  let temp = []
+  result.data.forEach(element => {
+    temp = temp.concat(element.module_id)
+  });
+  let data = getArrayNum(temp)
+  return data
+}
+
+// 获取数组中不同元素的数量
+const getArrayNum = (arr) => {
+  return arr.reduce(function(prev,next){
+    prev[next] = (prev[next] + 1) || 1;
+    return prev;
+  },{});
+  // let newArr = []
+  // for (key in obj) {
+  //   newArr.push({
+  //       module_id: key,
+  //       count: obj[key]
+  //   })
+  // };
+  // return newArr
+}
+
 // 获取模块下的已经掌握的题目数量 和 模块下面的题目（除去已经掌握的）
-const getQuestionById = async (data) => {
-  const result = await getAllQuestion(data)
-  const resultRecord = await getAllStudyQuestionById(data)
+const getQuestionCountById = async (options) =>  {
+  const result = await questionCollection.where({ module_id: options.module_id}).count()
+  const resultRecord = await questionRCollection.where({ user_id: options.user_id, module_id: options.module_id, isRight: '1'}).count()
+  let res = {
+    questionCount: result.total,
+    questionStudyCount: resultRecord.total
+  }
+  return res;
+}
+
+// 获取模块下的已经掌握的题目数量 和 模块下面的题目（除去已经掌握的）
+const getQuestionById = async (options) => {
+  const result = await getAllQuestion(options)
+  const resultRecord = await getAllStudyQuestionById(options)
   let allQuestion = result.data
-  let allStudyQuestion = []
   // 过滤已经回答正确的题目
   let resultQuestion = allQuestion.filter(item => {
     return !resultRecord.data.find(element => {
       return element.question_id == item._id
     })
   })
-  // 将回答正确的题目保存到allStudyQuestion
-  if (resultRecord.data.length > 0 && allQuestion.length > 0){
-    allQuestion.forEach(element => {
-      resultRecord.data.forEach(item => {
-        if (item.question_id == element._id) {
-          allStudyQuestion.push(element)
-        }
-      })
-    });
-  }
-  resultQuestion = data.isShuffle ? shuffle(resultQuestion).slice(0,10) : resultQuestion.slice(0,10)
+  resultQuestion = options.isShuffle ? shuffle(resultQuestion).slice(0,10) : resultQuestion.slice(0,10)
   let res = {
-    resultQuestion,
+    resultQuestion
   }
   return res;
 }
@@ -185,6 +279,7 @@ const shuffle = (array) => {
 const addQuestionRecord = async (options) => {
   console.log(options)
   let hasRecord = await questionRCollection.where({ user_id: options.user_id, question_id: options.question_id}).get();
+  console.log(hasRecord)
   if (Array.isArray(hasRecord.data) && hasRecord.data.length === 0) {
     let count = options.isRight === '2' ? 1 : 0
     await questionRCollection.add({
@@ -223,6 +318,8 @@ exports.main = async (event, context) => {
   let res;
   if (func === 'getQuestionById') {
     res = await getQuestionById(data);
+  } else if (func === 'getQuestionCountById') {
+    res = await getQuestionCountById(data);
   } else if (func === 'addQuestionRecord') {
     res = await addQuestionRecord(data);
   } else if (func === 'getPractiseList') {
@@ -235,6 +332,10 @@ exports.main = async (event, context) => {
     res = await addPractise(data);
   } else if (func === 'updatePractise') {
     res = await updatePractise(data);
+  } else if (func === 'getAllErrQuestionById') {
+    res = await getAllErrQuestionById(data);
+  } else if (func === 'getErrQuestionQueryPage') {
+    res = await getErrQuestionQueryPage(data);
   }
   return res;
 }

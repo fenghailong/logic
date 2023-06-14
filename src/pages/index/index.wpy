@@ -251,7 +251,7 @@
           background-color: #FFFFFF;
           border-radius: 10px;
           text-align: center;
-          width: 30%;
+          width: 45%;
           margin-bottom: 20px;
           image {
             width: 30px;
@@ -413,14 +413,14 @@
           <image src="../../assets/images/person.png" />
           <div class="logic-index-box-hot-item-text">人物素材</div>
         </div>
-        <div class="logic-index-box-hot-item">
-          <image src="../../assets/images/studytalk.png" @click="toPractise()"/>
+        <div class="logic-index-box-hot-item"  @click="toPractise()">
+          <image src="../../assets/images/studytalk.png"/>
           <div class="logic-index-box-hot-item-text">练习记录</div>
         </div>
-        <!-- <div class="logic-index-box-hot-item">
+        <div class="logic-index-box-hot-item" @click="toErrquestion()">
           <image src="../../assets/images/studytalk.png" />
           <div class="logic-index-box-hot-item-text">我的错题</div>
-        </div> -->
+        </div>
       </div>
     </div>
     <div class="logic-index-footer">
@@ -618,6 +618,13 @@
         if (this.isLoggedIn) {
           wx.navigateTo({
             url: `/pages/realpolitics/index?id=${'2cc84e26645f47100c48bab504de9717'}`,
+          })
+        }
+      },
+      toErrquestion () {
+        if (this.isLoggedIn) {
+          wx.navigateTo({
+            url: `/pages/errorquestion/index`,
           })
         }
       }
