@@ -111,6 +111,11 @@ wepy.app({
       'pages/practise/index',
       'pages/errorquestion/index',
       'pages/errorquestion/list',
+      'pages/expound/index',
+      'pages/expound/list',
+      'pages/expound/detail',
+      'pages/brushquestion/index',
+      'pages/brushquestion/list',
       'pages/auth/login'
     ],
     window: {

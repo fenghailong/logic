@@ -251,7 +251,7 @@
           background-color: #FFFFFF;
           border-radius: 10px;
           text-align: center;
-          width: 45%;
+          width: 30%;
           margin-bottom: 20px;
           image {
             width: 30px;
@@ -387,15 +387,15 @@
         </div>
       </div>
       <div class="logic-index-box-middle">
-        <div class="logic-index-box-middle-left" @click="toDetail('国考高频成语')">
+        <div class="logic-index-box-middle-left" @click="toBrushQuestion()">
           <image src="../../assets/images/words-bg.png" />
-          <div class="logic-index-box-middle-left-title">高频成语</div>
-          <text class="logic-index-box-middle-left-text">词语日常积累</text>
-          <text class="logic-index-box-middle-left-text">轻松搞定逻辑填空</text>
+          <div class="logic-index-box-middle-left-title">百日刷题</div>
+          <text class="logic-index-box-middle-left-text">分模块百日刷题计划</text>
+          <text class="logic-index-box-middle-left-text">行测轻松上80+</text>
         </div>
         <div class="logic-index-box-middle-right">
-          <div class="logic-index-box-middle-right-item" @click="toGeneral">
-            <div class="item-name">常识积累</div>
+          <div class="logic-index-box-middle-right-item" @click="toDetail('国考高频成语')">
+            <div class="item-name">高频成语</div>
             <div class="item-tips">不积跬步，无以至千里</div>
           </div>
           <div class="logic-index-box-middle-right-item logic-index-box-middle-right-item-other" @click="toRealpolitics">
@@ -405,19 +405,23 @@
         </div>
       </div>
       <div class="logic-index-box-hot">
-        <div class="logic-index-box-hot-item" @click="toDetail('申论范文', personCount)">
+        <div class="logic-index-box-hot-item" @click="toGeneral()">
           <image src="../../assets/images/realpolitics.png" />
-          <div class="logic-index-box-hot-item-text">申论范文</div>
+          <div class="logic-index-box-hot-item-text">常识积累</div>
+        </div>
+        <div class="logic-index-box-hot-item" @click="toExpound()">
+          <image src="../../assets/images/changshi.png" />
+          <div class="logic-index-box-hot-item-text">申论学习</div>
         </div>
         <div class="logic-index-box-hot-item" @click="toDetail('人物素材', personCount)">
           <image src="../../assets/images/person.png" />
           <div class="logic-index-box-hot-item-text">人物素材</div>
         </div>
-        <div class="logic-index-box-hot-item"  @click="toPractise()">
+        <div class="logic-index-box-hot-item"  @click="toPractise()" style="width: 40%;">
           <image src="../../assets/images/studytalk.png"/>
           <div class="logic-index-box-hot-item-text">练习记录</div>
         </div>
-        <div class="logic-index-box-hot-item" @click="toErrquestion()">
+        <div class="logic-index-box-hot-item" @click="toErrquestion()" style="width: 40%;">
           <image src="../../assets/images/studytalk.png" />
           <div class="logic-index-box-hot-item-text">我的错题</div>
         </div>
@@ -557,16 +561,6 @@
       onCustomerServiceButtonClick(e) {
         console.log(e)
       },
-      // // 联系客服
-      // toContaact () {
-      //   wx.openCustomerServiceChat({
-      //     extInfo: {url: 'https://work.weixin.qq.com/kfid/kfcffeb6bea0dd3ea9c'},
-      //     corpId: 'wwa3b7b5ecaf98ba59',
-      //     success(res) {
-      //       console.log(res)
-      //     }
-      //   })
-      // },
       //获取搜索列表函数（这里是模拟数据）
       async getListData() {
         let data = await getWAllList()
@@ -606,11 +600,26 @@
           })
         }
       },
+      // 跳转百日刷题页面
+      toBrushQuestion () {
+        if (this.isLoggedIn) {
+          wx.navigateTo({
+            url: `/pages/brushquestion/index?id=${'b3785663648c13c6000196482e4d7212'}`,
+          })
+        }
+      },
       // 跳转常识页面
       toGeneral () {
         if (this.isLoggedIn) {
           wx.navigateTo({
             url: `/pages/general/index?id=${'e54110dd644a20de001e8d834e839d06'}`,
+          })
+        }
+      },
+      toExpound () {
+        if (this.isLoggedIn) {
+          wx.navigateTo({
+            url: `/pages/expound/index?id=${'a8503eb0647458be0002a584226ef2c5'}`,
           })
         }
       },

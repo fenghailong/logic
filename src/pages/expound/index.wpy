@@ -1,0 +1,202 @@
+<style lang="less">
+.page{
+  background-color: #eee;
+  .logic-detail-box {
+    padding: 0 10px 10px;
+    margin-top: 10px;
+  }
+  .logic-detail-content {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 10px 20px 20px;
+    margin-bottom: 20px;
+    position: relative;
+    .logic-detail-content-people {
+      text-align: right;
+      font-size: 12px;
+      color: #999;
+    }
+    .logic-detail-content-title {
+      display: flex;
+      align-items: center;
+      .logic-detail-content-title-text {
+        text-align: left;
+        font-size: 18px;
+        font-weight: 500;
+        flex: 1;
+      }
+      .logic-detail-content-title-button {
+        color: #666;
+      }
+    }
+    .logic-detail-content-describe {
+      text-align: left;
+      font-size: 14px;
+      color: #999;
+      margin: 20px 0;
+    }
+    .logic-detail-content-message {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 20px 10px;
+      .logic-detail-content-message-practice {
+        font-size: 12px;
+        color: #999;
+        margin-right: 80px;
+      }
+    }
+    .logic-detail-content-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      .logic-detail-content-button {
+        .van-button {
+          width: 120px;
+        }
+      }
+    }
+    .logic-detail-content-locked {
+      position: absolute;
+      left: 0;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      margin: auto;
+      width: 20px;
+      height: 20px;
+      opacity: 1;
+    }
+  }
+  .logic-detail-content-opticty {
+    opacity: 0.5;
+  }
+}
+</style>
+<template>
+  <div class="page">
+    <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，在进行考点评测效果会更好哦" />
+    <div class="logic-detail-box">
+      <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content {{ user.isMember != '1' ? 'logic-detail-content-opticty' : ''}}" @click="{{ user.isMember != '1' ? openPayTipPopup() : ''}}">
+        <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->
+        <div class="logic-detail-content-title">
+          <div class="logic-detail-content-title-text">{{item.name}}</div>
+          <!-- <div class="logic-detail-content-title-button" @click="{{user.isMember != '1' ? '' : toQuestion(item._id, item.name)}}">去刷题 ></div> -->
+        </div>
+        <div class="logic-detail-content-describe">总结{{item.name}}模块的知识点，需要掌握熟记，学习完后最好配合对应的刷题模块。</div>
+        <div class="logic-detail-content-footer">
+          <van-button class="logic-detail-content-button" color="#4755EB" round @click="{{user.isMember != '1' ? '' : toList(item._id, item.name)}}">开始学习</van-button>
+          <!-- <van-button class="logic-detail-content-button" color="#54BBCB" round @click="{{user.isMember != '1' ? '' : toEvaluation(item._id, item.name)}}">考点评测</van-button> -->
+        </div>
+        <div v-if="user.isMember != '1'">
+          <image class="logic-detail-content-locked" src="../../assets/images/locked.png" />
+        </div>
+      </div>
+      <div class="logic-detail-content">
+        <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->
+        <div class="logic-detail-content-title">
+          <div class="logic-detail-content-title-text">申论范文</div>
+          <!-- <div class="logic-detail-content-title-button" @click="{{user.isMember != '1' ? '' : toQuestion(item._id, item.name)}}">去刷题 ></div> -->
+        </div>
+        <div class="logic-detail-content-describe">申论优秀范文欣赏 | 适用于各种考试大作文</div>
+        <!-- <div class="logic-detail-content-message">
+          <div class="logic-detail-content-message-practice">已学习 {{studyCount}}/{{detail.count}}</div>
+          <van-rate readonly value="{{ starValue }}" allow-half/>
+        </div> -->
+        <div class="logic-detail-content-footer">
+          <van-button class="logic-detail-content-button" color="#4755EB" round @click="toArticle">开始学习</van-button>
+          <!-- <van-button class="logic-detail-content-button" color="#54BBCB" round >考点评测</van-button> -->
+        </div>
+      </div>
+    </div>
+    <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
+  </div>
+</template>
+<config>
+  {
+  navigationBarTitleText: '知识点详情',
+    usingComponents: {
+      "van-search": "../../libs/vant/circle/index",
+      "van-notice-bar": "../../libs/vant/notice-bar/index",
+      "van-button": "../../libs/vant/button/index",
+      "van-rate": "../../libs/vant/rate/index",
+      "pay-tip-popup": "~@/components/pay-tip-popup"
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import subscribe from '@/mixins/subscribe.js'
+  import { mapGetters } from '@wepy/x'
+  import { getModulesById } from '@/api/knowledgeModule'
+  import { addMessage } from '@/api/subscribe'
+  import eventHub from '@/common/eventHub'
+
+  wepy.page({
+    store,
+    mixins: [ subscribe ],
+    data: {
+      moudleId: '',
+      moudleList: [],
+      tipsShow: false
+    },
+    // 计算的属性
+    computed: {
+      ...mapGetters(['_id', 'user']),
+    },
+    onLoad(options) {
+      this.moudleId = options.id
+      this.getModulesByIdData(this.moudleId)
+    },
+    methods: {
+      openPayTipPopup () {
+        this.tipsShow = true
+      },
+      closePayPopup (e) {
+        this.tipsShow = e
+      },
+      // 获取已学习
+      async getModulesByIdData(moudleId) {
+        wx.showLoading({title: '加载中'})
+        let result = await getModulesById(moudleId)
+        this.moudleList = result.result.data
+        wx.hideLoading()
+      },
+      async toList (id, name) {
+        if (this.user.messageCount < 1) {
+          await this.onSubscribe()
+        }
+        wx.navigateTo({
+          url: `/pages/expound/list?id=${id}&name=${name}`,
+        })
+      },
+      async toArticle () {
+        if (this.user.messageCount < 1) {
+          await this.onSubscribe()
+        }
+        wx.navigateTo({
+          url: '/pages/index/list?type=申论范文',
+        })
+      },
+      // toEvaluation (id, name) {
+      //   wx.navigateTo({
+      //     url: `/pages/realpolitics/evaluation?id=${id}&name=${name}`,
+      //   })
+      // },
+      // toQuestion (id, name) {
+      //   wx.navigateTo({
+      //     url: `/pages/realpolitics/question?id=${id}&name=${name}`,
+      //   })
+      // },
+    },
+    onShareAppMessage () {
+      return {
+        // 标题是话题标题
+        title: '知识模块',
+        // 路径为话题详情路径
+        path: '/pages/expound/index?id=' + this.moudleId,
+      }
+    },
+  })
+</script>

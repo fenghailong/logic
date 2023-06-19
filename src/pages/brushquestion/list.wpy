@@ -1,0 +1,147 @@
+<style lang="less">
+.page{
+  // background-color: #eee;
+  background-image: url('https://7072-prod-2gzhco766f4e1e27-1304834920.tcb.qcloud.la/index/index-bg.png?sign=c0a04d439d28057eae72424de5b43242&t=1684489430');
+  background-repeat:no-repeat;
+  background-size: 100% 100%;
+  min-height:100%;
+  background-color: #F5F7FB;
+  // height: auto;s
+  .logic-detail-box {
+    display: flex;
+    flex-wrap: wrap;
+    // flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+  }
+  .logic-detail-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5px;
+    color: #948282;
+    font-size: 14px;
+    border-radius: 10px;
+    box-shadow: 0px 10px 15px 0px rgba(35,59,204,0.35);
+    margin-bottom: 20px;
+  }
+  .logic-detail-item {
+    width: 80px;
+    height: 80px;
+    position: relative;
+    .logic-detail-item-bg {
+      width: 100%;
+      position: absolute;
+      z-index: 0;
+    }
+    .logic-detail-item-content {
+      width: 100%;
+      position: absolute;
+      z-index: 1;
+      top: 0;
+      bottom: 15px;
+      margin: auto 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 12px;
+    }
+  }
+  // .logic-detail-content:nth-child(n) {
+  //   align-self: flex-start;
+  //   // transform: translateY(-20px);
+  // }
+
+  // .logic-detail-content:nth-child(2n) {
+  //   align-self: center;
+  //   // transform: translateY(-20px);
+  // }
+
+  // .logic-detail-content:nth-child(3n) {
+  //   align-self: flex-end;
+  //   // transform: translateY(-40px);
+  // }
+}
+</style>
+<template>
+  <div class="page">
+    <div class="logic-detail-box">
+      <div class="logic-detail-content" v-for="(item, index) in moudleList" :key="index">
+        <div class="logic-detail-content-status">待学习</div>
+        <div class="logic-detail-item">
+          <image class="logic-detail-item-bg" src="../../assets/images/study-type.png" />
+          <div class="logic-detail-item-content">第 {{index+1}} 天</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<config>
+  {
+  navigationBarTitleText: '刷题模块',
+    usingComponents: {
+      "van-button": "../../libs/vant/button/index",
+      "van-progress": "../../libs/vant/progress/index"
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import subscribe from '@/mixins/subscribe.js'
+  import { mapGetters } from '@wepy/x'
+  import { getModulesByTypeById } from '@/api/knowledgeModule'
+  import eventHub from '@/common/eventHub'
+
+  wepy.page({
+    store,
+    mixins: [ subscribe ],
+    data: {
+      moudleId: '',
+      moudleList: []
+    },
+    // 计算的属性
+    computed: {
+      ...mapGetters(['_id', 'user']),
+    },
+    onLoad(options) {
+      this.moudleId = options.id
+      this.getModulesByIdData()
+    },
+    methods: {
+      // 获取已学习
+      async getModulesByIdData() {
+        wx.showLoading({title: '加载中'})
+        let params = {
+          parent_id: this.moudleId,
+          module_type: '2'
+        }
+        let result = await getModulesByTypeById(params)
+        this.moudleList = result.result.data
+        wx.hideLoading()
+      },
+      async toList (id, name) {
+        if (this.user.messageCount < 1) {
+          await this.onSubscribe()
+        }
+        wx.navigateTo({
+          url: `/pages/brushquestion/list?id=${id}&name=${name}`,
+        })
+      },
+      // toQuestion (id, name) {
+      //   wx.navigateTo({
+      //     url: `/pages/realpolitics/question?id=${id}&name=${name}`,
+      //   })
+      // },
+    },
+    onShareAppMessage () {
+      return {
+        // 标题是话题标题
+        title: '知识模块',
+        // 路径为话题详情路径
+        path: '/pages/brushquestion/index?id=' + this.moudleId,
+      }
+    },
+  })
+</script>

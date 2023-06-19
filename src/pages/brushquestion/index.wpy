@@ -1,0 +1,124 @@
+<style lang="less">
+.page{
+  background-color: #eee;
+  .logic-detail-box {
+    padding: 10px 10px 10px;
+  }
+  .logic-detail-content {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px 15px;
+    margin-bottom: 20px;
+    position: relative;
+    .logic-detail-content-title {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      .logic-detail-content-title-text {
+        text-align: left;
+        font-size: 18px;
+        font-weight: 500;
+        flex: 1;
+      }
+      .logic-detail-content-title-button {
+        height: 30px;
+        .logic-detail-content-title-vanbutton {
+          height: 30px;
+          .van-button {
+            height: 30px;
+          }
+        }
+      }
+    }
+    .logic-detail-content-process-tips {
+      font-size: 14px;
+      color: #999;
+      margin-bottom: 10px;
+    }
+  }
+}
+</style>
+<template>
+  <div class="page">
+    <div class="logic-detail-box">
+      <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content">
+        <div class="logic-detail-content-title">
+          <div class="logic-detail-content-title-text">{{item.name}}</div>
+          <div class="logic-detail-content-title-button">
+            <van-button class="logic-detail-content-title-vanbutton" color="#387ffb" round @click="toList(item._id, item.name)">立即刷题</van-button>
+          </div>
+        </div>
+        <div class="logic-detail-content-process-tips">第2天 共30题</div>
+        <van-progress percentage="50" stroke-width="6px" :show-pivot="false" />
+      </div>
+    </div>
+  </div>
+</template>
+<config>
+  {
+  navigationBarTitleText: '刷题模块',
+    usingComponents: {
+      "van-button": "../../libs/vant/button/index",
+      "van-progress": "../../libs/vant/progress/index"
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import subscribe from '@/mixins/subscribe.js'
+  import { mapGetters } from '@wepy/x'
+  import { getModulesByTypeById } from '@/api/knowledgeModule'
+  import eventHub from '@/common/eventHub'
+
+  wepy.page({
+    store,
+    mixins: [ subscribe ],
+    data: {
+      moudleId: '',
+      moudleList: []
+    },
+    // 计算的属性
+    computed: {
+      ...mapGetters(['_id', 'user']),
+    },
+    onLoad(options) {
+      this.moudleId = options.id
+      this.getModulesByIdData()
+    },
+    methods: {
+      // 获取已学习
+      async getModulesByIdData() {
+        wx.showLoading({title: '加载中'})
+        let params = {
+          parent_id: this.moudleId,
+          module_type: '2'
+        }
+        let result = await getModulesByTypeById(params)
+        this.moudleList = result.result.data
+        wx.hideLoading()
+      },
+      async toList (id, name) {
+        if (this.user.messageCount < 1) {
+          await this.onSubscribe()
+        }
+        wx.navigateTo({
+          url: `/pages/brushquestion/list?id=${id}&name=${name}`,
+        })
+      },
+      // toQuestion (id, name) {
+      //   wx.navigateTo({
+      //     url: `/pages/realpolitics/question?id=${id}&name=${name}`,
+      //   })
+      // },
+    },
+    onShareAppMessage () {
+      return {
+        // 标题是话题标题
+        title: '知识模块',
+        // 路径为话题详情路径
+        path: '/pages/brushquestion/index?id=' + this.moudleId,
+      }
+    },
+  })
+</script>

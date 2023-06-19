@@ -149,7 +149,20 @@ const getAllModules = async (data) => {
 }
 // 获取单个模块下面的子集
 const getModulesById = async (id) => {
-  const result = await collection.where({ parent_id: id, isTopParent: false, module_type: db.command.neq('2') }).get();
+  const result = await collection.where({
+    parent_id: id,
+    isTopParent: false,
+    module_type: db.command.neq('2')
+  }).get();
+  return result
+}
+
+// 获取单个模块下面的子集
+const getModulesByTypeById = async (options) => {
+  const result = await collection.where({
+    parent_id: options.parent_id,
+    module_type: options.module_type
+  }).get();
   return result
 }
 
@@ -161,6 +174,8 @@ exports.main = async (event, context) => {
     res = await getAllModules(data);
   } else if (func === 'getModulesById') {
     res = await getModulesById(data);
+  } else if (func === 'getModulesByTypeById') {
+    res = await getModulesByTypeById(data);
   } else if (func === 'getEvaluationById') {
     res = await getEvaluationById(data);
   } else if (func === 'addEvaluationRecord') {

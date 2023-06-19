@@ -73,13 +73,16 @@
   .logic-index-popup-userpower-list {
     display: flex;
     align-items: center;
-    justify-content: space-around;
+    flex-wrap: wrap;
+    // justify-content: space-around;
     width: 100%;
     // padding: 0 15px 15px;
   }
   .logic-index-popup-userpower-item {
+    width: 20%;
     text-align: center;
     margin-right: 5px;
+    margin-bottom: 5px;
   }
   .logic-index-popup-userpower-icon {
     width: 30px;
@@ -96,14 +99,14 @@
       <div v-if="isIOS" class="logic-index-popup-box" :style="{ height: '70vh' }">
         <div class="logic-index-popup-userpower">
           <div class="logic-index-popup-userpower-text">普通用户(权限)</div>
-          <div class="logic-index-popup-userpower-list">
+          <div class="logic-index-popup-userpower-list" style="justify-content: space-around;">
             <div class="logic-index-popup-userpower-item">
               <image class="logic-index-popup-userpower-icon" src="../assets/images/judgement.png" />
               <div class="logic-index-popup-userpower-name">高频成语</div>
             </div>
             <div class="logic-index-popup-userpower-item">
               <image class="logic-index-popup-userpower-icon" src="../assets/images/quantity.png" />
-              <div class="logic-index-popup-userpower-name">申论规范</div>
+              <div class="logic-index-popup-userpower-name">申论范文</div>
             </div>
             <div class="logic-index-popup-userpower-item">
               <image class="logic-index-popup-userpower-icon" src="../assets/images/dataany.png" />
@@ -118,21 +121,25 @@
         <div class="logic-index-popup-userpower">
           <div class="logic-index-popup-userpower-text">会员用户(权限)</div>
           <div class="logic-index-popup-userpower-list">
-            <div class="logic-index-popup-userpower-item">
+            <div class="logic-index-popup-userpower-item" style="width: 30%;">
               <image class="logic-index-popup-userpower-icon" src="../assets/images/studytalk.png" />
               <div class="logic-index-popup-userpower-name">公基模块</div>
             </div>
-            <div class="logic-index-popup-userpower-item">
+            <div class="logic-index-popup-userpower-item" style="width: 30%;">
               <image class="logic-index-popup-userpower-icon" src="../assets/images/speech.png" />
               <div class="logic-index-popup-userpower-name">时事政治</div>
             </div>
-            <div class="logic-index-popup-userpower-item">
+            <div class="logic-index-popup-userpower-item" style="width: 30%;">
               <image class="logic-index-popup-userpower-icon" src="../assets/images/reply.png" />
               <div class="logic-index-popup-userpower-name">常识积累</div>
             </div>
-            <div class="logic-index-popup-userpower-item">
+            <div class="logic-index-popup-userpower-item" style="width: 30%;">
               <image class="logic-index-popup-userpower-icon" src="../assets/images/index-selected.png" />
-              <div class="logic-index-popup-userpower-name">刷题计划</div>
+              <div class="logic-index-popup-userpower-name">时政刷题</div>
+            </div>
+            <div class="logic-index-popup-userpower-item" style="width: 30%;">
+              <image class="logic-index-popup-userpower-icon" src="../assets/images/quantity.png" />
+              <div class="logic-index-popup-userpower-name">规范词</div>
             </div>
           </div>
         </div>
@@ -160,14 +167,14 @@
       <div v-else class="logic-index-popup-member-box" :style="{ height: '70vh' }">
         <div class="logic-index-popup-userpower">
           <div class="logic-index-popup-userpower-text">普通用户(权限)</div>
-          <div class="logic-index-popup-userpower-list">
+          <div class="logic-index-popup-userpower-list" style="justify-content: space-around;">
             <div class="logic-index-popup-userpower-item">
               <image class="logic-index-popup-userpower-icon" src="../assets/images/judgement.png" />
               <div class="logic-index-popup-userpower-name">高频成语</div>
             </div>
             <div class="logic-index-popup-userpower-item">
               <image class="logic-index-popup-userpower-icon" src="../assets/images/quantity.png" />
-              <div class="logic-index-popup-userpower-name">申论规范</div>
+              <div class="logic-index-popup-userpower-name">申论范文</div>
             </div>
             <div class="logic-index-popup-userpower-item">
               <image class="logic-index-popup-userpower-icon" src="../assets/images/dataany.png" />
@@ -182,21 +189,25 @@
         <div class="logic-index-popup-userpower">
           <div class="logic-index-popup-userpower-text">会员用户(权限)</div>
           <div class="logic-index-popup-userpower-list">
-            <div class="logic-index-popup-userpower-item">
+            <div class="logic-index-popup-userpower-item" style="width: 30%;">
               <image class="logic-index-popup-userpower-icon" src="../assets/images/studytalk.png" />
               <div class="logic-index-popup-userpower-name">公基模块</div>
             </div>
-            <div class="logic-index-popup-userpower-item">
+            <div class="logic-index-popup-userpower-item" style="width: 30%;">
               <image class="logic-index-popup-userpower-icon" src="../assets/images/speech.png" />
               <div class="logic-index-popup-userpower-name">时事政治</div>
             </div>
-            <div class="logic-index-popup-userpower-item">
+            <div class="logic-index-popup-userpower-item" style="width: 30%;">
               <image class="logic-index-popup-userpower-icon" src="../assets/images/reply.png" />
               <div class="logic-index-popup-userpower-name">常识积累</div>
             </div>
-            <div class="logic-index-popup-userpower-item">
+            <div class="logic-index-popup-userpower-item" style="width: 30%;">
               <image class="logic-index-popup-userpower-icon" src="../assets/images/index-selected.png" />
-              <div class="logic-index-popup-userpower-name">刷题计划</div>
+              <div class="logic-index-popup-userpower-name">时政刷题</div>
+            </div>
+            <div class="logic-index-popup-userpower-item" style="width: 30%;">
+              <image class="logic-index-popup-userpower-icon" src="../assets/images/quantity.png" />
+              <div class="logic-index-popup-userpower-name">申论规范词</div>
             </div>
           </div>
         </div>
