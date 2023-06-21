@@ -390,8 +390,8 @@
         <div class="logic-index-box-middle-left" @click="toBrushQuestion()">
           <image src="../../assets/images/words-bg.png" />
           <div class="logic-index-box-middle-left-title">百日刷题</div>
-          <text class="logic-index-box-middle-left-text">分模块百日刷题计划</text>
-          <text class="logic-index-box-middle-left-text">行测轻松上80+</text>
+          <text class="logic-index-box-middle-left-text">第一期：百日刷题上80+</text>
+          <text class="logic-index-box-middle-left-text">开始时间：2023.06.21</text>
         </div>
         <div class="logic-index-box-middle-right">
           <div class="logic-index-box-middle-right-item" @click="toDetail('国考高频成语')">

@@ -116,6 +116,8 @@ wepy.app({
       'pages/expound/detail',
       'pages/brushquestion/index',
       'pages/brushquestion/list',
+      'pages/brushquestion/question',
+      'pages/brushquestion/questionResult',
       'pages/auth/login'
     ],
     window: {

@@ -24,6 +24,27 @@
     border-radius: 10px;
     box-shadow: 0px 10px 15px 0px rgba(35,59,204,0.35);
     margin-bottom: 20px;
+    position: relative;
+  }
+  .logic-detail-content-opticty {
+    opacity: 0.5;
+  }
+  .logic-detail-content-locked {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+    width: 20px;
+    height: 20px;
+    opacity: 1;
+  }
+  .logic-detail-content-ed {
+    color: #387ffb;
+  }
+  .logic-detail-content-ing {
+    color: #387ffb;
   }
   .logic-detail-item {
     width: 80px;
@@ -48,33 +69,100 @@
       font-size: 12px;
     }
   }
-  // .logic-detail-content:nth-child(n) {
-  //   align-self: flex-start;
-  //   // transform: translateY(-20px);
-  // }
+  .logic-detail-popup {
+  }
+  .logic-detail-popup-box {
+    width: 80vw;
+    height: 70vh;
+    padding: 20px;
+    font-size: 14px;
+    font-weight: 400;
+  }
+  .logic-detail-popup-title {
+    text-align: center;
+    padding: 10px 0;
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .logic-detail-popup-name {
+    padding: 5px 0;
+  }
+  .logic-detail-popup-rule {
+    margin-top: 5px;
+  }
+  .logic-detail-popup-footer {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 20px;
+  }
 
-  // .logic-detail-content:nth-child(2n) {
-  //   align-self: center;
-  //   // transform: translateY(-20px);
-  // }
-
-  // .logic-detail-content:nth-child(3n) {
-  //   align-self: flex-end;
-  //   // transform: translateY(-40px);
-  // }
 }
 </style>
 <template>
   <div class="page">
     <div class="logic-detail-box">
-      <div class="logic-detail-content" v-for="(item, index) in moudleList" :key="index">
-        <div class="logic-detail-content-status">待学习</div>
-        <div class="logic-detail-item">
-          <image class="logic-detail-item-bg" src="../../assets/images/study-type.png" />
-          <div class="logic-detail-item-content">第 {{index+1}} 天</div>
+      <div v-for="(item, index) in moudleList" :key="index">
+        <div v-if="item.isCanUse === '1'">
+          <div v-if="item.practise && item.practise.isComplete === '1'" class="logic-detail-content logic-detail-content-ed" @click="openPopup(item, 1, index)">
+            <div class="logic-detail-content-status">已学习</div>
+            <div class="logic-detail-item">
+              <image class="logic-detail-item-bg" src="../../assets/images/study-type-ed.png" />
+              <div class="logic-detail-item-content">第 {{index+1}} 天</div>
+            </div>
+          </div>
+          <div v-else-if="item.practise && item.practise.isComplete === '2'" class="logic-detail-content logic-detail-content-ing" @click="openPopup(item, 2, index)">
+            <div class="logic-detail-content-status">学习中</div>
+            <div class="logic-detail-item">
+              <image class="logic-detail-item-bg" src="../../assets/images/study-type-ing.png" />
+            </div>
+          </div>
+          <div v-else class="logic-detail-content   {{ index > 2 && user.isMember != '1' ? 'logic-detail-content-opticty' : ''}}" @click="openPopup(item, 3, index)">
+            <div class="logic-detail-content-status">待学习</div>
+            <div class="logic-detail-item">
+              <image class="logic-detail-item-bg" src="../../assets/images/study-type.png" />
+              <div class="logic-detail-item-content">第 {{index+1}} 天</div>
+            </div>
+            <div v-if="index > 2 && user.isMember != '1'">
+              <image class="logic-detail-content-locked" src="../../assets/images/locked.png" />
+            </div>
+          </div>
+        </div>
+        <div v-else>
+          <div class="logic-detail-content" @click="openPopup(item, 4, index)">
+            <div class="logic-detail-content-status">未开放</div>
+            <div class="logic-detail-item">
+              <image class="logic-detail-item-bg" src="../../assets/images/study-type.png" />
+              <div class="logic-detail-item-content">第 {{index+1}} 天</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+    <div class="logic-detail-popup">
+      <van-popup get-container="#app" @click-overlay="closePopup" :show="tipsShow">
+        <div class="logic-detail-popup-box">
+          <div class="logic-detail-popup-title">{{popupDetail.examination.name}}</div>
+          <div class="logic-detail-popup-name">刷题模块：{{popupDetail.name}}</div>
+          <div class="logic-detail-popup-rule">刷题规则：</div>
+          <div class="logic-detail-popup-rule">1.每日刷题后，消化吸收巩固。每个模块题量不宜多，弄清每一道题，以及背后的知识点很重要啊！</div>
+          <div class="logic-detail-popup-rule">2.所选题目都是历年真题，每天只能完成当天的题目，不能提前解锁。</div>
+          <div class="logic-detail-popup-rule">3.完成刷题后，可查看所有人平均用时，以及正确率。</div>
+          <div class="logic-detail-popup-rule">4.提供刷题群服务，刷题群只讨论公考相关，包括错题，解析，群主会组织大家一起刷题讨论。</div>
+          <div class="logic-detail-popup-footer">
+            <div>
+              <van-button round type="info" block @click="pay">加入群聊</van-button>
+            </div>
+            <div>
+              <van-button v-if="popupType === 1" round type="info" block @click="toQuestion(popupDetail, popupType)">查看结果</van-button>
+              <van-button v-else-if="popupType === 2" round type="info" block @click="toQuestion(popupDetail, popupType)">继续学习</van-button>
+              <van-button v-else round type="info" block @click="toQuestion(popupDetail, popupType)">开始学习</van-button>
+            </div>
+          </div>
+        </div>
+      </van-popup>
+    </div>
+    <pay-tip-popup :tipsShow="tipsPayShow" @closePayPopup="closePayPopup"></pay-tip-popup>
+    <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
   </div>
 </template>
 <config>
@@ -82,7 +170,10 @@
   navigationBarTitleText: '刷题模块',
     usingComponents: {
       "van-button": "../../libs/vant/button/index",
-      "van-progress": "../../libs/vant/progress/index"
+      "van-progress": "../../libs/vant/progress/index",
+      "van-popup": "../../libs/vant/popup/index",
+      "van-dialog": "../../libs/vant/dialog/index",
+      "pay-tip-popup": "~@/components/pay-tip-popup"
     }
   }
 </config>
@@ -91,15 +182,20 @@
   import store from '@/store'
   import subscribe from '@/mixins/subscribe.js'
   import { mapGetters } from '@wepy/x'
-  import { getModulesByTypeById } from '@/api/knowledgeModule'
+  import { getModulesByPractise } from '@/api/knowledgeModule'
   import eventHub from '@/common/eventHub'
+  import Dialog from '../../libs/vant/dialog/dialog';
 
   wepy.page({
     store,
     mixins: [ subscribe ],
     data: {
       moudleId: '',
-      moudleList: []
+      moudleList: [],
+      tipsShow: false,
+      tipsPayShow: false,
+      popupDetail: {},
+      popupType: '1'
     },
     // 计算的属性
     computed: {
@@ -115,25 +211,60 @@
         wx.showLoading({title: '加载中'})
         let params = {
           parent_id: this.moudleId,
-          module_type: '2'
+          module_type: '2',
+          user_id: this._id
         }
-        let result = await getModulesByTypeById(params)
-        this.moudleList = result.result.data
+        let result = await getModulesByPractise(params)
+        console.log(result.result.data.list, '????????????')
+        this.moudleList = result.result.data.list
         wx.hideLoading()
       },
-      async toList (id, name) {
-        if (this.user.messageCount < 1) {
-          await this.onSubscribe()
-        }
-        wx.navigateTo({
-          url: `/pages/brushquestion/list?id=${id}&name=${name}`,
-        })
+      openPayTipPopup () {
+        this.tipsPayShow = true
       },
-      // toQuestion (id, name) {
-      //   wx.navigateTo({
-      //     url: `/pages/realpolitics/question?id=${id}&name=${name}`,
-      //   })
-      // },
+      closePayPopup (e) {
+        this.tipsPayShow = false
+      },
+      closePopup () {
+        this.tipsShow = false
+      },
+      openPopup (item, type, index) {
+        if (item.isCanUse === '1') {
+          if (index > 2 && this.user.isMember != '1') {
+            this.tipsPayShow = true
+            return
+          } else {
+            this.tipsShow = true
+            this.popupDetail = item
+            this.popupType = type
+          }
+
+        } else {
+          Dialog.confirm({
+            message: '请完成当天刷题，未到该模块刷题时间',
+            showCancelButton: false
+          })
+        }
+      },
+      toQuestion (item, type) {
+        this.tipsShow = false
+        if (item.isCanUse === '1') {
+          if (type === 1) {
+            wx.navigateTo({
+              url: `/pages/brushquestion/questionResult?id=${item.practise._id}&title=${item.name}&ishiddenButton=2`,
+            })
+          } else if (type === 2) {
+            wx.navigateTo({
+              url: `/pages/brushquestion/question?practiseId=${item.practise._id}&title=${item.name}`,
+            })
+          } else {
+            wx.navigateTo({
+              url: `/pages/brushquestion/question?moudleId=${item._id}&examinationId=${item.examination_id}&title=${item.name}`,
+            })
+          }
+        }
+
+      },
     },
     onShareAppMessage () {
       return {

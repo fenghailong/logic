@@ -32,6 +32,17 @@ export async function getModulesByTypeById(data) {
   })
 }
 
+// 获取子模块，联表查询是否有刷题记录（新）
+export async function getModulesByPractise(data) {
+  return await wx.cloud.callFunction({
+    name: 'knowledgeModule',
+    data: {
+      func: 'getModulesByPractise',
+      data
+    },
+  })
+}
+
 // 事业单位获取详情
 export async function getKnowledgeDetailById(data) {
   return await wx.cloud.callFunction({

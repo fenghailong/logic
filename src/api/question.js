@@ -9,6 +9,17 @@ export async function getQuestionById(data) {
   })
 }
 
+// 获取一次刷题题目（百日刷题）
+export async function getQuestionBymodule(data) {
+  return await wx.cloud.callFunction({
+    name: 'question',
+    data: {
+      func: 'getQuestionBymodule',
+      data
+    },
+  })
+}
+
 // 获取模块题目数量
 export async function getQuestionCountById(data) {
   return await wx.cloud.callFunction({

@@ -48,10 +48,10 @@ const sendMessageItem = async (item) => {
       "lang": 'zh_CN',
       "data": {
         "thing1": {
-          "value": '错题记录'
+          "value": '申论、人物素材200个'
         },
         "thing2": {
-          "value": '新增错题记录，随时查漏补缺'
+          "value": '更新申论规范词、模板、金句，人物素材'
         },
         "thing5": {
           "value": '点击此处查看更新内容'

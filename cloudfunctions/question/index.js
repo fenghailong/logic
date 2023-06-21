@@ -184,9 +184,24 @@ const getQuestionById = async (options) => {
   return res;
 }
 
+// 获取百日刷题模块下的所有题目 根据试卷id 和模块id 获取
+const getQuestionBymodule = async (options) => {
+  const result = await questionCollection.where({ examination_id: options.examination_id, module_id: options.module_id}).get()
+  resultQuestion = result.data
+  let res = {
+    resultQuestion
+  }
+  return res;
+}
+
 // 获取刷题练习记录
 const getPractise = async (options) => {
-  let hasRecord = await practiseCollection.where({ user_id: options.user_id, module_id: options.module_id, isComplete: '2'}).get();
+  let isComplete = options.isComplete ? options.isComplete : '2'
+  let hasRecord = await practiseCollection.where({
+    user_id: options.user_id,
+    module_id: options.module_id,
+    isComplete: isComplete
+  }).get();
   if (Array.isArray(hasRecord.data) && hasRecord.data.length === 0) {
     return []
   } else {
@@ -236,7 +251,7 @@ const getPractiseById = async (options) => {
 
 // 增加刷题练习记录
 const addPractise = async (options) => {
-  await practiseCollection.add({
+  let data = await practiseCollection.add({
     data: {
       user_id: options.user_id,
       module_id: options.module_id,
@@ -247,6 +262,8 @@ const addPractise = async (options) => {
       _updateTime: Date.now()
     }
   })
+  console.log(data,'增加记录')
+  return data
 }
 
 // 更新刷题记录
@@ -318,6 +335,8 @@ exports.main = async (event, context) => {
   let res;
   if (func === 'getQuestionById') {
     res = await getQuestionById(data);
+  } else if (func === 'getQuestionBymodule') {
+    res = await getQuestionBymodule(data);
   } else if (func === 'getQuestionCountById') {
     res = await getQuestionCountById(data);
   } else if (func === 'addQuestionRecord') {

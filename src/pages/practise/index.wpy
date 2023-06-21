@@ -133,16 +133,28 @@
         wx.hideLoading(this.practiseList)
       },
       toQuestion (item) {
-        if (item.isComplete === '1') {
-          wx.navigateTo({
-            url: `/pages/realpolitics/questionResult?id=${item._id}&title=${item.module.name}&moudleId=${item.module._id}&ishiddenButton=2`,
-          })
+        console.log(item)
+        if (item.module.parent_id === '2cc84e26645f47100c48bab504de9717') { //时事政治
+          if (item.isComplete === '1') {
+            wx.navigateTo({
+              url: `/pages/realpolitics/questionResult?id=${item._id}&title=${item.module.name}&moudleId=${item.module._id}&ishiddenButton=2`,
+            })
+          } else {
+            wx.navigateTo({
+              url: `/pages/realpolitics/question?id=${item.module._id}&name=${item.module.name}`,
+            })
+          }
         } else {
-          wx.navigateTo({
-            url: `/pages/realpolitics/question?id=${item.module._id}&name=${item.module.name}`,
-          })
+          if (item.isComplete === '1') {
+            wx.navigateTo({
+              url: `/pages/brushquestion/questionResult?id=${item._id}&title=${item.module.name}&ishiddenButton=1`,
+            })
+          } else {
+            wx.navigateTo({
+              url: `/pages/brushquestion/question?practiseId=${item._id}&title=${item.module.name}`,
+            })
+          }
         }
-
       },
     },
     onShareAppMessage () {

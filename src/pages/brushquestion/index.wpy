@@ -13,7 +13,7 @@
     .logic-detail-content-title {
       display: flex;
       align-items: center;
-      margin-bottom: 10px;
+      // margin-bottom: 10px;
       .logic-detail-content-title-text {
         text-align: left;
         font-size: 18px;
@@ -48,8 +48,8 @@
             <van-button class="logic-detail-content-title-vanbutton" color="#387ffb" round @click="toList(item._id, item.name)">立即刷题</van-button>
           </div>
         </div>
-        <div class="logic-detail-content-process-tips">第2天 共30题</div>
-        <van-progress percentage="50" stroke-width="6px" :show-pivot="false" />
+        <!-- <div class="logic-detail-content-process-tips">第2天 共30题</div>
+        <van-progress percentage="50" stroke-width="6px" :show-pivot="false" /> -->
       </div>
     </div>
   </div>
@@ -92,7 +92,8 @@
         wx.showLoading({title: '加载中'})
         let params = {
           parent_id: this.moudleId,
-          module_type: '2'
+          module_type: '2',
+          user_id: this._id,
         }
         let result = await getModulesByTypeById(params)
         this.moudleList = result.result.data

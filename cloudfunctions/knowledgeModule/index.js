@@ -8,7 +8,8 @@ const db = cloud.database();
 const collection = db.collection('knowledgeModule');
 const evaluationCollection = db.collection('evaluation');
 const evaluationRCollection = db.collection('evaluation_record');
-const questionCollection = db.collection('question');
+const $ = db.command.aggregate
+const _ = db.command
 // const questionRCollection = db.collection('evaluation_record');
 
 // 获取某个模块下的所有题目
@@ -157,13 +158,57 @@ const getModulesById = async (id) => {
   return result
 }
 
-// 获取单个模块下面的子集
+// 获取单个刷题模块下面的子集，并判断是否已学习完成
 const getModulesByTypeById = async (options) => {
   const result = await collection.where({
-    parent_id: options.parent_id,
-    module_type: options.module_type
+    new_parent_id: options.parent_id,
+    // module_type: options.module_type
   }).get();
   return result
+}
+
+// 获取单个刷题模块下面的子集,并联表查询是否有练习记录
+const getModulesByPractise = async (options) => {
+  const aggregateInstance = collection.aggregate()
+  .lookup({
+    from: 'practise',
+    let: {
+      user_id: options.user_id,
+      module_id: '$_id'
+    },
+    pipeline: $.pipeline()
+    .match(_.expr(
+      $.and([
+        $.eq(['$module_id', '$$module_id']),
+        $.eq(['$user_id', '$$user_id'])
+      ])
+    ))
+    .done(),
+    as: 'practiseList',
+  })
+  .lookup({
+    from: 'examination',
+    localField: 'examination_id',
+    foreignField: '_id',
+    as: 'examinationList',
+  })
+  const data = await aggregateInstance
+  .match({
+    new_parent_id: options.parent_id,
+    module_type: options.module_type
+  })
+  .addFields({
+    practise: $.arrayElemAt(['$practiseList', 0]),
+    examination: $.arrayElemAt(['$examinationList', 0]),
+  })
+  .project({
+    practiseList: 0,
+    examinationList: 0,
+  })
+  .sort({'sort': 1})
+  .limit(100)
+  .end()
+  return {data}
 }
 
 exports.main = async (event, context) => {
@@ -176,6 +221,8 @@ exports.main = async (event, context) => {
     res = await getModulesById(data);
   } else if (func === 'getModulesByTypeById') {
     res = await getModulesByTypeById(data);
+  } else if (func === 'getModulesByPractise') {
+    res = await getModulesByPractise(data);
   } else if (func === 'getEvaluationById') {
     res = await getEvaluationById(data);
   } else if (func === 'addEvaluationRecord') {
