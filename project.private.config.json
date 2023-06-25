@@ -35,6 +35,20 @@
           "query": "id=cec053f36481dd85000f5bd869c47b12&title=言语理解",
           "launchMode": "default",
           "scene": null
+        },
+        {
+          "name": "",
+          "pathName": "pages/customer/index",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "",
+          "pathName": "pages/brushquestion/rank",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
         }
       ]
     }

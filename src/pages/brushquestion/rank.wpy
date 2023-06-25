@@ -1,0 +1,265 @@
+<style lang="less">
+.page{
+  background-color: #eee;
+  .logic-index-box {
+    padding: 20px 20px;
+
+  }
+  .logic-index-header {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 15px 15px 0;
+    .logic-index-header-item{
+      width: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 15px;
+      .logic-index-header-title{
+        font-size: 12px;
+        color: #c8c8c8;
+      }
+      .logic-index-header-time {
+        font-size: 20px;
+        color: #333333;
+        font-weight: 600;
+      }
+    }
+  }
+  .logic-index-list {
+    padding: 10px 20px;
+    background-color: #ffffff;
+    margin-top: 10px;
+    border-radius: 10px;
+    // overflow: auto;
+    .logic-index-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+      .logic-index-item-sort {
+        margin-right: 20px;
+        font-size: 18px;
+        font-weight: 400;
+        color: #2fcebe;
+      }
+      .logic-index-item-user {
+        display: flex;
+        align-items: center;
+        flex: 1;
+      }
+      .logic-index-item-user-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50px;
+        margin-right: 15px;
+        margin-left: 0;
+        padding: 0;
+        overflow: auto;
+        background: none;
+        border: 0;
+        image {
+          width: 100%;
+          height: 100%;
+        }
+      }
+      .logic-index-title {
+        flex: 1;
+        font-size: 14 px;
+        white-space:nowrap;
+        overflow:hidden;
+        text-overflow:ellipsis;
+      }
+    }
+    .logic-index-item:last-child {
+      border-bottom: none;
+    }
+    .logic-index-item-opticty {
+      opacity: 0.4;
+    }
+  }
+}
+</style>
+<template>
+  <div class="page">
+    <div class="logic-index-box">
+      <div class="logic-index-header">
+        <div class="logic-index-header-item">
+          <div class="logic-index-header-title">平均用时</div>
+          <div class="logic-index-header-time">3分6秒</div>
+        </div>
+        <div class="logic-index-header-item">
+          <div class="logic-index-header-title">平均正确率</div>
+          <div class="logic-index-header-time">80%</div>
+        </div>
+        <div class="logic-index-header-item">
+          <div class="logic-index-header-title">我的用时</div>
+          <div class="logic-index-header-time">5分7秒</div>
+        </div>
+        <div class="logic-index-header-item">
+          <div class="logic-index-header-title">我的正确率</div>
+          <div class="logic-index-header-time">75%（23）</div>
+        </div>
+      </div>
+      <div class="logic-index-list">
+        <div class="logic-index-item">
+
+          <div class="logic-index-item-sort">1</div>
+          <!-- <div class="logic-index-index">{{index + 1}}</div> -->
+          <div class="logic-index-item-user">
+            <div class="logic-index-item-user-icon">
+              <image v-if="user.avatarUrl" :src="user.avatarUrl" />
+              <image v-else src="../../assets/images/avatar.png" />
+            </div>
+            <div class="logic-index-box-user-text">
+              <div v-if="user.nickName" class="logic-index-box-user-name">{{user.nickName}}</div>
+              <div v-else class="logic-index-box-user-name">新小白用户</div>
+            </div>
+          </div>
+          <div>80%</div>
+          <!-- <div class="logic-index-title" >{{item.title}}</div> -->
+        </div>
+        <div class="logic-index-item">
+
+          <div class="logic-index-item-sort">2</div>
+          <!-- <div class="logic-index-index">{{index + 1}}</div> -->
+          <div class="logic-index-item-user">
+            <div class="logic-index-item-user-icon">
+              <image v-if="user.avatarUrl" :src="user.avatarUrl" />
+              <image v-else src="../../assets/images/avatar.png" />
+            </div>
+            <div class="logic-index-box-user-text">
+              <div v-if="user.nickName" class="logic-index-box-user-name">{{user.nickName}}</div>
+              <div v-else class="logic-index-box-user-name">新小白用户</div>
+            </div>
+          </div>
+          <div>80%</div>
+          <!-- <div class="logic-index-title" >{{item.title}}</div> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<config>
+  {
+    navigationBarTitleText: '排行信息',
+    usingComponents: {
+      "van-circle": "../../libs/vant/circle/index",
+      "van-button": "../../libs/vant/button/index",
+      "van-empty": "../../libs/vant/empty/index",
+      "van-field": "../../libs/vant/field/index",
+      "van-swipe-cell": "../../libs/vant/swipe-cell/index",
+      "van-icon": "../../libs/vant/icon/index",
+      "van-dialog": "../../libs/vant/dialog/index",
+      "van-tag": "../../libs/vant/tag/index",
+      "van-popup": "../../libs/vant/popup/index",
+      "pay-tip-popup": "~@/components/pay-tip-popup"
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import { mapGetters } from '@wepy/x'
+  import eventHub from '@/common/eventHub'
+  import { addGeneralRecord, getKnowledgeDetailById } from '@/api/general'
+
+  wepy.page({
+    store,
+    computed: {
+      // 用户信息
+      ...mapGetters(['_id', 'user'])
+    },
+    data: {
+      id: '',
+      detail: {},
+      moudleList: {},
+      showPopup: false, // 列表弹框
+      tipsShow: false // 兑换码提示弹框
+    },
+    async onLoad(options) {
+      // this.moudleList = JSON.parse((decodeURIComponent(options.moudleList)))
+      // this.id = options.id
+      // await this.getDetail()
+      // wx.setNavigationBarTitle({title: this.detail.title})
+    },
+    methods: {
+      // 获取模块知识点详情
+      async getDetail() {
+        let index = this.moudleList.findIndex((item) => item._id == this.id)
+        let result = await getKnowledgeDetailById(this.id)
+        this.detail = result.result.data[0]
+        await this.addGeneralRecord(index)
+      },
+      async toGeneral (id) {
+        this.showPopup = false
+        this.id = id
+        this.getDetail()
+      },
+      async nextGeneral () {
+        let nextIndex = 0
+        let index = this.moudleList.findIndex((item) => item._id == this.id)
+        nextIndex = index + 1
+        if (nextIndex > 2 && this.user.isMember != '1'){
+          this.tipsShow = true // 打开提示框
+          return
+        }
+        if (nextIndex > (this.moudleList.length - 1)) {
+          wx.showToast({
+            title: '已经是最后一个了',
+            icon: 'success'
+          })
+        } else {
+          this.id = this.moudleList[nextIndex]._id
+          this.getDetail()
+        }
+      },
+      openPayTipPopup () {
+        this.tipsShow = true
+      },
+      closePayPopup (e) {
+        this.tipsShow = e
+      },
+      async previousGeneral () {
+        let previousIndex = 0
+        let index = this.moudleList.findIndex((item) => item._id == this.id)
+        previousIndex = index - 1
+        if (previousIndex < 0) {
+          wx.showToast({
+            title: '前面已经没有了',
+            icon: 'success'
+          })
+        } else {
+          this.id = this.moudleList[previousIndex]._id
+          this.getDetail()
+        }
+      },
+      // 增加知识点学习记录
+      async addGeneralRecord(index) {
+        wx.showLoading({title: '加载中'})
+        let result = await addGeneralRecord({
+          general_id: this.id,
+          user_id: this._id,
+          module_id: this.detail.module_id
+        })
+        let temp = this.moudleList[index]
+        temp.isStudyed = true
+        this.$set(this.moudleList, index, temp)
+        wx.hideLoading()
+        eventHub.$emit('refresh-list', this.moudleList);
+      },
+      async showListPopup () {
+        this.showPopup = !this.showPopup
+      },
+      clickOverlay () {
+        this.showPopup = false
+      }
+      // // 换一批知识点
+      // async nextSubject () {
+      // },
+    }
+  })
+</script>

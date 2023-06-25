@@ -1,0 +1,147 @@
+<style lang="less">
+.page {
+  background-image: url('https://7072-prod-2gzhco766f4e1e27-1304834920.tcb.qcloud.la/index/index-bg.png?sign=c0a04d439d28057eae72424de5b43242&t=1684489430');
+  background-repeat:no-repeat;
+  background-size: 100% 100%;
+  min-height:100%;
+  background-color: #F5F7FB;
+}
+.logic-index-box {
+  padding: 40px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  .logic-index-header{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .logic-index-header-icon {
+      width: 60px;
+      height: 60px;
+      image {
+        width: 100%;
+        height: 100%;
+      }
+    }
+    .logic-index-header-message {
+      font-size: 16px;
+      margin-left: 20px;
+      line-height: 1;
+      .logic-index-header-text {
+        font-size: 20px;
+        font-weight: 500;
+        margin-bottom: 15px;
+      }
+    }
+  }
+  .logic-index-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+    .logic-index-content-icon {
+      width: 200px;
+      height: 200px;
+      padding: 20px 0 10px;
+      image {
+        width: 100%;
+        height: 100%;
+      }
+    }
+    .logic-index-content-message {
+      font-size: 14px;
+      color: #333333;
+    }
+  }
+  .logic-index-box-hot {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    width: 100%;
+    .logic-index-box-hot-item {
+      padding: 20px 0;
+      background-color: #FFFFFF;
+      border-radius: 10px;
+      text-align: center;
+      width: 30%;
+      margin-bottom: 20px;
+      image {
+        width: 30px;
+        height: 30px;
+      }
+      .logic-index-box-hot-item-text {
+        font-size: 14px;
+        font-weight: 500;
+        color: #333333;
+        line-height: 14px;
+      }
+    }
+  }
+}
+</style>
+<template>
+  <div class="page">
+    <div class="logic-index-box">
+      <div class="logic-index-header">
+        <div class="logic-index-header-icon">
+          <image src="../../assets/images/avatar.png" />
+        </div>
+        <div class="logic-index-header-message">
+          <div class="logic-index-header-text">逻辑填空</div>
+          <div class="logic-index-header-tips">更懂公考，更懂你</div>
+        </div>
+      </div>
+      <div class="logic-index-content">
+        <div class="logic-index-content-icon">
+          <image 	show-menu-by-longpress src="cloud://prod-2gzhco766f4e1e27.7072-prod-2gzhco766f4e1e27-1304834920/customer/customer.jpeg" />
+        </div>
+        <div class="logic-index-content-message">长按识别添加微信</div>
+      </div>
+      <van-divider style="width: 100%;" contentPosition="center" borderColor="#1989fa" textColor="#1989fa" fontSize="18">加入刷题学习群</van-divider>
+      <div class="logic-index-box-hot">
+        <div class="logic-index-box-hot-item">
+          <image src="../../assets/images/realpolitics.png" />
+          <div class="logic-index-box-hot-item-text">百日刷题</div>
+        </div>
+        <div class="logic-index-box-hot-item">
+          <image src="../../assets/images/changshi.png" />
+          <div class="logic-index-box-hot-item-text">考友交流</div>
+        </div>
+        <div class="logic-index-box-hot-item">
+          <image src="../../assets/images/person.png" />
+          <div class="logic-index-box-hot-item-text">班班督学</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<config>
+  {
+    navigationBarTitleText: '加入群聊',
+    navigationBarBackgroundColor: '#ffffff',
+    navigationBarTextStyle: 'black',
+    usingComponents: {
+      "van-divider": "../../libs/vant/divider/index"
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import { mapGetters } from '@wepy/x'
+  wepy.page({
+    store,
+    data: {
+    },
+    computed: {
+      ...mapGetters([ '_id', 'user' ])
+    },
+    onReady() {
+    },
+    methods: {
+    }
+  })
+</script>

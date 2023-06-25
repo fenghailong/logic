@@ -118,6 +118,8 @@ wepy.app({
       'pages/brushquestion/list',
       'pages/brushquestion/question',
       'pages/brushquestion/questionResult',
+      'pages/brushquestion/rank',
+      'pages/customer/index',
       'pages/auth/login'
     ],
     window: {

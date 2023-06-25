@@ -95,7 +95,7 @@
     </div>
     <div v-if="ishiddenButton === '1'" class="logic-index-button">
       <van-button round type="info" @click="toIndex">返回首页</van-button>
-      <!-- <van-button round type="info" @click="toQuestion">查看排行</van-button> -->
+      <van-button round type="info" @click="toRank">查看排行</van-button>
     </div>
     <div class="logic-index-box">
       <div v-if="questionList.length > 0" v-for="(item, index) in questionList" :key="index" class="logic-index-question-list {{item.isShowAnswer ? 'logic-index-question-list-an' : ''}}">
@@ -165,10 +165,10 @@
         let options = {
           practise_id: this.practise_id
         }
-        // 获取一条联系记录
+        // 获取一条练习记录
         let result = await getPractiseById(options)
         this.practiseData = result.result
-        console.log(result,'============')
+        console.log(this.practiseData,'============')
         if(result.result && result.result.questions.length > 0) {
           this.seconds = Number(result.result.useTime.slice(3,5))
           this.minutes = Number(result.result.useTime.slice(0,2))
@@ -188,11 +188,11 @@
           this.rightPercent = parseInt((rightCount/this.questionList.length)*100)
         }
       },
-      // toQuestion () {
-      //   wx.navigateTo({
-      //     url: `/pages/realpolitics/question?id=${this.moudleId}&name=${this.title}`,
-      //   })
-      // },
+      toRank () {
+        wx.navigateTo({
+          url: `/pages/brushquestion/rank?id=${this.moudleId}&name=${this.title}`,
+        })
+      },
       toIndex () {
         wx.navigateTo({
           url: `/pages/index/index`,
