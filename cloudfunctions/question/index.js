@@ -239,6 +239,36 @@ const getPractiseList = async (options) => {
   return {currPage: options.currPage, pageSize: options.pageSize, totalPage, totalCount, data}
 }
 
+// 获取一个模版的刷题练习记录 （排名使用）
+const getPractiseListByModule = async (options) => {
+  const skipCount = (options.currPage - 1) * options.pageSize
+  const countResult = await practiseCollection.where({ module_id: options.module_id}).count();
+  const totalCount = countResult.total
+  const totalPage = totalCount === 0 ? 0 : totalCount <= options.pageSize ? 1 : parseInt(totalCount / options.pageSize) + 1
+  const aggregateInstance = practiseCollection.aggregate()
+  .lookup({
+    from: 'user',
+    localField: 'user_id',
+    foreignField: '_id',
+    as: 'userList',
+  })
+  const data = await aggregateInstance
+  .match({
+    module_id: options.module_id
+  })
+  .addFields({
+    user: $.arrayElemAt(['$userList', 0]),
+  })
+  .project({
+    userList: 0
+  })
+  // .sort({'_updateTime': -1})
+  .skip(skipCount)
+  .limit(options.pageSize)
+  .end()
+  return {currPage: options.currPage, pageSize: options.pageSize, totalPage, totalCount, data}
+}
+
 // 获取刷题练习记录
 const getPractiseById = async (options) => {
   let hasRecord = await practiseCollection.where({ _id: options.practise_id}).get();

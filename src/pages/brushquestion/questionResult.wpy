@@ -190,7 +190,7 @@
       },
       toRank () {
         wx.navigateTo({
-          url: `/pages/brushquestion/rank?id=${this.moudleId}&name=${this.title}`,
+          url: `/pages/brushquestion/rank?moudleId=${this.practiseData.module_id}`,
         })
       },
       toIndex () {
