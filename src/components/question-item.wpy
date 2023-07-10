@@ -2,6 +2,7 @@
 .logic-index-question-item {
   .logic-index-question-title{
     max-height: 70vh;
+    width: 100%;
     overflow: auto;
     font-size: 16px;
     margin-bottom: 10px;
@@ -15,6 +16,7 @@
       // max-width: 100%;
       // text-align: justify;
       // white-space: normal;
+      // color: #387ffb;
       letter-spacing: 2px !important;
     }
   }

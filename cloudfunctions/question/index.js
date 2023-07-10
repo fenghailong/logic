@@ -186,6 +186,7 @@ const getQuestionById = async (options) => {
 
 // 获取百日刷题模块下的所有题目 根据试卷id 和模块id 获取
 const getQuestionBymodule = async (options) => {
+  console.log(options, '===========')
   const result = await questionCollection.where({ examination_id: options.examination_id, module_id: options.module_id}).get()
   resultQuestion = result.data
   let res = {
