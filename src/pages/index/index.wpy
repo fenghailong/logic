@@ -174,7 +174,7 @@
           background-color: #1663FF;
           color: #FFFFFF;
           border-radius: 10px;
-          padding: 37px 15px;
+          padding: 20px 15px;
           position: relative;
           overflow: hidden;
           box-shadow: 0px 10px 15px 0px rgba(35,59,204,0.35);
@@ -391,7 +391,8 @@
           <image src="../../assets/images/words-bg.png" />
           <div class="logic-index-box-middle-left-title">百日刷题</div>
           <text class="logic-index-box-middle-left-text">第一期：百日刷题上80+</text>
-          <text class="logic-index-box-middle-left-text">开始时间：2023.06.21</text>
+          <text class="logic-index-box-middle-left-text">开始时间：2023.07.01</text>
+          <text class="logic-index-box-middle-left-text">结束时间：2023.10.08</text>
         </div>
         <div class="logic-index-box-middle-right">
           <div class="logic-index-box-middle-right-item" @click="toDetail('国考高频成语')">

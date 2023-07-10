@@ -8,7 +8,6 @@ export async function getQuestionById(data) {
     },
   })
 }
-
 // 获取一次刷题题目（百日刷题）
 export async function getQuestionBymodule(data) {
   return await wx.cloud.callFunction({
@@ -81,6 +80,17 @@ export async function getPractiseList(data) {
     name: 'question',
     data: {
       func: 'getPractiseList',
+      data
+    },
+  })
+}
+
+// 获取练习记录列表
+export async function getPractiseListByModule(data) {
+  return await wx.cloud.callFunction({
+    name: 'question',
+    data: {
+      func: 'getPractiseListByModule',
       data
     },
   })

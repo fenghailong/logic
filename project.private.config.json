@@ -46,7 +46,7 @@
         {
           "name": "",
           "pathName": "pages/brushquestion/rank",
-          "query": "",
+          "query": "moduleId=5987e352648f2d67025abd1271994339",
           "launchMode": "default",
           "scene": null
         }

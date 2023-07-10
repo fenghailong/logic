@@ -154,7 +154,7 @@ const getModulesById = async (id) => {
     parent_id: id,
     isTopParent: false,
     module_type: db.command.neq('2')
-  }).get();
+  }).orderBy('sort', 'desc').get();
   return result
 }
 

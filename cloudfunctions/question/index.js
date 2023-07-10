@@ -241,10 +241,10 @@ const getPractiseList = async (options) => {
 
 // 获取一个模版的刷题练习记录 （排名使用）
 const getPractiseListByModule = async (options) => {
-  const skipCount = (options.currPage - 1) * options.pageSize
-  const countResult = await practiseCollection.where({ module_id: options.module_id}).count();
-  const totalCount = countResult.total
-  const totalPage = totalCount === 0 ? 0 : totalCount <= options.pageSize ? 1 : parseInt(totalCount / options.pageSize) + 1
+  // const skipCount = (options.currPage - 1) * options.pageSize
+  // const countResult = await practiseCollection.where({ module_id: options.module_id}).count();
+  // const totalCount = countResult.total
+  // const totalPage = totalCount === 0 ? 0 : totalCount <= options.pageSize ? 1 : parseInt(totalCount / options.pageSize) + 1
   const aggregateInstance = practiseCollection.aggregate()
   .lookup({
     from: 'user',
@@ -254,7 +254,8 @@ const getPractiseListByModule = async (options) => {
   })
   const data = await aggregateInstance
   .match({
-    module_id: options.module_id
+    module_id: options.module_id,
+    isComplete: '1'
   })
   .addFields({
     user: $.arrayElemAt(['$userList', 0]),
@@ -262,11 +263,36 @@ const getPractiseListByModule = async (options) => {
   .project({
     userList: 0
   })
-  // .sort({'_updateTime': -1})
-  .skip(skipCount)
-  .limit(options.pageSize)
+  // .skip(skipCount)
+  // .limit(options.pageSize)
   .end()
-  return {currPage: options.currPage, pageSize: options.pageSize, totalPage, totalCount, data}
+  let totalRate = 0
+  let totalTime = 0
+  data.list = data.list.map(item => {
+    let seconds = 0
+    let minutes = 0
+    item.rightCount = 0
+    item.questions.forEach(ele => {
+      if (ele.isRight) {
+        item.rightCount += 1
+      }
+    })
+    item.rightRate = (item.rightCount * 100 / item.questions.length ).toFixed(2)
+    seconds = Number(item.useTime.slice(3,5))
+    minutes = Number(item.useTime.slice(0,2))
+    totalRate = totalRate + item.rightRate
+    totalTime = totalTime + (minutes * 60 + seconds)
+    return item
+  })
+  totalRate = (totalRate / data.list.length).toFixed(2)
+  totalTime = parseInt(totalTime / data.list.length)
+  console.log(totalTime)
+  totalTime = toZero(parseInt(totalTime/ 60)) +':'+ toZero(parseInt(totalTime % 60))
+  return { totalTime, totalRate, data }
+}
+
+const toZero = (timeNumber) => {
+  return timeNumber < 10 ? '0' + timeNumber : timeNumber
 }
 
 // 获取刷题练习记录
@@ -377,6 +403,8 @@ exports.main = async (event, context) => {
     res = await getPractise(data);
   } else if (func === 'getPractiseById') {
     res = await getPractiseById(data);
+  } else if (func === 'getPractiseListByModule') {
+    res = await getPractiseListByModule(data);
   } else if (func === 'addPractise') {
     res = await addPractise(data);
   } else if (func === 'updatePractise') {

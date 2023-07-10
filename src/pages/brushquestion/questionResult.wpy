@@ -148,7 +148,7 @@
     async onLoad(options) {
       this.practise_id = options.id
       this.title = options.title
-      // this.moudleId = options.moudleId
+      // this.moduleId = options.moduleId
       this.ishiddenButton = options.ishiddenButton
       console.log(this.ishiddenButton)
       wx.showLoading({title: '加载中'})
@@ -190,7 +190,7 @@
       },
       toRank () {
         wx.navigateTo({
-          url: `/pages/brushquestion/rank?moudleId=${this.practiseData.module_id}`,
+          url: `/pages/brushquestion/rank?moduleId=${this.practiseData.module_id}`,
         })
       },
       toIndex () {
