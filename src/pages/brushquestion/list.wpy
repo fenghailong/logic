@@ -73,7 +73,7 @@
   }
   .logic-detail-popup-box {
     width: 80vw;
-    height: 70vh;
+    height: auto;
     padding: 20px;
     font-size: 14px;
     font-weight: 400;
