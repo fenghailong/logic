@@ -229,6 +229,7 @@
         this.tipsShow = false
       },
       openPopup (item, type, index) {
+        console.log(item, '======================')
         if (item.isCanUse === '1') {
           if (index > 2 && this.user.isMember != '1') {
             this.tipsPayShow = true
@@ -264,7 +265,7 @@
             })
           } else {
             wx.navigateTo({
-              url: `/pages/brushquestion/question?moudleId=${item._id}&examinationId=${item.examination_id}&title=${item.name}`,
+              url: `/pages/brushquestion/question?moudleId=${this.moudleId}&examinationId=${item.examination_id}&title=${item.name}`,
             })
           }
         }
