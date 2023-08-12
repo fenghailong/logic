@@ -34,10 +34,31 @@ const sendMessage = async () => {
   let messageList = result.data.filter(function(item,index,self){
     return self.findIndex(el=>(el.wechat_openid==item.wechat_openid && item.isUse === '2'))===index
   })
+  // messageList=messageList.slice(0,1)
   console.log(messageList)
   for(var i =0;i<messageList.length;i++){
     sendMessageItem(messageList[i])
   }
+  // const result = await cloud.openapi.subscribeMessage.send({
+  //   "touser": 'oDr_s0MzSIcrxnNnXiXgmqPr-fn4',
+  //   "page": 'pages/index/index',
+  //   "lang": 'zh_CN',
+  //   "data": {
+  //     "thing1": {
+  //       "value": '1～5月时政已经更新'
+  //     },
+  //     "thing2": {
+  //       "value": '更新知识点测试和题库1000题'
+  //     },
+  //     "thing5": {
+  //       "value": '点击此处查看更新内容'
+  //     }
+  //   },
+  //   "templateId": 'YYZyC81sN90SfsOfzO8e2bzsX_spTgvnRSl6fckmHuA',
+  //   "miniprogramState": 'formal'
+  //   // formal/正式版（默认）；trial/体验版；developer/开发版
+  // })
+  // console.log(result,'==========')
 }
 
 const sendMessageItem = async (item) => {
@@ -48,10 +69,10 @@ const sendMessageItem = async (item) => {
       "lang": 'zh_CN',
       "data": {
         "thing1": {
-          "value": '申论、人物素材200个'
+          "value": '1～5月时政已经更新'
         },
         "thing2": {
-          "value": '更新申论规范词、模板、金句，人物素材'
+          "value": '更新知识点测试和题库近1000题'
         },
         "thing5": {
           "value": '点击此处查看更新内容'
@@ -61,7 +82,7 @@ const sendMessageItem = async (item) => {
       "miniprogramState": 'formal'
       // formal/正式版（默认）；trial/体验版；developer/开发版
     })
-    console.log(result)
+    console.log(result,'==========')
     await db.collection('messages').where({
       wechat_openid: item.wechat_openid,
       _id: item._id
@@ -71,6 +92,7 @@ const sendMessageItem = async (item) => {
         isUse: '1'
       }
     })
+    console.log(result,'==========')
     return result
   } catch (err) {
     return err
