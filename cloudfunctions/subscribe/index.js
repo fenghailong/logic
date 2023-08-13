@@ -32,6 +32,7 @@ const getAllMessages = async (data) => {
 const sendMessage = async () => {
   let result = await getAllMessages();
   let messageList = result.data.filter(function(item,index,self){
+    // return self.findIndex(el=>(el.wechat_openid==item.wechat_openid && item.isUse === '2' && item._createTime < 1691909633887))===index
     return self.findIndex(el=>(el.wechat_openid==item.wechat_openid && item.isUse === '2'))===index
   })
   // messageList=messageList.slice(0,1)
@@ -39,16 +40,16 @@ const sendMessage = async () => {
   for(var i =0;i<messageList.length;i++){
     sendMessageItem(messageList[i])
   }
-  // const result = await cloud.openapi.subscribeMessage.send({
-  //   "touser": 'oDr_s0MzSIcrxnNnXiXgmqPr-fn4',
+  // const data = await cloud.openapi.subscribeMessage.send({
+  //   "touser": 'oDr_s0MbQj0uKvObn51-hNVJaKN4',
   //   "page": 'pages/index/index',
   //   "lang": 'zh_CN',
   //   "data": {
   //     "thing1": {
-  //       "value": '1～5月时政已经更新'
+  //       "value": '百日刷题计划重磅来袭'
   //     },
   //     "thing2": {
-  //       "value": '更新知识点测试和题库1000题'
+  //       "value": '小程序百日刷题功能已上线'
   //     },
   //     "thing5": {
   //       "value": '点击此处查看更新内容'
@@ -58,7 +59,7 @@ const sendMessage = async () => {
   //   "miniprogramState": 'formal'
   //   // formal/正式版（默认）；trial/体验版；developer/开发版
   // })
-  // console.log(result,'==========')
+  // console.log(data,'==========')
 }
 
 const sendMessageItem = async (item) => {
@@ -69,10 +70,10 @@ const sendMessageItem = async (item) => {
       "lang": 'zh_CN',
       "data": {
         "thing1": {
-          "value": '1～5月时政已经更新'
+          "value": '百日刷题计划重磅来袭'
         },
         "thing2": {
-          "value": '更新知识点测试和题库近1000题'
+          "value": '小程序百日刷题功能已上线'
         },
         "thing5": {
           "value": '点击此处查看更新内容'

@@ -170,6 +170,7 @@
     data: {
       practiseId: '', //练习id
       examinationId: '', //试卷id
+      parentmoudleId: '', //传入参数的父模块Id
       moudleId: '', //传入参数 模块id
       title: '', //传入参数 模块名
       questionList: [], //题目列表
@@ -182,6 +183,7 @@
     },
     async onLoad(options) {
       this.moudleId = options.moudleId
+      this.parentmoudleId = options.parentmoudleId
       this.examinationId = options.examinationId
       this.practiseId = options.practiseId
       this.title = options.title
@@ -216,12 +218,17 @@
     },
     async onUnload() {
       if (this.questionList.length > 0) {
+        wx.showLoading({title: '保存练习'})
         await updatePractise ({
           practise_id: this.practiseId,
           isComplete: this.isComplete,
           questions: this.questionList,
           useTime: this.nowTime,
         })
+        wx.hideLoading()
+      }
+      if (this.parentmoudleId) {
+        eventHub.$emit('refresh-brushquestion-list', this.parentmoudleId);
       }
       clearInterval(this.timer2)
     },
@@ -294,7 +301,7 @@
         } else {
           let options = {
             user_id: this._id,
-            module_id: this.moudleId,
+            module_id: this.parentmoudleId, // 查询题目时，使用父模块ID
             examination_id: this.examinationId
           }
           let data = await getQuestionBymodule(options)
@@ -302,6 +309,7 @@
             questionList = data.result.resultQuestion
             this.nowTime = '00:00'
             this.isComplete = '2'
+            options.module_id = this.moudleId // 添加练习时 保存每天的模块ID
             options.questions = questionList.map(item => {
               item.isRight = false
               item.youAnswer = ''

@@ -265,30 +265,47 @@ const getPractiseListByModule = async (options) => {
     userList: 0
   })
   // .skip(skipCount)
-  // .limit(options.pageSize)
+  .limit(50)
   .end()
-  let totalRate = 0
-  let totalTime = 0
+
+  // 计算每个用户的正确率
   data.list = data.list.map(item => {
-    let seconds = 0
-    let minutes = 0
     item.rightCount = 0
     item.questions.forEach(ele => {
       if (ele.isRight) {
         item.rightCount += 1
       }
     })
-    item.rightRate = (item.rightCount * 100 / item.questions.length ).toFixed(2)
-    seconds = Number(item.useTime.slice(3,5))
-    minutes = Number(item.useTime.slice(0,2))
-    totalRate = totalRate + item.rightRate
-    totalTime = totalTime + (minutes * 60 + seconds)
+    item.rightRate = (item.rightCount * 100 / item.questions.length).toFixed(2)
+    return item
+  })
+  data.list= data.list.filter(item=>item.rightRate != '0.00')
+
+  // 计算平均正确率
+  let totalRate = 0
+  data.list = data.list.map(item => {
+    totalRate = totalRate + parseFloat(item.rightRate)
     return item
   })
   totalRate = (totalRate / data.list.length).toFixed(2)
+
+  // 计算平均用时
+  let totalTime = 0
+  data.list = data.list.map(item => {
+    let seconds = 0
+    let minutes = 0
+    seconds = Number(item.useTime.slice(3,5))
+    minutes = Number(item.useTime.slice(0,2))
+    totalTime = totalTime + (minutes * 60 + seconds)
+    item.questions = {}
+    return item
+  })
   totalTime = parseInt(totalTime / data.list.length)
-  console.log(totalTime)
   totalTime = toZero(parseInt(totalTime/ 60)) +':'+ toZero(parseInt(totalTime % 60))
+
+  data.list.sort((a, b) => {
+    return b.rightRate - a.rightRate;
+  });
   return { totalTime, totalRate, data }
 }
 

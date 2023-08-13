@@ -169,11 +169,16 @@ const getModulesByTypeById = async (options) => {
 
 // 获取单个刷题模块下面的子集,并联表查询是否有练习记录
 const getModulesByPractise = async (options) => {
+  const skipCount = (options.currPage - 1) * options.pageSize
+  const countResult = await collection.where({ user_id: options.user_id}).count();
+  const totalCount = countResult.total
+  const totalPage = totalCount === 0 ? 0 : totalCount <= options.pageSize ? 1 : parseInt(totalCount / options.pageSize) + 1
   const aggregateInstance = collection.aggregate()
   .lookup({
     from: 'practise',
     let: {
       user_id: options.user_id,
+      // module_id: options.parent_id,
       module_id: '$_id'
     },
     pipeline: $.pipeline()
@@ -206,9 +211,22 @@ const getModulesByPractise = async (options) => {
     examinationList: 0,
   })
   .sort({'sort': 1})
-  .limit(100)
+  .skip(skipCount)
+  .limit(options.pageSize)
   .end()
-  return {data}
+  console.log(data, '===============')
+  if (data.list.length > 0){
+    data.list = data.list.map(element => {
+      let practise = {}
+      if(element.practise) {
+        practise._id = element.practise._id
+        practise.isComplete = element.practise.isComplete
+        element.practise = practise
+      }
+      return element
+    });
+  }
+  return {currPage: options.currPage, pageSize: options.pageSize, totalPage, totalCount, data}
 }
 
 exports.main = async (event, context) => {

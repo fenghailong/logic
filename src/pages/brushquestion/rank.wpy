@@ -106,7 +106,7 @@
       </div>
       <div class="logic-index-list">
         <div v-for="(item,index) in rankList" :key="index" class="logic-index-item">
-          <div class="logic-index-item-sort">1</div>
+          <div class="logic-index-item-sort">{{index + 1}}</div>
           <!-- <div class="logic-index-index">{{index + 1}}</div> -->
           <div class="logic-index-item-user">
             <div class="logic-index-item-user-icon">

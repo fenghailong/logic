@@ -6,13 +6,14 @@
   background-size: 100% 100%;
   min-height:100%;
   background-color: #F5F7FB;
+  padding: 20px;
   // height: auto;s
   .logic-detail-box {
     display: flex;
     flex-wrap: wrap;
     // flex-direction: column;
     justify-content: space-between;
-    padding: 20px;
+    width: 100%;
   }
   .logic-detail-content {
     display: flex;
@@ -101,7 +102,7 @@
 <template>
   <div class="page">
     <div class="logic-detail-box">
-      <div v-for="(item, index) in moudleList" :key="index">
+      <div style="width: 30%;" v-for="(item, index) in moudleList" :key="index">
         <div v-if="item.isCanUse === '1'">
           <div v-if="item.practise && item.practise.isComplete === '1'" class="logic-detail-content logic-detail-content-ed" @click="openPopup(item, 1, index)">
             <div class="logic-detail-content-status">已学习</div>
@@ -137,6 +138,9 @@
           </div>
         </div>
       </div>
+      <div class="weui-loadmore weui-loadmore_line" v-if="noMoreData">
+        <div class="weui-loadmore__tips weui-loadmore__tips_in-line">没有更多数据</div>
+      </div>
     </div>
     <div class="logic-detail-popup">
       <van-popup get-container="#app" @click-overlay="closePopup" :show="tipsShow">
@@ -167,7 +171,8 @@
 </template>
 <config>
   {
-  navigationBarTitleText: '刷题模块',
+    navigationBarTitleText: '刷题模块',
+    enablePullDownRefresh: true,
     usingComponents: {
       "van-button": "../../libs/vant/button/index",
       "van-progress": "../../libs/vant/progress/index",
@@ -195,28 +200,65 @@
       tipsShow: false,
       tipsPayShow: false,
       popupDetail: {},
-      popupType: '1'
+      popupType: '1',
+      currPage: 1,
+      pageSize: 18,
+      noMoreData: false
     },
     // 计算的属性
     computed: {
       ...mapGetters(['_id', 'user']),
     },
     onLoad(options) {
+      eventHub.$on('refresh-brushquestion-list', (...args) => {
+        console.log('app-launch event emitted, the params are:');
+        // eventHub.$emit('refresh-list', this.moudleList);
+        this.moudleList = []
+        let moudleId = JSON.parse(JSON.stringify(args[0]))
+        this.moudleId = moudleId
+        this.currPage = 1
+        this.getModulesByIdData()
+      });
       this.moudleId = options.id
       this.getModulesByIdData()
+    },
+    async onUnload() {
+      // eventHub.$destroy('refresh-brushquestion-list')
+      eventHub._events['refresh-brushquestion-list'] = undefined
+      console.log(eventHub)
+    },
+    async onPullDownRefresh() {
+      this.currPage = 1
+      this.moudleList = []
+      await this.getModulesByIdData()
+      wx.stopPullDownRefresh()
+    },
+    async onReachBottom () {
+
+      if(!this.noMoreData) {
+        this.currPage = this.currPage + 1
+        await this.getModulesByIdData()
+      }
     },
     methods: {
       // 获取已学习
       async getModulesByIdData() {
         wx.showLoading({title: '加载中'})
+        this.noMoreData = false
         let params = {
+          currPage: this.currPage,
+          pageSize: this.pageSize,
           parent_id: this.moudleId,
           module_type: '2',
           user_id: this._id
         }
         let result = await getModulesByPractise(params)
         console.log(result.result.data.list, '????????????')
-        this.moudleList = result.result.data.list
+        if (result.result.data.list.length > 0) {
+          this.moudleList = this.moudleList.length > 0 ? this.moudleList.concat(result.result.data.list) : result.result.data.list
+        } else {
+          this.noMoreData = true
+        }
         wx.hideLoading()
       },
       openPayTipPopup () {
@@ -265,7 +307,7 @@
             })
           } else {
             wx.navigateTo({
-              url: `/pages/brushquestion/question?moudleId=${this.moudleId}&examinationId=${item.examination_id}&title=${item.name}`,
+              url: `/pages/brushquestion/question?moudleId=${item._id}&parentmoudleId=${this.moudleId}&examinationId=${item.examination_id}&title=${item.name}`,
             })
           }
         }
