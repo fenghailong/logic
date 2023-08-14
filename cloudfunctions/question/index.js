@@ -294,9 +294,9 @@ const getPractiseListByModule = async (options) => {
   data.list = data.list.map(item => {
     let seconds = 0
     let minutes = 0
-    seconds = Number(item.useTime.slice(3,5))
-    minutes = Number(item.useTime.slice(0,2))
-    totalTime = totalTime + (minutes * 60 + seconds)
+    seconds = Number(item.useTime.split(':')[1])
+    minutes = Number(item.useTime.split(':')[0])
+    totalTime = parseInt(totalTime) + parseInt(minutes * 60 + seconds)
     item.questions = {}
     return item
   })

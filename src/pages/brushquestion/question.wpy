@@ -294,8 +294,8 @@
           questionList = result.result.questions
           this.nowTime = result.result.useTime
           this.isComplete = '2'
-          this.seconds = Number(result.result.useTime.slice(3,5))
-          this.minutes = Number(result.result.useTime.slice(0,2))
+          this.seconds = Number(result.result.useTime.split(':')[1])
+          this.minutes = Number(result.result.useTime.split(':')[0])
           this.questionList = questionList
           // this.practiseData = result.result
         } else {

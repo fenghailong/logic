@@ -6,7 +6,9 @@ cloud.init({
 });
 const db = cloud.database();
 const collection = db.collection('knowledgeModule');
+const practiseCollection = db.collection('practise');
 const evaluationCollection = db.collection('evaluation');
+const examinationCollection = db.collection('examination');
 const evaluationRCollection = db.collection('evaluation_record');
 const $ = db.command.aggregate
 const _ = db.command
@@ -167,66 +169,107 @@ const getModulesByTypeById = async (options) => {
   return result
 }
 
+
 // 获取单个刷题模块下面的子集,并联表查询是否有练习记录
+const getPractiseByUserModdule = async (options) => {
+  const practise = await practiseCollection.where({
+    module_id: options.module_id,
+    user_id: options.user_id,
+  }).get();
+  return practise.data[0] || {};
+}
+const getExaminationCollectionByUserModdule = async (options) => {
+  const examination = await examinationCollection.where({
+    _id: options.examination_id
+  }).get();
+  return examination.data[0] || {};
+}
 const getModulesByPractise = async (options) => {
   const skipCount = (options.currPage - 1) * options.pageSize
-  const countResult = await collection.where({ user_id: options.user_id}).count();
+  const countResult = await collection.where({ new_parent_id: options.parent_id, module_type: options.module_type}).count();
   const totalCount = countResult.total
   const totalPage = totalCount === 0 ? 0 : totalCount <= options.pageSize ? 1 : parseInt(totalCount / options.pageSize) + 1
-  const aggregateInstance = collection.aggregate()
-  .lookup({
-    from: 'practise',
-    let: {
-      user_id: options.user_id,
-      // module_id: options.parent_id,
-      module_id: '$_id'
-    },
-    pipeline: $.pipeline()
-    .match(_.expr(
-      $.and([
-        $.eq(['$module_id', '$$module_id']),
-        $.eq(['$user_id', '$$user_id'])
-      ])
-    ))
-    .done(),
-    as: 'practiseList',
-  })
-  .lookup({
-    from: 'examination',
-    localField: 'examination_id',
-    foreignField: '_id',
-    as: 'examinationList',
-  })
-  const data = await aggregateInstance
-  .match({
-    new_parent_id: options.parent_id,
-    module_type: options.module_type
-  })
-  .addFields({
-    practise: $.arrayElemAt(['$practiseList', 0]),
-    examination: $.arrayElemAt(['$examinationList', 0]),
-  })
-  .project({
-    practiseList: 0,
-    examinationList: 0,
-  })
-  .sort({'sort': 1})
+  console.log(totalCount)
+  console.log(skipCount)
+  console.log(totalPage)
+  const result = await collection
+  .where({ new_parent_id: options.parent_id, module_type: options.module_type})
+  .orderBy('sort', 'asc')
   .skip(skipCount)
   .limit(options.pageSize)
-  .end()
-  console.log(data, '===============')
-  if (data.list.length > 0){
-    data.list = data.list.map(element => {
-      let practise = {}
-      if(element.practise) {
-        practise._id = element.practise._id
-        practise.isComplete = element.practise.isComplete
-        element.practise = practise
-      }
-      return element
-    });
+  .get()
+  for(var i =0;i<result.data.length;i++){
+    let params = {
+      user_id: options.user_id,
+      module_id: result.data[i]._id,
+    }
+    let temp = await getPractiseByUserModdule(params)
+    result.data[i].practise = {
+      _id: temp._id,
+      isComplete: temp.isComplete,
+    }
+    if(result.data[i].examination_id) {
+      result.data[i].examination = await getExaminationCollectionByUserModdule({
+        examination_id: result.data[i].examination_id
+      })
+    }
   }
-  return {currPage: options.currPage, pageSize: options.pageSize, totalPage, totalCount, data}
+  console.log(result)
+  return {currPage: options.currPage, pageSize: options.pageSize, totalPage, totalCount, data: { list: result.data }}
+  // const aggregateInstance = collection.aggregate()
+  // .lookup({
+  //   from: 'practise',
+  //   let: {
+  //     user_id: options.user_id,
+  //     // module_id: options.parent_id,
+  //     module_id: '$_id'
+  //   },
+  //   pipeline: $.pipeline()
+  //   .match(_.expr(
+  //     $.and([
+  //       $.eq(['$module_id', '$$module_id']),
+  //       $.eq(['$user_id', '$$user_id'])
+  //     ])
+  //   ))
+  //   .done(),
+  //   as: 'practiseList',
+  // })
+  // .lookup({
+  //   from: 'examination',
+  //   localField: 'examination_id',
+  //   foreignField: '_id',
+  //   as: 'examinationList',
+  // })
+  // const data = await aggregateInstance
+  // .match({
+  //   new_parent_id: options.parent_id,
+  //   module_type: options.module_type
+  // })
+  // .addFields({
+  //   practise: $.arrayElemAt(['$practiseList', 0]),
+  //   examination: $.arrayElemAt(['$examinationList', 0]),
+  // })
+  // .project({
+  //   practiseList: 0,
+  //   examinationList: 0,
+  // })
+  // .sort({'sort': 1})
+  // .skip(skipCount)
+  // .limit(options.pageSize)
+  // .end()
+  // console.log(data, '===============')
+  // if (data.list.length > 0){
+  //   data.list = data.list.map(element => {
+  //     let practise = {}
+  //     if(element.practise) {
+  //       practise._id = element.practise._id
+  //       practise.isComplete = element.practise.isComplete
+  //       element.practise = practise
+  //     }
+  //     return element
+  //   });
+  // }
+  // return {currPage: options.currPage, pageSize: options.pageSize, totalPage, totalCount, data}
 }
 
 exports.main = async (event, context) => {
