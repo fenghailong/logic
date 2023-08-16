@@ -273,7 +273,7 @@
       openPopup (item, type, index) {
         console.log(item, '======================')
         if (item.isCanUse === '1') {
-          if (index > 2 && this.user.isMember != '1') {
+          if (index > 1 && this.user.isMember != '1') {
             this.tipsPayShow = true
             return
           } else {

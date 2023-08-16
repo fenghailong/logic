@@ -268,6 +268,30 @@ const getPractiseListByModule = async (options) => {
   .limit(50)
   .end()
 
+  // 待优化
+  const aggregateInstanceMy = practiseCollection.aggregate()
+  .lookup({
+    from: 'user',
+    localField: 'user_id',
+    foreignField: '_id',
+    as: 'userList',
+  })
+  const dataMy = await aggregateInstanceMy
+  .match({
+    module_id: options.module_id,
+    user_id: options.user_id,
+    isComplete: '1'
+  })
+  .addFields({
+    user: $.arrayElemAt(['$userList', 0]),
+  })
+  .project({
+    userList: 0
+  })
+  .limit(1)
+  .end()
+
+  data.list.push(dataMy.list[0])
   // 计算每个用户的正确率
   data.list = data.list.map(item => {
     item.rightCount = 0
@@ -280,7 +304,6 @@ const getPractiseListByModule = async (options) => {
     return item
   })
   data.list= data.list.filter(item=>item.rightRate != '0.00')
-
   // 计算平均正确率
   let totalRate = 0
   data.list = data.list.map(item => {
