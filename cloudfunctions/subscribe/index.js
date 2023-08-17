@@ -70,13 +70,13 @@ const sendMessageItem = async (item) => {
       "lang": 'zh_CN',
       "data": {
         "thing1": {
-          "value": '百日刷题计划重磅来袭'
+          "value": '刷题计划错题功能上线'
         },
         "thing2": {
-          "value": '小程序百日刷题功能已上线'
+          "value": '小程序百日刷题第四天'
         },
         "thing5": {
-          "value": '点击此处查看更新内容'
+          "value": '点击此处立即开始刷题'
         }
       },
       "templateId": item.templateId,

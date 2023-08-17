@@ -36,11 +36,18 @@
 </style>
 <template>
   <div class="page">
-    <div class="logic-detail-box" v-if="realplitics.count > 0">
-      <div class="logic-detail-content">
+    <div class="logic-detail-box" v-if="realplitics.count > 0 || brushQuestion.count > 0" >
+      <div class="logic-detail-content" v-if="realplitics.count > 0" >
         <van-collapse accordion :border="false" value="{{ activeName }}" bind:change="onChange">
           <van-collapse-item v-if="realplitics.count > 0" title="{{realplitics.name}}" name="1" value="{{ realplitics.count }} 道">
             <van-cell v-for="item in realplitics.children" v-if="item.count > 0" :title="item.name" is-link value="{{ item.count }} 道" @click="toQuestion(item)" />
+          </van-collapse-item>
+        </van-collapse>
+      </div>
+      <div class="logic-detail-content" v-if="brushQuestion.count > 0">
+        <van-collapse accordion :border="false" value="{{ brushActiveName }}" bind:change="onBrushChange">
+          <van-collapse-item v-if="brushQuestion.count > 0" title="{{brushQuestion.name}}" name="1" value="{{ brushQuestion.count }} 道">
+            <van-cell v-for="item in brushQuestion.children" v-if="item.count > 0" :title="item.name" is-link value="{{ item.count }} 道" @click="toQuestion(item)" />
           </van-collapse-item>
         </van-collapse>
       </div>
@@ -77,6 +84,7 @@
     mixins: [ subscribe ],
     data: {
       activeName: '1',
+      brushActiveName: '1',
       resultCount: {},
       realplitics: {
         id: '2cc84e26645f47100c48bab504de9717',
@@ -86,6 +94,18 @@
           { id: '5fd74860645f4e55000a79dd5633ffa8', count: 0, name: '2023年1月'},
           { id: '88d7257b645f4a6f0000d8534c67d08b', count: 0, name: '2023年2月'},
           { id: '2cc84e26645f4a510c48e3572d6311e3', count: 0, name: '2023年3月'}
+        ]
+      },
+      brushQuestion: {
+        id: 'b3785663648c13c6000196482e4d7212',
+        count: 0,
+        name: '百日刷题',
+        children: [
+          { id: 'e54110dd644a20de001e8d834e839d06', count: 0, name: '常识'},
+          { id: '9428a00a6464e553000f4715287f2f0d', count: 0, name: '言语'},
+          { id: '93e4b6a06465cb440cfbbdee6be33b08', count: 0, name: '判断'},
+          { id: '0122a5876465cc950cff7061728c652f', count: 0, name: '数量'},
+          { id: '4f9a71986465cbd200151c1320b8cfc3', count: 0, name: '资料'}
         ]
       }
     },
@@ -104,6 +124,9 @@
       onChange (e) {
         this.activeName = e.$wx.detail
       },
+      onBrushChange (e) {
+        this.brushActiveName = e.$wx.detail
+      },
       // 获取错题数量
       async getAllErrQuestion() {
         this.noMoreData = false
@@ -112,12 +135,23 @@
         }
         wx.showLoading({title: '加载中'})
         let result = await getAllErrQuestionById(params)
+        console.log(result, '=======================')
         this.resultCount = result.result
         this.realplitics.count = this.resultCount[this.realplitics.id]
         this.realplitics.children = this.realplitics.children.map(item => {
           item.count = this.resultCount[item.id]
           return item
         })
+
+        let temp = 0
+        this.brushQuestion.children = this.brushQuestion.children.map(item => {
+          item.count = this.resultCount[item.id] || 0
+          console.log(item.count)
+          temp = temp  + item.count
+          console.log(temp)
+          return item
+        })
+        this.brushQuestion.count = temp
         wx.hideLoading()
       },
       toQuestion (item) {

@@ -117,13 +117,13 @@
               <image class="logic-detail-item-bg" src="../../assets/images/study-type-ing.png" />
             </div>
           </div>
-          <div v-else class="logic-detail-content   {{ index > 2 && user.isMember != '1' ? 'logic-detail-content-opticty' : ''}}" @click="openPopup(item, 3, index)">
+          <div v-else class="logic-detail-content   {{ index > 1 && user.isMember != '1' ? 'logic-detail-content-opticty' : ''}}" @click="openPopup(item, 3, index)">
             <div class="logic-detail-content-status">待学习</div>
             <div class="logic-detail-item">
               <image class="logic-detail-item-bg" src="../../assets/images/study-type.png" />
               <div class="logic-detail-item-content">第 {{index+1}} 天</div>
             </div>
-            <div v-if="index > 2 && user.isMember != '1'">
+            <div v-if="index > 1 && user.isMember != '1'">
               <image class="logic-detail-content-locked" src="../../assets/images/locked.png" />
             </div>
           </div>
@@ -272,8 +272,10 @@
       },
       openPopup (item, type, index) {
         console.log(item, '======================')
+        console.log(item, '======================')
+        console.log(item, '======================')
         if (item.isCanUse === '1') {
-          if (index > 2 && this.user.isMember != '1') {
+          if (index > 1 && this.user.isMember != '1') {
             this.tipsPayShow = true
             return
           } else {
