@@ -1,6 +1,7 @@
 <style lang="less">
 .page{
   background-color: #eee;
+  position: relative;
   .logic-index-header {
     position: fixed;
     top: 0;
@@ -33,6 +34,7 @@
   }
   .logic-index-box {
     // padding: 20px 20px;
+    // position: relative;
     padding-top: 30px;
     .logic-index-question-list {
       display: flex;
@@ -50,6 +52,20 @@
         }
       }
     }
+  }
+  .logic-index-canvas {
+    position: absolute;
+    top: 0;
+    height: 1000%;
+    width: 100vw;
+    // background: #fff;
+    background-color:rgba(0, 0, 0, 0.1);
+  }
+  .logic-index-canvas-content{
+    width: 100%;
+    height: 100%;
+    flex: 1;
+    box-sizing: border-box;
   }
   .logic-index-complete {
     position: fixed;
@@ -121,6 +137,10 @@
         <question-item :questionItem="item" :questionIndex="index" @onChange="onChange" @onMoreChange="onMoreChange"></question-item>
       </div>
     </div>
+    <div class="logic-index-canvas">
+        <canvas class="logic-index-canvas-content" id="canvas" type="2d" disable-scroll="true" bindtouchstart="canvasStart" bindtouchmove="canvasMove"></canvas>
+      </div>
+    <div class="logic-index-complete">画笔</div>
     <div class="logic-index-complete" @click="openCompletePopup">交卷</div>
     <van-popup get-container="#app" @click-overlay="closeCompletePopup" :show="isCompleteShow" position="bottom">
       <div class="logic-index-popup-box" :style="{ height: '30vh' }">
@@ -143,6 +163,7 @@
 <config>
   {
     navigationBarTitleText: '专项刷题',
+    pageOrientation: "auto",
     usingComponents: {
       "van-tag": "../../libs/vant/tag/index",
       "van-icon": "../../libs/vant/icon/index",
@@ -160,7 +181,8 @@
   import eventHub from '@/common/eventHub'
   import { getQuestionBymodule, getPractiseById, addPractise, updatePractise, addQuestionRecord} from '@/api/question'
   import Dialog from '../../libs/vant/dialog/dialog';
-
+  var context = null; // 使用 wx.createContext 获取绘图上下文 context
+  var mCanvas = null;
   wepy.page({
     store,
     computed: {
@@ -179,7 +201,8 @@
       timer2: null, // 计时器
       nowTime: '00:00', // 计时
       minutes: 0,
-      seconds: 0
+      seconds: 0,
+      hasDraw: false, //默认没有画
     },
     async onLoad(options) {
       this.moudleId = options.moudleId
@@ -188,6 +211,35 @@
       this.practiseId = options.practiseId
       this.title = options.title
       wx.setNavigationBarTitle({title: options.title})
+
+      wx.createSelectorQuery()
+      .select('#canvas') // 在 WXML 中填入的 id
+      .fields({
+        node: true,
+        size: true
+      })
+      .exec((res) => {
+        console.log(res,'=====')
+        // Canvas 对象
+        const canvas = res[0].node
+        mCanvas = res[0].node
+        // 渲染上下文
+        context = canvas.getContext('2d')
+        // context = canvas.getContext('webgl', { alpha: true });
+        // getContext('webgl', { alpha: true })
+        // Canvas 画布的实际绘制宽高
+        const width = res[0].width
+        const height = res[0].height
+        // 初始化画布大小
+        const dpr = wx.getWindowInfo().pixelRatio
+        canvas.width = width * dpr
+        canvas.height = height * dpr
+        context.scale(dpr, dpr)
+        //绘制背景
+        // context.fillStyle = '#fff'
+        // context.clearRect(0, 0, canvas.width, canvas.height)
+        // context.fillRect(0, 0, canvas.width, canvas.height)
+      })
     },
     async onShow() {
       wx.showLoading({title: '加载中'})
@@ -233,6 +285,42 @@
       clearInterval(this.timer2)
     },
     methods: {
+      // 画布绘制
+      canvasStart (event) {
+        context.moveTo(event.touches[0].pageX, event.touches[0].pageY);
+        // context.setStrokeStyle('#1A1A1A')
+      },
+      //过程
+      canvasMove (event) {
+        console.log(event)
+        var x = event.touches[0].pageX;
+        var y = event.touches[0].pageY;
+        // context.strokeStyle = '#1A1A1A'
+        context.lineWidth = 4
+        context.lineCap = 'round'
+        context.lineJoin = 'round'
+        context.lineTo(x, y);
+        context.stroke()
+        // context.draw()
+        this.hasDraw = true
+
+        // this.startX = e.changedTouches[0].x
+        // this.startY = e.changedTouches[0].y
+        // //设置画笔参数
+        // //画笔颜色
+        // context.setStrokeStyle('#1A1A1A')
+        // //设置线条粗细
+        // context.setLineWidth('5')
+        // //设置线条的结束端点样式
+        // context.setLineCap('round') //'butt'、'round'、'square'
+        // //开始画笔
+        // context.beginPath()
+      },
+      clickClear () {
+        context.clearRect(0, 0, mCanvas.width, mCanvas.height); //清除画布
+        context.beginPath() //清空画笔
+        this.hasDraw = false
+      },
       openCompletePopup () {
         this.isCompleteShow = true
       },
