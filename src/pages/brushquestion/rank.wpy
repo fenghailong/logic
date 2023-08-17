@@ -178,6 +178,7 @@
       async getRankList() {
         let result = await getPractiseListByModule({
           module_id: this.module_id,
+          user_id: this._id,
           currPage: this.currPage,
           pageSize: this.pageSize
         })

@@ -170,8 +170,8 @@
         this.practiseData = result.result
         console.log(result,'============')
         if(result.result && result.result.questions.length > 0) {
-          this.seconds = Number(result.result.useTime.slice(3,5))
-          this.minutes = Number(result.result.useTime.slice(0,2))
+          this.seconds = Number(result.result.useTime.split(':')[1])
+          this.minutes = Number(result.result.useTime.split(':')[0])
           let rightCount = 0
           this.questionList = result.result.questions.map(item => {
             item.title =item.title.replace(/\<code/gi,'<code class="logic-code"')
