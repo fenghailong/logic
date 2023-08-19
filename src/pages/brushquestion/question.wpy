@@ -54,9 +54,9 @@
     }
   }
   .logic-index-canvas {
-    position: absolute;
-    top: 0;
-    height: 1000%;
+    // position: absolute;
+    // top: 0;
+    height: 100vh;
     width: 100vw;
     // background: #fff;
     background-color:rgba(0, 0, 0, 0.1);
@@ -71,6 +71,18 @@
     position: fixed;
     bottom: 20px;
     right: 20px;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    color: #fff;
+    background-color: #387ffb;
+    border-radius: 50px;
+  }
+  .logic-index-pen {
+    position: fixed;
+    bottom: 20px;
+    right: 80px;
     width: 50px;
     height: 50px;
     line-height: 50px;
@@ -119,6 +131,7 @@
 }
 </style>
 <template>
+  <page-meta page-style="overflow: {{disableScroll ? 'hidden' : 'visible'}}" />
   <div class="page">
     <div class="logic-index-header">
       <div class="logic-index-header-box">
@@ -137,11 +150,8 @@
         <question-item :questionItem="item" :questionIndex="index" @onChange="onChange" @onMoreChange="onMoreChange"></question-item>
       </div>
     </div>
-    <div class="logic-index-canvas">
-        <canvas class="logic-index-canvas-content" id="canvas" type="2d" disable-scroll="true" bindtouchstart="canvasStart" bindtouchmove="canvasMove"></canvas>
-      </div>
-    <div class="logic-index-complete">画笔</div>
-    <div class="logic-index-complete" @click="openCompletePopup">交卷</div>
+    <div v-if="!disableScroll" class="logic-index-pen" @click="openCanvasPen">笔</div>
+    <div v-if="!disableScroll" class="logic-index-complete" @click="openCompletePopup">交卷</div>
     <van-popup get-container="#app" @click-overlay="closeCompletePopup" :show="isCompleteShow" position="bottom">
       <div class="logic-index-popup-box" :style="{ height: '30vh' }">
         <div class="logic-index-popup-title">交卷提示</div>
@@ -155,6 +165,11 @@
         <div class="logic-index-popup-button">
           <van-button round type="info" @click="doSubmit">立刻交卷</van-button>
         </div>
+      </div>
+    </van-popup>
+    <van-popup @click-overlay="closeCanvasPen" :show="disableScroll" :overlay="false" custom-style="background-color:rgba(0, 0, 0, 0.1);">
+      <div v-show="disableScroll" class="logic-index-canvas">
+        <canvas class="logic-index-canvas-content" id="canvas" type="2d" disable-scroll="true" bindtouchstart="canvasStart" bindtouchmove="canvasMove" bindtouchend="touchEnd"></canvas>
       </div>
     </van-popup>
     <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
@@ -202,7 +217,8 @@
       nowTime: '00:00', // 计时
       minutes: 0,
       seconds: 0,
-      hasDraw: false, //默认没有画
+      disableScroll: false, //默认没有画
+      boxHeight: 0,
     },
     async onLoad(options) {
       this.moudleId = options.moudleId
@@ -211,35 +227,6 @@
       this.practiseId = options.practiseId
       this.title = options.title
       wx.setNavigationBarTitle({title: options.title})
-
-      wx.createSelectorQuery()
-      .select('#canvas') // 在 WXML 中填入的 id
-      .fields({
-        node: true,
-        size: true
-      })
-      .exec((res) => {
-        console.log(res,'=====')
-        // Canvas 对象
-        const canvas = res[0].node
-        mCanvas = res[0].node
-        // 渲染上下文
-        context = canvas.getContext('2d')
-        // context = canvas.getContext('webgl', { alpha: true });
-        // getContext('webgl', { alpha: true })
-        // Canvas 画布的实际绘制宽高
-        const width = res[0].width
-        const height = res[0].height
-        // 初始化画布大小
-        const dpr = wx.getWindowInfo().pixelRatio
-        canvas.width = width * dpr
-        canvas.height = height * dpr
-        context.scale(dpr, dpr)
-        //绘制背景
-        // context.fillStyle = '#fff'
-        // context.clearRect(0, 0, canvas.width, canvas.height)
-        // context.fillRect(0, 0, canvas.width, canvas.height)
-      })
     },
     async onShow() {
       wx.showLoading({title: '加载中'})
@@ -285,18 +272,53 @@
       clearInterval(this.timer2)
     },
     methods: {
+      openCanvasPen () {
+        this.disableScroll = true
+        wx.createSelectorQuery()
+        .select('#canvas') // 在 WXML 中填入的 id
+        .fields({
+          node: true,
+          size: true
+        })
+        .exec((res) => {
+          console.log(res,'=====')
+          // Canvas 对象
+          const canvas = res[0].node
+          const system = wx.getWindowInfo()
+          wx.getSystemInfo({
+            success: (res) => {
+              console.log(system)
+              canvas.width = res.windowWidth
+              canvas.height = res.windowHeight
+              // // 渲染上下文
+              context = canvas.getContext('2d')
+              // canvas.addEventListener("mousemove", this.mouseMoving, false);
+              // context.canvas.offsetTop = 0
+              console.log(context)
+            }
+          })
+        })
+      },
+      // mouseMoving(e) {
+      //           console.log(`当前鼠标在Canvas中的位置: x: ${e.clientX}  y: ${e.clientY}`);
+      //         },
+      closeCanvasPen() {
+        this.disableScroll = false
+      },
+      touchEnd () {},
       // 画布绘制
       canvasStart (event) {
-        context.moveTo(event.touches[0].pageX, event.touches[0].pageY);
+
+        context.moveTo(event.touches[0].clientX, event.touches[0].clientY - context.canvas.offsetTop);
         // context.setStrokeStyle('#1A1A1A')
       },
       //过程
       canvasMove (event) {
         console.log(event)
-        var x = event.touches[0].pageX;
-        var y = event.touches[0].pageY;
-        // context.strokeStyle = '#1A1A1A'
-        context.lineWidth = 4
+        var x = event.touches[0].clientX;
+        var y = event.touches[0].clientY - context.canvas.offsetTop;
+        context.strokeStyle = '#1A1A1A'
+        context.lineWidth = 1
         context.lineCap = 'round'
         context.lineJoin = 'round'
         context.lineTo(x, y);
