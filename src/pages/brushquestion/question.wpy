@@ -54,18 +54,16 @@
     }
   }
   .logic-index-canvas {
-    // position: absolute;
-    // top: 0;
-    height: 100vh;
-    width: 100vw;
+    position: fixed;
+    top: 0;
+    height: 0;
+    width: 0;
+    // overflow: hidden;
     // background: #fff;
     background-color:rgba(0, 0, 0, 0.1);
   }
-  .logic-index-canvas-content{
-    width: 100%;
-    height: 100%;
-    flex: 1;
-    box-sizing: border-box;
+  .logic-index-canvas-close {
+    overflow: hidden;
   }
   .logic-index-complete {
     position: fixed;
@@ -150,6 +148,8 @@
         <question-item :questionItem="item" :questionIndex="index" @onChange="onChange" @onMoreChange="onMoreChange"></question-item>
       </div>
     </div>
+    <div v-if="disableScroll" class="logic-index-complete" @click="closeCanvasPen">关</div>
+    <div v-if="disableScroll" class="logic-index-pen" @click="clearCanvasPen">清</div>
     <div v-if="!disableScroll" class="logic-index-pen" @click="openCanvasPen">笔</div>
     <div v-if="!disableScroll" class="logic-index-complete" @click="openCompletePopup">交卷</div>
     <van-popup get-container="#app" @click-overlay="closeCompletePopup" :show="isCompleteShow" position="bottom">
@@ -167,13 +167,12 @@
         </div>
       </div>
     </van-popup>
-    <van-popup @click-overlay="closeCanvasPen" :show="disableScroll" :overlay="false" custom-style="background-color:rgba(0, 0, 0, 0.1);">
-      <div v-show="disableScroll" class="logic-index-canvas">
-        <canvas class="logic-index-canvas-content" id="canvas" type="2d" disable-scroll="true" bindtouchstart="canvasStart" bindtouchmove="canvasMove" bindtouchend="touchEnd"></canvas>
+    <div class="logic-index-canvas" :class="{ 'logic-index-canvas-close': !disableScroll}">
+        <canvas style="height: 90vh; width:100vw" id="canvas" type="2d" disable-scroll="true" bindtouchstart="canvasStart" bindtouchmove="canvasMove" bindtouchend="touchEnd"></canvas>
       </div>
-    </van-popup>
     <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
   </div>
+  // eslint-disable-next-line [RULE]
 </template>
 <config>
   {
@@ -226,6 +225,27 @@
       this.examinationId = options.examinationId
       this.practiseId = options.practiseId
       this.title = options.title
+      wx.createSelectorQuery()
+        .select('#canvas') // 在 WXML 中填入的 id
+        .fields({
+          node: true,
+          size: true
+        })
+        .exec((res) => {
+          console.log(res,'=====')
+          // Canvas 对象
+          const canvas = res[0].node
+          mCanvas = res[0].node
+          context = canvas.getContext('2d')
+          // Canvas 画布的实际绘制宽高
+          const width = res[0].width
+          const height = res[0].height
+          // 初始化画布大小
+          const dpr = wx.getWindowInfo().pixelRatio
+          canvas.width = width * dpr
+          canvas.height = height * dpr
+          context.scale(dpr, dpr)
+        })
       wx.setNavigationBarTitle({title: options.title})
     },
     async onShow() {
@@ -274,74 +294,37 @@
     methods: {
       openCanvasPen () {
         this.disableScroll = true
-        wx.createSelectorQuery()
-        .select('#canvas') // 在 WXML 中填入的 id
-        .fields({
-          node: true,
-          size: true
-        })
-        .exec((res) => {
-          console.log(res,'=====')
-          // Canvas 对象
-          const canvas = res[0].node
-          const system = wx.getWindowInfo()
-          wx.getSystemInfo({
-            success: (res) => {
-              console.log(system)
-              canvas.width = res.windowWidth
-              canvas.height = res.windowHeight
-              // // 渲染上下文
-              context = canvas.getContext('2d')
-              // canvas.addEventListener("mousemove", this.mouseMoving, false);
-              // context.canvas.offsetTop = 0
-              console.log(context)
-            }
-          })
-        })
       },
-      // mouseMoving(e) {
-      //           console.log(`当前鼠标在Canvas中的位置: x: ${e.clientX}  y: ${e.clientY}`);
-      //         },
+      clearCanvasPen() {
+        context.clearRect(0, 0, mCanvas.width, mCanvas.height); //清除画布
+        context.beginPath() //清空画笔
+      },
       closeCanvasPen() {
         this.disableScroll = false
+        this.clearCanvasPen()
       },
       touchEnd () {},
       // 画布绘制
       canvasStart (event) {
-
-        context.moveTo(event.touches[0].clientX, event.touches[0].clientY - context.canvas.offsetTop);
-        // context.setStrokeStyle('#1A1A1A')
+        console.log(this.disableScroll)
+        if(this.disableScroll) {
+          context.moveTo(event.touches[0].clientX, event.touches[0].clientY);
+        }
       },
       //过程
       canvasMove (event) {
-        console.log(event)
-        var x = event.touches[0].clientX;
-        var y = event.touches[0].clientY - context.canvas.offsetTop;
-        context.strokeStyle = '#1A1A1A'
-        context.lineWidth = 1
-        context.lineCap = 'round'
-        context.lineJoin = 'round'
-        context.lineTo(x, y);
-        context.stroke()
-        // context.draw()
-        this.hasDraw = true
-
-        // this.startX = e.changedTouches[0].x
-        // this.startY = e.changedTouches[0].y
-        // //设置画笔参数
-        // //画笔颜色
-        // context.setStrokeStyle('#1A1A1A')
-        // //设置线条粗细
-        // context.setLineWidth('5')
-        // //设置线条的结束端点样式
-        // context.setLineCap('round') //'butt'、'round'、'square'
-        // //开始画笔
-        // context.beginPath()
-      },
-      clickClear () {
-        context.clearRect(0, 0, mCanvas.width, mCanvas.height); //清除画布
-        context.beginPath() //清空画笔
-        this.hasDraw = false
+        console.log(this.disableScroll)
+        if(this.disableScroll) {
+          console.log(event)
+          var x = event.touches[0].clientX;
+          var y = event.touches[0].clientY;
+          context.strokeStyle = '#FF0000';
+          context.lineWidth = 2
+          context.lineCap = 'round'
+          context.lineJoin = 'round'
+          context.lineTo(x, y);
+          context.stroke()
+        }
       },
       openCompletePopup () {
         this.isCompleteShow = true
