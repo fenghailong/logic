@@ -300,7 +300,7 @@
           user_id: this._id,
           module_id: this.moudleId,
         }
-        // 获取一条联系记录
+        // 获取一条练习记录
         let result = await getPractise(options)
         this.practiseData = result.result
         console.log(result,'============')

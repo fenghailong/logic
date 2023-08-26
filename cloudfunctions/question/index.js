@@ -93,21 +93,6 @@ const getErrQuestionQueryPage = async (options) => {
   return {currPage: options.currPage, pageSize: options.pageSize, totalPage, totalCount, data}
 }
 
-// 分页获取错题
-// const getErrQuestionQueryPage = async (options) => {
-//   const skipCount = (options.currPage - 1) * options.pageSize
-//   const countResult = await questionRCollection.where({ user_id: options.user_id, module_id: options.module_id, isRight: '2' }).count();
-//   const totalCount = countResult.total
-//   const totalPage = totalCount === 0 ? 0 : totalCount <= options.pageSize ? 1 : parseInt(totalCount / options.pageSize) + 1
-//   let result = await questionRCollection
-//   .where({ user_id: options.user_id, module_id: options.module_id, isRight: '2'})
-//   .orderBy('_updateTime', 'asc')
-//   .skip(skipCount)
-//   .limit(options.pageSize)
-//   .get()
-//   return {currPage: options.currPage, pageSize: options.pageSize, totalPage, totalCount, data: result.data}
-// }
-
 // 获取某个模块下的所有错题数量
 const getAllErrQuestionById = async (options) => {
   const countResult = await questionRCollection.where({ user_id: options.user_id, isRight: '2'}).count()
@@ -145,14 +130,6 @@ const getArrayNum = (arr) => {
     prev[next] = (prev[next] + 1) || 1;
     return prev;
   },{});
-  // let newArr = []
-  // for (key in obj) {
-  //   newArr.push({
-  //       module_id: key,
-  //       count: obj[key]
-  //   })
-  // };
-  // return newArr
 }
 
 // 获取模块下的已经掌握的题目数量 和 模块下面的题目（除去已经掌握的）
@@ -355,22 +332,33 @@ const addPractise = async (options) => {
       isComplete: '2',
       questions: options.questions,
       useTime: '00:00',
+      rightRate: '0.00',
       _createTime: Date.now(),
       _updateTime: Date.now()
     }
   })
-  console.log(data,'增加记录')
   return data
 }
 
 // 更新刷题记录
 const updatePractise = async (options) => {
+  if (options.isComplete == '1') {
+    let rightCount = 0
+    let rightRate = ''
+    options.questions.map(item => {
+      if (item.isRight) {
+        rightCount += 1
+      }
+    })
+    rightRate = (rightCount * 100 / options.questions.length).toFixed(2)
+  }
   await practiseCollection.where({ _id: options.practise_id}).update({
     // data 传入需要局部更新的数据
     data: {
       isComplete: options.isComplete,
       questions: options.questions,
       useTime: options.useTime,
+      rightRate: options.isComplete == '1' ? rightRate.toString() : '0.00',
       _updateTime: Date.now()
     }
   })

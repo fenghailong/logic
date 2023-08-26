@@ -168,11 +168,10 @@
       </div>
     </van-popup>
     <div class="logic-index-canvas" :class="{ 'logic-index-canvas-close': !disableScroll}">
-        <canvas style="height: 90vh; width:100vw" id="canvas" type="2d" disable-scroll="true" bindtouchstart="canvasStart" bindtouchmove="canvasMove" bindtouchend="touchEnd"></canvas>
-      </div>
+      <canvas style="height: 90vh; width:100vw" id="canvas" type="2d" disable-scroll="true" bindtouchstart="canvasStart" bindtouchmove="canvasMove" bindtouchend="touchEnd"></canvas>
+    </div>
     <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
   </div>
-  // eslint-disable-next-line [RULE]
 </template>
 <config>
   {
@@ -217,7 +216,6 @@
       minutes: 0,
       seconds: 0,
       disableScroll: false, //默认没有画
-      boxHeight: 0,
     },
     async onLoad(options) {
       this.moudleId = options.moudleId
@@ -306,6 +304,7 @@
       touchEnd () {},
       // 画布绘制
       canvasStart (event) {
+        console.log(event)
         console.log(this.disableScroll)
         if(this.disableScroll) {
           context.moveTo(event.touches[0].clientX, event.touches[0].clientY);
@@ -313,9 +312,9 @@
       },
       //过程
       canvasMove (event) {
+        console.log(event)
         console.log(this.disableScroll)
         if(this.disableScroll) {
-          console.log(event)
           var x = event.touches[0].clientX;
           var y = event.touches[0].clientY;
           context.strokeStyle = '#FF0000';

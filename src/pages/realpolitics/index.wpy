@@ -99,7 +99,7 @@
 </template>
 <config>
   {
-  navigationBarTitleText: '知识点详情',
+  navigationBarTitleText: '时政知识',
     usingComponents: {
       "van-search": "../../libs/vant/circle/index",
       "van-notice-bar": "../../libs/vant/notice-bar/index",
@@ -152,9 +152,16 @@
         if (this.user.messageCount < 1) {
           await this.onSubscribe()
         }
-        wx.navigateTo({
-          url: `/pages/realpolitics/list?id=${id}&name=${name}`,
-        })
+        if(id == 'e039cb5d64995bfb0000076d5b56ed17') { //时政专题
+          wx.navigateTo({
+            url: `/pages/realpolitics/list?id=${id}&name=${name}`,
+          })
+        } else {
+          wx.navigateTo({
+            url: `/pages/realpolitics/detail?moduleId=${id}&type=module`,
+          })
+        }
+
       },
       toEvaluation (id, name) {
         wx.navigateTo({

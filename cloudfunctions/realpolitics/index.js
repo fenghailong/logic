@@ -26,6 +26,19 @@ const getRealpoliticsList = async (options) => {
   }
   return res;
 }
+// 获取时政详情
+const getRealpoliticsByModuleId = async (options) => {
+  console.log(options, '==============')
+  const result = await collection.where({ module_id: options.module_id }).get()
+  return result
+}
+
+// 获取时政详情
+const getRealpoliticsByDetailId = async (options) => {
+  console.log(options)
+  const result = await collection.where({ _id: options.id }).get()
+  return result
+}
 
 exports.main = async (event, context) => {
   const { func, data } = event;
@@ -33,6 +46,10 @@ exports.main = async (event, context) => {
   let res;
   if (func === 'getRealpoliticsList') {
     res = await getRealpoliticsList(data);
+  } else if(func === 'getRealpoliticsByModuleId') {
+    res = await getRealpoliticsByModuleId(data);
+  } else if(func === 'getRealpoliticsByDetailId') {
+    res = await getRealpoliticsByDetailId(data);
   }
   return res;
 }
