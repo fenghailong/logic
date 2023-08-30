@@ -504,7 +504,7 @@
       this.getSystemInfo()
       this.getUserCount()
       this.getAllModulesData()
-      await sendMessage() //调用模版消息
+      // await sendMessage() //调用模版消息
     },
     async onPullDownRefresh() {
       wx.stopPullDownRefresh()

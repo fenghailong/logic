@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "less": "^4.2.0",
     "wx-server-sdk": "latest"
   }
 }

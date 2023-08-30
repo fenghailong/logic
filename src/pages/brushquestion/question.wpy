@@ -129,7 +129,7 @@
 }
 </style>
 <template>
-  <page-meta page-style="overflow: {{disableScroll ? 'hidden' : 'visible'}}" />
+  <!-- <page-meta page-style="overflow: {{disableScroll ? 'hidden' : 'visible'}}" /> -->
   <div class="page">
     <div class="logic-index-header">
       <div class="logic-index-header-box">
@@ -148,9 +148,9 @@
         <question-item :questionItem="item" :questionIndex="index" @onChange="onChange" @onMoreChange="onMoreChange"></question-item>
       </div>
     </div>
-    <div v-if="disableScroll" class="logic-index-complete" @click="closeCanvasPen">关</div>
+    <!-- <div v-if="disableScroll" class="logic-index-complete" @click="closeCanvasPen">关</div>
     <div v-if="disableScroll" class="logic-index-pen" @click="clearCanvasPen">清</div>
-    <div v-if="!disableScroll" class="logic-index-pen" @click="openCanvasPen">笔</div>
+    <div v-if="!disableScroll" class="logic-index-pen" @click="openCanvasPen">笔</div> -->
     <div v-if="!disableScroll" class="logic-index-complete" @click="openCompletePopup">交卷</div>
     <van-popup get-container="#app" @click-overlay="closeCompletePopup" :show="isCompleteShow" position="bottom">
       <div class="logic-index-popup-box" :style="{ height: '30vh' }">
@@ -167,9 +167,9 @@
         </div>
       </div>
     </van-popup>
-    <div class="logic-index-canvas" :class="{ 'logic-index-canvas-close': !disableScroll}">
+    <!-- <div class="logic-index-canvas" :class="{ 'logic-index-canvas-close': !disableScroll}">
       <canvas style="height: 90vh; width:100vw" id="canvas" type="2d" disable-scroll="true" bindtouchstart="canvasStart" bindtouchmove="canvasMove" bindtouchend="touchEnd"></canvas>
-    </div>
+    </div> -->
     <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
   </div>
 </template>
@@ -223,27 +223,27 @@
       this.examinationId = options.examinationId
       this.practiseId = options.practiseId
       this.title = options.title
-      wx.createSelectorQuery()
-        .select('#canvas') // 在 WXML 中填入的 id
-        .fields({
-          node: true,
-          size: true
-        })
-        .exec((res) => {
-          console.log(res,'=====')
-          // Canvas 对象
-          const canvas = res[0].node
-          mCanvas = res[0].node
-          context = canvas.getContext('2d')
-          // Canvas 画布的实际绘制宽高
-          const width = res[0].width
-          const height = res[0].height
-          // 初始化画布大小
-          const dpr = wx.getWindowInfo().pixelRatio
-          canvas.width = width * dpr
-          canvas.height = height * dpr
-          context.scale(dpr, dpr)
-        })
+      // wx.createSelectorQuery()
+      //   .select('#canvas') // 在 WXML 中填入的 id
+      //   .fields({
+      //     node: true,
+      //     size: true
+      //   })
+      //   .exec((res) => {
+      //     console.log(res,'=====')
+      //     // Canvas 对象
+      //     const canvas = res[0].node
+      //     mCanvas = res[0].node
+      //     context = canvas.getContext('2d')
+      //     // Canvas 画布的实际绘制宽高
+      //     const width = res[0].width
+      //     const height = res[0].height
+      //     // 初始化画布大小
+      //     const dpr = wx.getWindowInfo().pixelRatio
+      //     canvas.width = width * dpr
+      //     canvas.height = height * dpr
+      //     context.scale(dpr, dpr)
+      //   })
       wx.setNavigationBarTitle({title: options.title})
     },
     async onShow() {

@@ -27,3 +27,13 @@ export async function getRealpoliticsByDetailId(data) {
     },
   })
 }
+
+export async function clearQusetion(data) {
+  return await wx.cloud.callFunction({
+    name: 'realpolitics',
+    data: {
+      func: 'clearQusetion',
+      data
+    },
+  })
+}

@@ -32,8 +32,8 @@ const getAllMessages = async (data) => {
 const sendMessage = async () => {
   let result = await getAllMessages();
   let messageList = result.data.filter(function(item,index,self){
-    return self.findIndex(el=>(el.wechat_openid==item.wechat_openid && item.isUse === '2' && item._createTime < 1693042541250))===index
-    // return self.findIndex(el=>(el.wechat_openid==item.wechat_openid && item.isUse === '2'))===index
+    // return self.findIndex(el=>(el.wechat_openid==item.wechat_openid && item.isUse === '2' && item._createTime < 1693042541250))===index
+    return self.findIndex(el=>(el.wechat_openid==item.wechat_openid && item.isUse === '2'))===index
   })
   // messageList=messageList.slice(0,1)
   console.log(messageList)
@@ -70,13 +70,13 @@ const sendMessageItem = async (item) => {
       "lang": 'zh_CN',
       "data": {
         "thing1": {
-          "value": '时政专题500题已更新'
+          "value": '会员名师网课大礼包'
         },
         "thing2": {
-          "value": '百日刷题第十三天已开启'
+          "value": '8000G网课会员专属'
         },
         "thing5": {
-          "value": '点击此处立即开始刷题'
+          "value": '点击联系客服获取'
         }
       },
       "templateId": item.templateId,

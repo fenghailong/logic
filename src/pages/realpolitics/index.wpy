@@ -26,6 +26,7 @@
         flex: 1;
       }
       .logic-detail-content-title-button {
+        margin-left: 10px;
         color: #666;
       }
     }
@@ -81,6 +82,7 @@
         <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->
         <div class="logic-detail-content-title">
           <div class="logic-detail-content-title-text">{{item.name}}</div>
+          <div class="logic-detail-content-title-button" @click="{{index != 1 && user.isMember != '1' ? '' : clearQusetion(item._id)}}">清除进度</div>
           <div class="logic-detail-content-title-button" @click="{{index != 1 && user.isMember != '1' ? '' : toQuestion(item._id, item.name)}}">去刷题 ></div>
         </div>
         <div class="logic-detail-content-describe">总结{{item.name}}模块的知识点，需要掌握熟记，学习完后最好配合对应的刷题模块。</div>
@@ -91,7 +93,7 @@
         <div v-if="index != 1 && user.isMember != '1'">
           <image class="logic-detail-content-locked" src="../../assets/images/locked.png" />
         </div>
-
+        <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
       </div>
     </div>
     <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
@@ -105,7 +107,8 @@
       "van-notice-bar": "../../libs/vant/notice-bar/index",
       "van-button": "../../libs/vant/button/index",
       "van-rate": "../../libs/vant/rate/index",
-      "pay-tip-popup": "~@/components/pay-tip-popup"
+      "van-dialog": "../../libs/vant/dialog/index",
+      "pay-tip-popup": "~@/components/pay-tip-popup",
     }
   }
 </config>
@@ -115,8 +118,8 @@
   import subscribe from '@/mixins/subscribe.js'
   import { mapGetters } from '@wepy/x'
   import { getModulesById } from '@/api/knowledgeModule'
-  import { addMessage } from '@/api/subscribe'
-  import eventHub from '@/common/eventHub'
+  import { clearQusetion } from '@/api/realpolitics'
+  import Dialog from '../../libs/vant/dialog/dialog';
 
   wepy.page({
     store,
@@ -147,6 +150,19 @@
         let result = await getModulesById(moudleId)
         this.moudleList = result.result.data
         wx.hideLoading()
+      },
+      clearQusetion (id) {
+        Dialog.confirm({
+          message: '清除进度后，该模块之前的做题记录会清楚，切无法恢复，是否清除？'
+        }).then(async () => {
+          wx.showLoading({title: '清除中'})
+          await clearQusetion({
+            module_id: id,
+            user_id: this._id
+          })
+          wx.hideLoading()
+          wx.showToast({ title: '已清除' })
+        });
       },
       async toList (id, name) {
         if (this.user.messageCount < 1) {
