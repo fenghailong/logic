@@ -21,12 +21,12 @@
         padding: 0 10px;
         margin-top: 10px;
         color: #666;
-        .code {
+        .logic-code {
           background-color: #eee;
           display: block;
           padding: 10px 10px;
         }
-        .p {
+        .logic-p {
           padding: 5px 0;
         }
       }
@@ -162,8 +162,9 @@
         wx.showLoading({title: '加载中'})
         let result = await getKnowledgeDetailById(options)
         this.detail = result.result.data[0]
-        this.detail.content =this.detail.content.replace(/\<code/gi,'<code class="code"')
-        this.detail.content =this.detail.content.replace(/\<p/gi,'<p class="p"')
+        // this.detail.content = this.formatRichText(this.detail.content)
+        this.detail.content =this.detail.content.replace(/\<code/gi,'<code class="logic-code"')
+        this.detail.content =this.detail.content.replace(/\<p/gi,'<p class="logic-p"')
         this.moudleId = this.detail._id
         wx.hideLoading()
       },
@@ -214,6 +215,33 @@
         await this.getNoteList()
         this.currentNote = ''
         wx.hideLoading()
+      },
+            /**
+       * 处理富文本里的图片宽度自适应
+       * 1.去掉img标签里的style、width、height属性
+       * 2.img标签添加style属性：max-width:100%;height:auto
+       * 3.修改所有style里的width属性为max-width:100%
+       * 4.p，code标签添加class
+       * 5.去掉<br/>标签
+       * @param html
+       * @returns {void|string|*}
+       */
+      formatRichText(html){
+        let newContent= html.replace(/<img[^>]*>/gi,function(match,capture){
+          match = match.replace(/style="[^"]+"/gi, '').replace(/style='[^']+'/gi, '');
+          match = match.replace(/width="[^"]+"/gi, '').replace(/width='[^']+'/gi, '');
+          match = match.replace(/height="[^"]+"/gi, '').replace(/height='[^']+'/gi, '');
+          return match;
+        });
+        newContent = newContent.replace(/style="[^"]+"/gi,function(match,capture){
+          match = match.replace(/width:[^;]+;/gi, 'max-width:100%;').replace(/width:[^;]+;/gi, 'max-width:100%;');
+          return match;
+        });
+        // newContent = newContent.replace(/<br[^>]*\/>/gi, '');
+        newContent = newContent.replace(/\<p/gi, '<p class="logic-p"');
+        newContent = newContent.replace(/\<code/gi, '<p class="logic-code"');
+        newContent = newContent.replace(/\<img/gi, '<img style="max-width:100%;height:auto;display:block;margin-top:0;margin-bottom:0;"');
+        return newContent;
       }
     },
     onShareAppMessage () {

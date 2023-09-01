@@ -189,9 +189,6 @@ const getModulesByPractise = async (options) => {
   const countResult = await collection.where({ new_parent_id: options.parent_id, module_type: options.module_type}).count();
   const totalCount = countResult.total
   const totalPage = totalCount === 0 ? 0 : totalCount <= options.pageSize ? 1 : parseInt(totalCount / options.pageSize) + 1
-  console.log(totalCount)
-  console.log(skipCount)
-  console.log(totalPage)
   const result = await collection
   .where({ new_parent_id: options.parent_id, module_type: options.module_type})
   .orderBy('sort', 'asc')
@@ -216,60 +213,6 @@ const getModulesByPractise = async (options) => {
   }
   console.log(result)
   return {currPage: options.currPage, pageSize: options.pageSize, totalPage, totalCount, data: { list: result.data }}
-  // const aggregateInstance = collection.aggregate()
-  // .lookup({
-  //   from: 'practise',
-  //   let: {
-  //     user_id: options.user_id,
-  //     // module_id: options.parent_id,
-  //     module_id: '$_id'
-  //   },
-  //   pipeline: $.pipeline()
-  //   .match(_.expr(
-  //     $.and([
-  //       $.eq(['$module_id', '$$module_id']),
-  //       $.eq(['$user_id', '$$user_id'])
-  //     ])
-  //   ))
-  //   .done(),
-  //   as: 'practiseList',
-  // })
-  // .lookup({
-  //   from: 'examination',
-  //   localField: 'examination_id',
-  //   foreignField: '_id',
-  //   as: 'examinationList',
-  // })
-  // const data = await aggregateInstance
-  // .match({
-  //   new_parent_id: options.parent_id,
-  //   module_type: options.module_type
-  // })
-  // .addFields({
-  //   practise: $.arrayElemAt(['$practiseList', 0]),
-  //   examination: $.arrayElemAt(['$examinationList', 0]),
-  // })
-  // .project({
-  //   practiseList: 0,
-  //   examinationList: 0,
-  // })
-  // .sort({'sort': 1})
-  // .skip(skipCount)
-  // .limit(options.pageSize)
-  // .end()
-  // console.log(data, '===============')
-  // if (data.list.length > 0){
-  //   data.list = data.list.map(element => {
-  //     let practise = {}
-  //     if(element.practise) {
-  //       practise._id = element.practise._id
-  //       practise.isComplete = element.practise.isComplete
-  //       element.practise = practise
-  //     }
-  //     return element
-  //   });
-  // }
-  // return {currPage: options.currPage, pageSize: options.pageSize, totalPage, totalCount, data}
 }
 
 exports.main = async (event, context) => {
