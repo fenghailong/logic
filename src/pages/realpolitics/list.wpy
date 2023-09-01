@@ -41,16 +41,11 @@
     <div class="logic-undertaking-list-header">{{title}}</div>
     <div class="logic-undertaking-list-box" v-if="moudleList.length > 0">
       <div class="logic-undertaking-list-content" v-for="(item, index) in moudleList" @click="toDetail(item._id)">
-        <!-- <div class="logic-undertaking-list-content-people">25624人正在学习</div> -->
         <div class="logic-undertaking-list-content-title">
           <div class="logic-undertaking-list-content-index">第{{index+1}}章</div>
           <div class="logic-undertaking-list-content-text">{{item.title}}</div>
         </div>
         <van-icon name="arrow" color="#387ffb" />
-        <!-- <div class="logic-undertaking-list-content-message">
-          <div class="logic-undertaking-list-content-message-practice">已练习 {{studyCount}}/{{undertaking-list.count}}</div>
-          <van-rate readonly value="{{ starValue }}" allow-half/>
-        </div> -->
       </div>
     </div>
     <van-empty v-else description="从政治模块开始更新，敬请期待" />
@@ -58,7 +53,7 @@
 </template>
 <config>
   {
-  navigationBarTitleText: '知识点详情',
+  navigationBarTitleText: '知识列表',
     usingComponents: {
       "van-search": "../../libs/vant/circle/index",
       "van-notice-bar": "../../libs/vant/notice-bar/index",
@@ -105,7 +100,7 @@
       },
       toDetail (id) {
         wx.navigateTo({
-          url: `/pages/realpolitics/detail?id=${id}`,
+          url: `/pages/realpolitics/detail?id=${id}&type=detail`,
         })
       }
     },

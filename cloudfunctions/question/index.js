@@ -1,4 +1,5 @@
 // 云函数入口文件
+const { options } = require('less');
 const cloud = require('wx-server-sdk')
 
 cloud.init({
@@ -263,7 +264,7 @@ const getPractiseList = async (options) => {
 
 // 获取一个模版的刷题练习记录 （排名使用）
 const getPractiseListByModule = async (options) => {
-  // const skipCount = (options.currPage - 1) * options.pageSize
+  // const skipCount = (options.currPage - 1) * options.pageSize 
   // const countResult = await practiseCollection.where({ module_id: options.module_id}).count();
   // const totalCount = countResult.total
   // const totalPage = totalCount === 0 ? 0 : totalCount <= options.pageSize ? 1 : parseInt(totalCount / options.pageSize) + 1
@@ -285,11 +286,12 @@ const getPractiseListByModule = async (options) => {
   .project({
     userList: 0
   })
+  .sort({'rightRate': -1})
   // .skip(skipCount)
   .limit(50)
   .end()
+  console.log(data, '================================')
 
-  // 待优化
   const aggregateInstanceMy = practiseCollection.aggregate()
   .lookup({
     from: 'user',
@@ -313,17 +315,6 @@ const getPractiseListByModule = async (options) => {
   .end()
 
   data.list.push(dataMy.list[0])
-  // 计算每个用户的正确率
-  data.list = data.list.map(item => {
-    item.rightCount = 0
-    item.questions.forEach(ele => {
-      if (ele.isRight) {
-        item.rightCount += 1
-      }
-    })
-    item.rightRate = (item.rightCount * 100 / item.questions.length).toFixed(2)
-    return item
-  })
   data.list= data.list.filter(item=>item.rightRate != '0.00')
   // 计算平均正确率
   let totalRate = 0
@@ -346,10 +337,6 @@ const getPractiseListByModule = async (options) => {
   })
   totalTime = parseInt(totalTime / data.list.length)
   totalTime = toZero(parseInt(totalTime/ 60)) +':'+ toZero(parseInt(totalTime % 60))
-
-  data.list.sort((a, b) => {
-    return b.rightRate - a.rightRate;
-  });
   return { totalTime, totalRate, data }
 }
 
@@ -384,6 +371,58 @@ const addPractise = async (options) => {
   return data
 }
 
+// 获取所有练习记录
+const getAllPractise = async (options) => {
+  const countResult = await practiseCollection.where({isComplete: '1',module_id:options.module_id}).count()
+  const total = countResult.total
+  // 计算需分几次取
+  const batchTimes = Math.ceil(total / 100)
+  // 承载所有读操作的 promise 的数组
+  const tasks = []
+  for (let i = 0; i < batchTimes; i++) {
+    const promise = practiseCollection.where({isComplete: '1',module_id:options.module_id}).skip(i * 100).limit(100).get()
+    tasks.push(promise)
+  }
+  // 等待所有
+  let result = (await Promise.all(tasks)).reduce((acc, cur) => {
+    if(acc.length <= 0) acc.data = []
+    if(cur.length <= 0) cur.data = []
+    return {
+      data: acc.data.concat(cur.data),
+      errMsg: acc.errMsg,
+    }
+  },[])
+  result.data = result.data || [] // 处理 没有数据时 reduce 结果 undefined 的情况
+  return result
+}
+
+// const updatePractise = async () => {
+//   const list = await getAllPractise()
+//   console.log(list)
+//   for(var i =0;i<list.data.length;i++){
+//     updatePractiseItem(list.data[i])
+//   }
+// }
+// 更新刷题记录
+// const updatePractiseItem = async (options) => {
+//   let rightCount = 0
+//   let rightRate = ''
+//   if (options.isComplete == '1') {
+//     options.questions.map(item => {
+//       if (item.isRight) {
+//         rightCount += 1
+//       }
+//     })
+//     rightRate = (rightCount * 100 / options.questions.length).toFixed(2)
+//     console.log(rightRate)
+//   }
+//   await practiseCollection.where({ _id: options._id}).update({
+//     data: {
+//       rightRate: options.isComplete == '1' ? rightRate.toString() : '0.00',
+//     }
+//   })
+// }
+
 // 更新刷题记录
 const updatePractise = async (options) => {
   let rightCount = 0
@@ -395,6 +434,7 @@ const updatePractise = async (options) => {
       }
     })
     rightRate = (rightCount * 100 / options.questions.length).toFixed(2)
+    console.log(rightRate)
   }
   await practiseCollection.where({ _id: options.practise_id}).update({
     // data 传入需要局部更新的数据

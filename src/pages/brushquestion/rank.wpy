@@ -176,6 +176,7 @@
     methods: {
       // 获取模块知识点详情
       async getRankList() {
+        wx.showLoading({title: '加载中'})
         let result = await getPractiseListByModule({
           module_id: this.module_id,
           user_id: this._id,
@@ -188,6 +189,7 @@
         this.allRankDetail.totalRate = result.result.totalRate
         let index = this.rankList.findIndex(item => item.user_id === this._id)
         this.myRankDetail = this.rankList[index]
+        wx.hideLoading()
       }
     }
   })

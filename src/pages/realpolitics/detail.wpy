@@ -120,7 +120,7 @@
 </template>
 <config>
   {
-    navigationBarTitleText: '哲学概述',
+    navigationBarTitleText: '知识详情',
     usingComponents: {
       "van-button": "../../libs/vant/button/index",
       "van-empty": "../../libs/vant/empty/index",
@@ -137,6 +137,7 @@
   import { mapGetters } from '@wepy/x'
   import eventHub from '@/common/eventHub'
   import { getKnowledgeDetail, addNotes, getNotes, deleteNotes } from '@/api/knowledgeModule'
+  import { getRealpoliticsByModuleId, getRealpoliticsByDetailId} from '@/api/realpolitics'
   import Dialog from '../../libs/vant/dialog/dialog';
 
   wepy.page({
@@ -146,26 +147,34 @@
       ...mapGetters(['_id'])
     },
     data: {
-      moudleId: '',
       detail: {},
       currentNote: '',
       notesList: []
     },
     async onLoad(options) {
-      this.moudleId = options.id
-      await this.getKnowledgeDetailData(options.id)
+      if (options.type == 'detail') {
+        await this.getRealpoliticsByDetailId({ id: options.id })
+      } else {
+        await this.getRealpoliticsByModuleId({ module_id: options.moduleId })
+      }
       await this.getNoteList()
       wx.setNavigationBarTitle({title: this.detail.title})
     },
     methods: {
-      // 获取模块词语列表
-      async getKnowledgeDetailData(options) {
+      async getRealpoliticsByDetailId(options) {
         wx.showLoading({title: '加载中'})
-        let result = await getKnowledgeDetail(options)
+        let result = await getRealpoliticsByDetailId(options)
         console.log(result)
         this.detail = result.result.data[0]
-        this.detail.content =this.detail.content.replace(/\<code/gi,'<code class="code"')
-        this.detail.content =this.detail.content.replace(/\<p/gi,'<p class="p"')
+        this.detail.content = this.formatRichText(this.detail.content)
+        wx.hideLoading()
+      },
+      async getRealpoliticsByModuleId(options) {
+        wx.showLoading({title: '加载中'})
+        let result = await getRealpoliticsByModuleId(options)
+        console.log(result)
+        this.detail = result.result.data[0]
+        this.detail.content = this.formatRichText(this.detail.content)
         wx.hideLoading()
       },
       noteChange (e) {
@@ -174,7 +183,7 @@
       async getNoteList () {
         wx.showLoading({title: '加载中'})
         let options = {
-          module_id: this.moudleId,
+          module_id: this.detail._id,
           user_id: this._id
         }
         let data = await getNotes(options)
@@ -203,7 +212,7 @@
       async doNotes () {
         wx.showLoading({title: '加载中'})
         let options = {
-          module_id: this.moudleId,
+          module_id: this.detail._id,
           user_id: this._id,
           content: this.currentNote
         }
@@ -215,14 +224,31 @@
         await this.getNoteList()
         this.currentNote = ''
         wx.hideLoading()
-      }
+      },
+      formatRichText(html){
+        let newContent= html.replace(/<img[^>]*>/gi,function(match,capture){
+          match = match.replace(/style="[^"]+"/gi, '').replace(/style='[^']+'/gi, '');
+          match = match.replace(/width="[^"]+"/gi, '').replace(/width='[^']+'/gi, '');
+          match = match.replace(/height="[^"]+"/gi, '').replace(/height='[^']+'/gi, '');
+          return match;
+        });
+        newContent = newContent.replace(/style="[^"]+"/gi,function(match,capture){
+          match = match.replace(/width:[^;]+;/gi, 'max-width:100%;').replace(/width:[^;]+;/gi, 'max-width:100%;');
+          return match;
+        });
+        newContent = newContent.replace(/<br[^>]*\/>/gi, '');
+        newContent = newContent.replace(/\<p/gi, '<p class="logic-p"');
+        newContent = newContent.replace(/\<code/gi, '<p class="logic-code"');
+        newContent = newContent.replace(/\<img/gi, '<img style="max-width:100%;height:auto;display:block;margin-top:0;margin-bottom:0;"');
+        return newContent;
+      },
     },
     onShareAppMessage () {
       return {
         // 标题是话题标题
-        title: '知识要点',
+        title: '知识详情',
         // 路径为话题详情路径
-        path: '/pages/undertaking/detail?id=' + this.moudleId,
+        path: '/pages/realpolitics/detail?id=' + this.detail._id,
       }
     },
   })
