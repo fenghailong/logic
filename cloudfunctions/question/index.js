@@ -164,58 +164,58 @@ const getQuestionById = async (options) => {
 
 // 获取百日刷题模块下的所有题目 根据试卷id 和模块id 获取
 const getQuestionBymodule = async (options) => {
-  // console.log(1, '===========')
-  // const data = await getAllQuestionText()
-  // for(var i =0;i<data.data.length;i++){
-  //   updateQuestion(data.data[i])
-  // }
-  // console.log(data, '===========')
-
-  const result = await questionCollection
-  .where({ examination_id: options.examination_id, module_id: options.module_id})
-  .orderBy('sort', 'asc')
-  .get()
-  resultQuestion = result.data
-  let res = {
-    resultQuestion
+  console.log(1, '===========')
+  const data = await getAllQuestionText()
+  for(var i =0;i<data.data.length;i++){
+    updateQuestion(data.data[i])
   }
-  return res;
+  console.log(data, '===========')
+
+  // const result = await questionCollection
+  // .where({ examination_id: options.examination_id, module_id: options.module_id})
+  // .orderBy('sort', 'asc')
+  // .get()
+  // resultQuestion = result.data
+  // let res = {
+  //   resultQuestion
+  // }
+  // return res;
 }
 // // 更新刷题记录
-// const updateQuestion = async (options) => {
-//   await questionCollection.where({ _id: options._id}).update({
-//     // data 传入需要局部更新的数据
-//     data: {
-//       sort: options.sort ? Number(options.sort) : 0,
-//     }
-//   })
-// }
+const updateQuestion = async (options) => {
+  await questionCollection.where({_id: options._id}).update({
+    // data 传入需要局部更新的数据
+    data: {
+      sort: options.sort ? Number(options.sort) : 0,
+    }
+  })
+}
 
-// // 获取某个模块下的所有题目
-// const getAllQuestionText = async (options) => {
-//   const countResult = await questionCollection.count()
-//   const total = countResult.total
-//   // 计算需分几次取
-//   const batchTimes = Math.ceil(total / 100)
+// 获取某个模块下的所有题目
+const getAllQuestionText = async () => {
+  const countResult = await questionCollection.where({ examination_id: '7dc1d50264f5846a0003a836323704c0'}).count()
+  const total = countResult.total
+  // 计算需分几次取
+  const batchTimes = Math.ceil(total / 100)
 
-//   // 承载所有读操作的 promise 的数组
-//   const tasks = []
-//   for (let i = 29; i < 39; i++) {
-//     const promise = questionCollection.orderBy('sort', 'asc').skip(i * 100).limit(100).get()
-//     tasks.push(promise)
-//   }
-//   // 等待所有
-//   let result = (await Promise.all(tasks)).reduce((acc, cur) => {
-//     if(acc.length <= 0) acc.data = []
-//     if(cur.length <= 0) cur.data = []
-//     return {
-//       data: acc.data.concat(cur.data),
-//       errMsg: acc.errMsg,
-//     }
-//   },[])
-//   result.data = result.data || [] // 处理 没有数据时 reduce 结果 undefined 的情况
-//   return result
-// }
+  // 承载所有读操作的 promise 的数组
+  const tasks = []
+  for (let i = 0; i < batchTimes; i++) {
+    const promise = questionCollection.where({ examination_id: '7dc1d50264f5846a0003a836323704c0'}).orderBy('sort', 'asc').skip(i * 100).limit(100).get()
+    tasks.push(promise)
+  }
+  // 等待所有
+  let result = (await Promise.all(tasks)).reduce((acc, cur) => {
+    if(acc.length <= 0) acc.data = []
+    if(cur.length <= 0) cur.data = []
+    return {
+      data: acc.data.concat(cur.data),
+      errMsg: acc.errMsg,
+    }
+  },[])
+  result.data = result.data || [] // 处理 没有数据时 reduce 结果 undefined 的情况
+  return result
+}
 
 // 获取刷题练习记录
 const getPractise = async (options) => {
@@ -264,7 +264,7 @@ const getPractiseList = async (options) => {
 
 // 获取一个模版的刷题练习记录 （排名使用）
 const getPractiseListByModule = async (options) => {
-  // const skipCount = (options.currPage - 1) * options.pageSize 
+  // const skipCount = (options.currPage - 1) * options.pageSize
   // const countResult = await practiseCollection.where({ module_id: options.module_id}).count();
   // const totalCount = countResult.total
   // const totalPage = totalCount === 0 ? 0 : totalCount <= options.pageSize ? 1 : parseInt(totalCount / options.pageSize) + 1
