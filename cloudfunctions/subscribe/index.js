@@ -32,7 +32,7 @@ const getAllMessages = async (data) => {
 const sendMessage = async () => {
   let result = await getAllMessages();
   let messageList = result.data.filter(function(item,index,self){
-    return self.findIndex(el=>(el.wechat_openid==item.wechat_openid && item.isUse === '2' && item._createTime < 1693553308218))===index
+    return self.findIndex(el=>(el.wechat_openid==item.wechat_openid && item.isUse === '2' && item._createTime < 1693915786597))===index
     // return self.findIndex(el=>(el.wechat_openid==item.wechat_openid && item.isUse === '2'))===index
   })
   // messageList=messageList.slice(0,1)
@@ -70,10 +70,10 @@ const sendMessageItem = async (item) => {
       "lang": 'zh_CN',
       "data": {
         "thing1": {
-          "value": '会员大礼包免费领取'
+          "value": '会员免费领申论提分礼包'
         },
         "thing2": {
-          "value": '8000G网课礼包'
+          "value": '230篇人民日报精读解析'
         },
         "thing5": {
           "value": '联系客服立刻领取'

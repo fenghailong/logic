@@ -23,7 +23,6 @@ const getAllWords = async () => {
     tasks.push(promise)
   }
   // 等待所有
-  console.log(tasks, '=============')
   let result = (await Promise.all(tasks)).reduce((acc, cur) => {
     return {
       data: acc.data.concat(cur.data),
