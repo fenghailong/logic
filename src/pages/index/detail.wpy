@@ -53,8 +53,7 @@
   <div class="page">
     <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，在进行考点评测效果会更好哦" />
     <div class="logic-detail-box">
-      <div class="logic-detail-content" v-if="detail.type === '高频成语'">
-        <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->
+      <!-- <div class="logic-detail-content" v-if="detail.type === '国考高频成语'">
         <div class="logic-detail-content-title">{{detail.type}}</div>
         <div class="logic-detail-content-describe">搜集历年国考、省考等考试中“逻辑填空”模块出现的高频成语，需要掌握意思，用法等。</div>
         <div class="logic-detail-content-message">
@@ -63,10 +62,9 @@
         </div>
         <div class="logic-detail-content-footer">
           <van-button class="logic-detail-content-button" color="#4755EB" round @click="toList" @tap="subscribe">开始学习</van-button>
-          <!-- <van-button class="logic-detail-content-button" color="#54BBCB" round >考点评测</van-button> -->
         </div>
-      </div>
-      <div class="logic-detail-content" v-else-if="detail.type === '人物素材'">
+      </div> -->
+      <div class="logic-detail-content" v-if="detail.type === '人物素材'">
         <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->
         <div class="logic-detail-content-title">{{detail.type}}</div>
         <div class="logic-detail-content-describe">人物素材积累汇总 | 适用于各种考试大作文</div>
@@ -79,8 +77,7 @@
           <!-- <van-button class="logic-detail-content-button" color="#54BBCB" round >考点评测</van-button> -->
         </div>
       </div>
-      <div class="logic-detail-content" v-else>
-        <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->
+      <!-- <div class="logic-detail-content" v-if="detail.type === '人物素材'">
         <div class="logic-detail-content-title">{{detail.type}}</div>
         <div class="logic-detail-content-describe">申论优秀范文欣赏 | 适用于各种考试大作文</div>
         <div class="logic-detail-content-message">
@@ -89,9 +86,8 @@
         </div>
         <div class="logic-detail-content-footer">
           <van-button class="logic-detail-content-button" color="#4755EB" round @click="toList">开始学习</van-button>
-          <!-- <van-button class="logic-detail-content-button" color="#54BBCB" round >考点评测</van-button> -->
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
@@ -122,6 +118,7 @@
     data: {
       detail: {
         count: 0,
+        type: ''
       },
       studyCount: 0,
       starValue: 0,
@@ -133,6 +130,8 @@
       ...mapGetters(['_id', 'user']),
     },
     onLoad(options) {
+      this.detail.type = options.type
+      this.detail.user_id = this._id
       eventHub.$on('refresh-words-info', (...args) => {
         console.log('app-launch event emitted, the params are:');
         console.log(args, '=========')
@@ -144,9 +143,6 @@
         });
         this.studyCount = count
       });
-
-      this.detail.type = options.type
-      this.detail.user_id = this._id
       if (this.detail.type === '国考高频成语'){
         this.getWordsStudyCount(this.detail)
       } else if (this.detail.type === '人物素材') {

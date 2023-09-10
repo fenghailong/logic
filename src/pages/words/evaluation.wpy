@@ -1,0 +1,156 @@
+<style lang="less">
+.page{
+    background-color: #eee;
+    .logic-detail-box {
+        padding: 0 10px;
+        margin-top: 10px;
+    }
+    .logic-detail-content {
+        background-color: #fff;
+        border-radius: 10px;
+        padding: 10px 20px 20px;
+        .logic-detail-content-people {
+            text-align: right;
+            font-size: 12px;
+            color: #999;
+        }
+        .logic-detail-content-title {
+            text-align: left;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        .logic-detail-content-describe {
+            text-align: left;
+            font-size: 14px;
+            color: #999;
+            margin: 20px 0;
+        }
+        .logic-detail-content-message {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 20px 10px;
+            .logic-detail-content-message-practice {
+            font-size: 12px;
+            color: #999;
+            margin-right: 80px;
+            }
+        }
+        .logic-detail-content-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            .logic-detail-content-button {
+                .van-button {
+                    width: 120px;
+                }
+            }
+        }
+    }
+}
+</style>
+<template>
+    <div class="page">
+        <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，在进行考点评测效果会更好哦" />
+        <div class="logic-detail-box">
+            <div class="logic-detail-content">
+            <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->
+            <div class="logic-detail-content-title">国考高频成语</div>
+            <div class="logic-detail-content-describe">搜集历年国考、省考等考试中“逻辑填空”模块出现的高频成语，需要掌握意思，用法等。</div>
+            <div class="logic-detail-content-message">
+                <div class="logic-detail-content-message-practice">已练习 {{studyCount}}/{{detail.count}}</div>
+                <van-rate readonly value="{{ starValue }}" allow-half/>
+            </div>
+            <div class="logic-detail-content-footer">
+                <van-button class="logic-detail-content-button" color="#4755EB" round @click="toList">开始学习</van-button>
+                <van-button class="logic-detail-content-button" color="#54BBCB" round >成语评测</van-button>
+            </div>
+            </div>
+        </div>
+    </div>
+</template>
+<config>
+{
+    navigationBarTitleText: '知识点详情',
+    usingComponents: {
+        "van-search": "../../libs/vant/circle/index",
+        "van-notice-bar": "../../libs/vant/notice-bar/index",
+        "van-button": "../../libs/vant/button/index",
+        "van-rate": "../../libs/vant/rate/index",
+    }
+}
+</config>
+<script>
+import wepy from '@wepy/core'
+import store from '@/store'
+import subscribe from '@/mixins/subscribe.js'
+import { mapGetters } from '@wepy/x'
+import { getWordsStudyCount } from '@/api/words'
+import eventHub from '@/common/eventHub'
+
+wepy.page({
+mixins: [ subscribe ],
+store,
+data: {
+    detail: {
+    count: 0,
+    type: ''
+    },
+    studyCount: 0,
+    starValue: 0,
+    currentId: '',
+    wordsList: []
+},
+// 计算的属性
+computed: {
+    ...mapGetters(['_id', 'user']),
+},
+onLoad(options) {
+    this.detail.type = options.type
+    this.detail.user_id = this._id
+    eventHub.$on('refresh-words-info', (...args) => {
+    console.log('app-launch event emitted, the params are:');
+    console.log(args, '=========')
+    this.wordsList = JSON.parse(JSON.stringify(args[0].wordsList))
+    this.currentId = JSON.parse(JSON.stringify(args[0].currentWord_id))
+    let count = 0
+    this.wordsList.forEach(element => {
+        if(element.isStudyed)count = count + 1
+    });
+    this.studyCount = count
+    });
+    this.getWordsStudyCount(this.detail)
+},
+methods: {
+    // 获取已学习
+    async getWordsStudyCount(options) {
+        wx.showLoading({title: '加载中'})
+        let result = await getWordsStudyCount(options)
+        console.log(result)
+        this.studyCount = result.result.studyCount
+        this.starValue = result.result.starValue
+        this.detail.count = result.result.wordCount
+        this.currentId = result.result.currentWordId
+        this.wordsList = result.result.wordsList
+        wx.hideLoading()
+    },
+    async toList () {
+        if (this.user.messageCount < 1) {
+            await this.onSubscribe()
+        }
+        let wordsList = encodeURIComponent(JSON.stringify(this.wordsList))
+        wx.navigateTo({
+            url: `/pages/index/list?type=国考高频成语&currentId=${this.currentId}&wordsList=${wordsList}`,
+        })
+    }
+},
+onShareAppMessage () {
+    return {
+    // 标题是话题标题
+    title: this.topic.title,
+    // 路径为话题详情路径
+    path: '/pages/topics/show?id=' + this.topic.id,
+    }
+},
+})
+</script>

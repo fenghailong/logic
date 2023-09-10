@@ -395,7 +395,7 @@
           <text class="logic-index-box-middle-left-text">结束时间：2023.11.21</text>
         </div>
         <div class="logic-index-box-middle-right">
-          <div class="logic-index-box-middle-right-item" @click="toDetail('国考高频成语')">
+          <div class="logic-index-box-middle-right-item" @click="toWords">
             <div class="item-name">高频成语</div>
             <div class="item-tips">不积跬步，无以至千里</div>
           </div>
@@ -538,6 +538,13 @@
       changeType (type) {
         this.chooseType = type
         this.listBoxHeight = this.chooseType== '2' ? '165px' : '95px'
+      },
+      toWords (type) {
+        if (this.isLoggedIn) {
+          wx.navigateTo({
+            url: `/pages/words/index`,
+          })
+        }
       },
       toDetail (type) {
         if (this.isLoggedIn) {

@@ -90,6 +90,7 @@ wepy.app({
       'pages/index/detail',
       'pages/index/searchDetail',
       'pages/index/web-view',
+      'pages/words/index',
       'pages/undertaking/index',
       'pages/undertaking/list',
       'pages/undertaking/detail',
