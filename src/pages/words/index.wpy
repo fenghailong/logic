@@ -63,7 +63,7 @@
             </div>
             <div class="logic-detail-content-footer">
                 <van-button class="logic-detail-content-button" color="#4755EB" round @click="toList">开始学习</van-button>
-                <van-button class="logic-detail-content-button" color="#54BBCB" round >成语评测</van-button>
+                <!-- <van-button class="logic-detail-content-button" color="#54BBCB" round >成语评测</van-button> -->
             </div>
             </div>
         </div>

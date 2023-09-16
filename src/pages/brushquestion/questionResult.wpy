@@ -174,10 +174,8 @@
           this.minutes = Number(result.result.useTime.split(':')[0])
           let rightCount = 0
           this.questionList = result.result.questions.map(item => {
-            item.title =item.title.replace(/\<code/gi,'<code class="logic-code"')
-            item.title =item.title.replace(/\<p/gi,'<p class="logic-p"')
-            item.analysis =item.analysis.replace(/\<code/gi,'<code class="logic-code"')
-            item.analysis =item.analysis.replace(/\<p/gi,'<p class="logic-p"')
+            item.title = this.formatRichText(item.title)
+            item.analysis = this.formatRichText(item.analysis)
             item.isShowAnswer = true
             if (item.isRight) {
               rightCount += 1
@@ -197,6 +195,33 @@
         wx.navigateTo({
           url: `/pages/index/index`,
         })
+      },
+            /**
+       * 处理富文本里的图片宽度自适应
+       * 1.去掉img标签里的style、width、height属性
+       * 2.img标签添加style属性：max-width:100%;height:auto
+       * 3.修改所有style里的width属性为max-width:100%
+       * 4.p，code标签添加class
+       * 5.去掉<br/>标签
+       * @param html
+       * @returns {void|string|*}
+       */
+        formatRichText(html){
+        let newContent= html.replace(/<img[^>]*>/gi,function(match,capture){
+          match = match.replace(/style="[^"]+"/gi, '').replace(/style='[^']+'/gi, '');
+          match = match.replace(/width="[^"]+"/gi, '').replace(/width='[^']+'/gi, '');
+          match = match.replace(/height="[^"]+"/gi, '').replace(/height='[^']+'/gi, '');
+          return match;
+        });
+        newContent = newContent.replace(/style="[^"]+"/gi,function(match,capture){
+          match = match.replace(/width:[^;]+;/gi, 'width:100%;').replace(/width:[^;]+;/gi, 'width:100%;');
+          return match;
+        });
+        newContent = newContent.replace(/<br[^>]*\/>/gi, '');
+        newContent = newContent.replace(/\<p/gi, '<p class="logic-p"');
+        newContent = newContent.replace(/\<code/gi, '<p class="logic-code"');
+        newContent = newContent.replace(/\<img/gi, '<img style="width:100%;height:auto;display:block;"');
+        return newContent;
       },
     }
   })

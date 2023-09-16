@@ -32,7 +32,7 @@ const getAllMessages = async (data) => {
 const sendMessage = async () => {
   let result = await getAllMessages();
   let messageList = result.data.filter(function(item,index,self){
-    return self.findIndex(el=>(el.wechat_openid==item.wechat_openid && item.isUse === '2' && item._createTime < 1693915786597))===index
+    return self.findIndex(el=>(el.wechat_openid==item.wechat_openid && item.isUse === '2' && item._createTime < 1694570709610))===index
     // return self.findIndex(el=>(el.wechat_openid==item.wechat_openid && item.isUse === '2'))===index
   })
   // messageList=messageList.slice(0,1)
@@ -40,26 +40,6 @@ const sendMessage = async () => {
   for(var i =0;i<messageList.length;i++){
     sendMessageItem(messageList[i])
   }
-  // const data = await cloud.openapi.subscribeMessage.send({
-  //   "touser": 'oDr_s0MbQj0uKvObn51-hNVJaKN4',
-  //   "page": 'pages/index/index',
-  //   "lang": 'zh_CN',
-  //   "data": {
-  //     "thing1": {
-  //       "value": '百日刷题计划重磅来袭'
-  //     },
-  //     "thing2": {
-  //       "value": '小程序百日刷题功能已上线'
-  //     },
-  //     "thing5": {
-  //       "value": '点击此处查看更新内容'
-  //     }
-  //   },
-  //   "templateId": 'YYZyC81sN90SfsOfzO8e2bzsX_spTgvnRSl6fckmHuA',
-  //   "miniprogramState": 'formal'
-  //   // formal/正式版（默认）；trial/体验版；developer/开发版
-  // })
-  // console.log(data,'==========')
 }
 
 const sendMessageItem = async (item) => {
@@ -70,13 +50,13 @@ const sendMessageItem = async (item) => {
       "lang": 'zh_CN',
       "data": {
         "thing1": {
-          "value": '会员免费领申论提分礼包'
+          "value": '8000G网课大礼包'
         },
         "thing2": {
           "value": '230篇人民日报精读解析'
         },
         "thing5": {
-          "value": '联系客服立刻领取'
+          "value": '会员联系客服立刻领取'
         }
       },
       "templateId": item.templateId,
