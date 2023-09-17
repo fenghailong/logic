@@ -49,7 +49,7 @@
       background-color: #fff;
       font-size: 16px;
       padding: 15px;
-      transition: all 2s ease-in-out;
+      // transition: all 2s ease-in-out;
       .van-radio {
         padding: 5px 0;
         .van-radio__label {
@@ -100,7 +100,7 @@
     <div class="logic-index-box">
       <div v-if="questionList.length > 0" v-for="(item, index) in questionList" :key="index" class="logic-index-question-list {{item.isShowAnswer ? 'logic-index-question-list-an' : ''}}">
         <van-tag type="primary" size="large" style="margin-bottom: 5px">{{index+1}}.单选题</van-tag>
-        <question-item :questionItem="item" :questionIndex="index" @onChange="onChange"></question-item>
+        <question-item style="flex:1;" :questionItem="item" :questionIndex="index" @onChange="onChange"></question-item>
       </div>
     </div>
     <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
@@ -150,7 +150,6 @@
       this.title = options.title
       // this.moduleId = options.moduleId
       this.ishiddenButton = options.ishiddenButton
-      console.log(this.ishiddenButton)
       wx.showLoading({title: '加载中'})
       await this.getQuestionsList()
       wx.hideLoading()
@@ -174,8 +173,6 @@
           this.minutes = Number(result.result.useTime.split(':')[0])
           let rightCount = 0
           this.questionList = result.result.questions.map(item => {
-            item.title = this.formatRichText(item.title)
-            item.analysis = this.formatRichText(item.analysis)
             item.isShowAnswer = true
             if (item.isRight) {
               rightCount += 1
@@ -195,33 +192,6 @@
         wx.navigateTo({
           url: `/pages/index/index`,
         })
-      },
-            /**
-       * 处理富文本里的图片宽度自适应
-       * 1.去掉img标签里的style、width、height属性
-       * 2.img标签添加style属性：max-width:100%;height:auto
-       * 3.修改所有style里的width属性为max-width:100%
-       * 4.p，code标签添加class
-       * 5.去掉<br/>标签
-       * @param html
-       * @returns {void|string|*}
-       */
-        formatRichText(html){
-        let newContent= html.replace(/<img[^>]*>/gi,function(match,capture){
-          match = match.replace(/style="[^"]+"/gi, '').replace(/style='[^']+'/gi, '');
-          match = match.replace(/width="[^"]+"/gi, '').replace(/width='[^']+'/gi, '');
-          match = match.replace(/height="[^"]+"/gi, '').replace(/height='[^']+'/gi, '');
-          return match;
-        });
-        newContent = newContent.replace(/style="[^"]+"/gi,function(match,capture){
-          match = match.replace(/width:[^;]+;/gi, 'width:100%;').replace(/width:[^;]+;/gi, 'width:100%;');
-          return match;
-        });
-        newContent = newContent.replace(/<br[^>]*\/>/gi, '');
-        newContent = newContent.replace(/\<p/gi, '<p class="logic-p"');
-        newContent = newContent.replace(/\<code/gi, '<p class="logic-code"');
-        newContent = newContent.replace(/\<img/gi, '<img style="width:100%;height:auto;display:block;"');
-        return newContent;
       },
     }
   })

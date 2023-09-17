@@ -190,7 +190,7 @@
       <div class="logic-index-list-footer">
         <van-button round type="info" @click="previousWord">上一个</van-button>
         <van-button round type="info" @click="showListPopup">列表</van-button>
-        <van-button round type="info" v-if="options.type === '申论范文'" @click="doAnaysis(articleDetail)">解析</van-button>
+        <!-- <van-button round type="info" v-if="options.type === '申论范文'" @click="doAnaysis(articleDetail)">解析</van-button> -->
         <van-button round type="info" @click="nextWord">下一个</van-button>
       </div>
     </div>

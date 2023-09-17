@@ -44,7 +44,7 @@
       background-color: #fff;
       font-size: 16px;
       padding: 15px;
-      transition: all 2s ease-in-out;
+      // transition: all 2s ease-in-out;
       .van-radio {
         padding: 5px 0;
         .van-radio__label {
@@ -129,7 +129,7 @@
 }
 </style>
 <template>
-  <page-meta page-style="overflow: {{disableScroll ? 'hidden' : 'visible'}}" />
+  <!-- <page-meta page-style="overflow: {{disableScroll ? 'hidden' : 'visible'}}" /> -->
   <div class="page">
     <div class="logic-index-header">
       <div class="logic-index-header-box">
@@ -145,7 +145,7 @@
       <div v-if="questionList.length > 0" v-for="(item, index) in questionList" :key="index" class="logic-index-question-list">
         <van-tag v-if="item.exa_type === '1'" type="primary" size="large" style="margin-bottom: 5px">{{index+1}}.单选题</van-tag>
         <van-tag v-else-if="item.exa_type === '2'" type="primary" size="large" style="margin-bottom: 5px">{{index+1}}.多选题</van-tag>
-        <question-item :questionItem="item" :questionIndex="index" @onChange="onChange" @onMoreChange="onMoreChange"></question-item>
+        <question-item style="flex:1;" :questionItem="item" :questionIndex="index" @onChange="onChange" @onMoreChange="onMoreChange"></question-item>
       </div>
     </div>
     <div v-if="disableScroll" class="logic-index-complete" @click="closeCanvasPen">关</div>
@@ -304,6 +304,11 @@
     methods: {
       openCanvasPen () {
         this.disableScroll = true
+        wx.setPageStyle({
+          style: {
+            overflow: 'hidden'
+          }
+        })
       },
       clearCanvasPen() {
         context.clearRect(0, 0, 5000, 5000); //清除画布
@@ -313,6 +318,11 @@
       closeCanvasPen() {
         this.disableScroll = false
         this.clearCanvasPen()
+        wx.setPageStyle({
+          style: {
+            overflow: 'visible'
+          }
+        })
       },
       touchEnd () {},
       // 画布绘制
@@ -413,16 +423,20 @@
               item.isRight = false
               item.youAnswer = ''
               item.isShowAnswer = false
+              item.title = this.formatRichText(item.title)
+              item.analysis = this.formatRichText(item.analysis)
               return item
             })
+            questionList = options.questions
             let resultP = await addPractise(options)
             this.practiseId = resultP.result._id
           }
-          this.questionList = questionList.map(item => {
-            item.title = this.formatRichText(item.title)
-            item.analysis = this.formatRichText(item.analysis)
-            return item
-          })
+          this.questionList = questionList
+          // .map(item => {
+          //   item.title = this.formatRichText(item.title)
+          //   item.analysis = this.formatRichText(item.analysis)
+          //   return item
+          // })
         }
       },
 
@@ -450,7 +464,7 @@
         newContent = newContent.replace(/<br[^>]*\/>/gi, '');
         newContent = newContent.replace(/\<p/gi, '<p class="logic-p"');
         newContent = newContent.replace(/\<code/gi, '<p class="logic-code"');
-        newContent = newContent.replace(/\<img/gi, '<img style="width:100%;height:auto;display:block;"');
+        newContent = newContent.replace(/\<img/gi, '<img style="width:100%;height:auto;display:block;margin:10px 0;"');
         return newContent;
       },
       // 添0
