@@ -1,0 +1,14 @@
+<view class="privacy-dialog {{visible ? 'active' : ''}}">
+  <view class="privacy-back {{visible ? 'active' : ''}}"></view>
+  <view class="privacy-container {{visible ? 'active' : ''}} {{useSafeArea ? 'change' : ''}}">
+    <view class="privacy-info">
+        <image src="{{mini_logo}}" mode="widthFix" class="privacy-logo" />
+        <text class="privacy-name">{{mini_name}}</text>
+    </view>
+    <view class="privacy-text">在您使用【{{mini_name}}】服务之前，请仔细阅读<text bindtap="openPrivacyContract">《{{mini_name}}隐私保护指引》</text>。如您同意，《{{mini_name}}隐私保护指引》，请点击“同意”开始使用【{{mini_name}}】</view>
+    <view class="privacy-btns">
+        <view id="disagree-btn" class="privacy-cancel-btn" bindtap="handleDisagree">不同意</view>
+        <button id="agree-btn" open-type="agreePrivacyAuthorization" class="privacy-confirm-btn" bindagreeprivacyauthorization="handleAgree">同意</button>
+    </view>
+  </view>
+</view>

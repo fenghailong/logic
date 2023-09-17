@@ -160,6 +160,14 @@ const getModulesById = async (id) => {
   return result
 }
 
+// 获取单个模块下面的子集
+const getModulesNewById = async (id) => {
+  const result = await collection.where({
+    parent_id: id
+  }).orderBy('sort', 'desc').get();
+  return result
+}
+
 // 获取单个刷题模块下面的子集，并判断是否已学习完成
 const getModulesByTypeById = async (options) => {
   const result = await collection.where({
@@ -223,6 +231,9 @@ exports.main = async (event, context) => {
     res = await getAllModules(data);
   } else if (func === 'getModulesById') {
     res = await getModulesById(data);
+  } else if (func === 'getModulesNewById') {
+    res = await getModulesNewById(data);
+    getModulesNewById
   } else if (func === 'getModulesByTypeById') {
     res = await getModulesByTypeById(data);
   } else if (func === 'getModulesByPractise') {

@@ -373,14 +373,14 @@ const addPractise = async (options) => {
 
 // 获取所有练习记录
 const getAllPractise = async (options) => {
-  const countResult = await practiseCollection.where({isComplete: '1',module_id:options.module_id}).count()
+  const countResult = await practiseCollection.where({isComplete: '1',module_id:'9682054c6497dfe9006353d348d73195'}).count()
   const total = countResult.total
   // 计算需分几次取
   const batchTimes = Math.ceil(total / 100)
   // 承载所有读操作的 promise 的数组
   const tasks = []
   for (let i = 0; i < batchTimes; i++) {
-    const promise = practiseCollection.where({isComplete: '1',module_id:options.module_id}).skip(i * 100).limit(100).get()
+    const promise = practiseCollection.where({isComplete: '1',module_id:'9682054c6497dfe9006353d348d73195'}).skip(i * 100).limit(100).get()
     tasks.push(promise)
   }
   // 等待所有
@@ -396,35 +396,41 @@ const getAllPractise = async (options) => {
   return result
 }
 
-// const updatePractise = async () => {
+// const updateRPractise = async () => {
 //   const list = await getAllPractise()
 //   console.log(list)
 //   for(var i =0;i<list.data.length;i++){
 //     updatePractiseItem(list.data[i])
 //   }
 // }
-// 更新刷题记录
+// // 更新刷题记录
 // const updatePractiseItem = async (options) => {
+//   let questions = {}
 //   let rightCount = 0
 //   let rightRate = ''
 //   if (options.isComplete == '1') {
-//     options.questions.map(item => {
+//     questions = options.questions.map(item => {
+//       item.isRight = item.answer == item.youAnswer ? true : false
 //       if (item.isRight) {
 //         rightCount += 1
 //       }
+//       return item
 //     })
+//     console.log(questions)
 //     rightRate = (rightCount * 100 / options.questions.length).toFixed(2)
 //     console.log(rightRate)
 //   }
 //   await practiseCollection.where({ _id: options._id}).update({
 //     data: {
 //       rightRate: options.isComplete == '1' ? rightRate.toString() : '0.00',
+//       questions: questions
 //     }
 //   })
 // }
 
 // 更新刷题记录
 const updatePractise = async (options) => {
+  // await updateRPractise()
   let rightCount = 0
   let rightRate = ''
   if (options.isComplete == '1') {
