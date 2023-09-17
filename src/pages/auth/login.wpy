@@ -40,15 +40,19 @@
 </style>
 <template>
   <div class="page">
+    <privacy-dialog id="logic-login" wx:if="{{showPrivacy}}" />
     <div class="logic-index-box">
       <button class="logic-index-box-user-avatar" plain open-type="chooseAvatar" @chooseavatar="onChooseAvatar">
         <image src="{{ user.avatarUrl ? user.avatarUrl : avatarUrl ? avatarUrl : '../../assets/images/nologin-avatar.png'}}" />
-      </button> 
+      </button>
     </div>
     <form catchsubmit="formSubmit">
       <div class="logic-index-box-user-input">
         <div class="text1">昵称：</div>
-        <input type="nickname" class="weui-input" name="nickname" placeholder="请输入昵称" :value="user.nickName ? user.nickName : ''"/>
+        <!-- <input type="nickname" focus="{{focus}}" placeholder="点击输入框，输入昵称" bindblur="handleGetNickname" /> -->
+        <div class="weui-input" catch:touchstart="handleTouchInput">
+          <input type="nickname" name="nickname" placeholder="请输入昵称" :value="user.nickName ? user.nickName : ''" bindblur="handleGetNickname" focus="{{focus}}"/>
+        </div>
       </div>
       <button type="primary" style="margin-top: 100px;width: 70% ;" form-type="submit">提交</button>
     </form>
@@ -80,15 +84,47 @@
       errors: {},
       // 错误信息
       errorMessage: '',
-      validatorInstance: null
+      validatorInstance: null,
+      focus: false,
+      showPrivacy: true
     },
     computed: {
       ...mapGetters([ '_id', 'user' ])
     },
-    onReady() {
-      // this.initValidator()
+    onShow() {
+      this.showPrivacy = true
+    },
+    onHide() {
+      this.showPrivacy = false
     },
     methods: {
+      handleTouchInput() {
+        let that = this
+        if (wx.getPrivacySetting) {
+          wx.getPrivacySetting({//获取是否需要弹出
+            success: res => {
+              if (res.needAuthorization) {
+                wx.requirePrivacyAuthorize({//该接口请求隐私协议，会自动触发上边的wx.onNeedPrivacyAuthorization
+                  success: () => {
+                    that.focus = true
+                  },
+                  fail: () => {},
+                  complete: () => {}
+                })
+              } else {
+                that.focus = true
+              }
+            },
+            fail: () => {},
+            complete: () => {}
+          })
+        } else {
+          this.focus = true
+        }
+      },
+      handleGetNickname(e) {
+        console.log('nickname is', e.$wx.detail.value)
+      },
       async onChooseAvatar(e) {
         const avatarUrl = e.$wx.detail.avatarUrl
         this.avatarUrl = avatarUrl

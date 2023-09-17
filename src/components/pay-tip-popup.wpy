@@ -219,9 +219,9 @@
           <van-button v-if="user.phoneNumber" round type="info" block @click="pay">开通会员</van-button>
           <van-button v-else round type="info" block @getphonenumber="getphonenumber"  open-type="getPhoneNumber">开通会员</van-button>
         </div>
-
       </div>
     </van-popup>
+    <privacy-dialog id="logic-login" wx:if="{{showPrivacy}}" />
   </div>
 </template>
 <config>
@@ -260,9 +260,16 @@
     data: {
       currentCode: '',
       isIOS: false,
+      showPrivacy: true
     },
     created () {
       this.getSystemInfo()
+    },
+    onShow() {
+      this.showPrivacy = true
+    },
+    onHide() {
+      this.showPrivacy = false
     },
     methods: {
       getSystemInfo () {

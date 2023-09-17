@@ -21,6 +21,17 @@ export async function getModulesById(data) {
   })
 }
 
+// 获取子模块（旧）
+export async function getModulesNewById(data) {
+  return await wx.cloud.callFunction({
+    name: 'knowledgeModule',
+    data: {
+      func: 'getModulesNewById',
+      data
+    },
+  })
+}
+
 // 获取子模块（新）
 export async function getModulesByTypeById(data) {
   return await wx.cloud.callFunction({
