@@ -372,29 +372,29 @@ const addPractise = async (options) => {
 }
 
 // 获取所有练习记录
-const getAllPractise = async (options) => {
-  const countResult = await practiseCollection.where({isComplete: '1',module_id:'9682054c6497dfe9006353d348d73195'}).count()
-  const total = countResult.total
-  // 计算需分几次取
-  const batchTimes = Math.ceil(total / 100)
-  // 承载所有读操作的 promise 的数组
-  const tasks = []
-  for (let i = 0; i < batchTimes; i++) {
-    const promise = practiseCollection.where({isComplete: '1',module_id:'9682054c6497dfe9006353d348d73195'}).skip(i * 100).limit(100).get()
-    tasks.push(promise)
-  }
-  // 等待所有
-  let result = (await Promise.all(tasks)).reduce((acc, cur) => {
-    if(acc.length <= 0) acc.data = []
-    if(cur.length <= 0) cur.data = []
-    return {
-      data: acc.data.concat(cur.data),
-      errMsg: acc.errMsg,
-    }
-  },[])
-  result.data = result.data || [] // 处理 没有数据时 reduce 结果 undefined 的情况
-  return result
-}
+// const getAllPractise = async (options) => {
+//   const countResult = await practiseCollection.where({isComplete: '1',module_id:'f7f77fd96499532e002dda0d09d57c11'}).count()
+//   const total = countResult.total
+//   // 计算需分几次取
+//   const batchTimes = Math.ceil(total / 100)
+//   // 承载所有读操作的 promise 的数组
+//   const tasks = []
+//   for (let i = 0; i < batchTimes; i++) {
+//     const promise = practiseCollection.where({isComplete: '1',module_id:'f7f77fd96499532e002dda0d09d57c11'}).skip(i * 100).limit(100).get()
+//     tasks.push(promise)
+//   }
+//   // 等待所有
+//   let result = (await Promise.all(tasks)).reduce((acc, cur) => {
+//     if(acc.length <= 0) acc.data = []
+//     if(cur.length <= 0) cur.data = []
+//     return {
+//       data: acc.data.concat(cur.data),
+//       errMsg: acc.errMsg,
+//     }
+//   },[])
+//   result.data = result.data || [] // 处理 没有数据时 reduce 结果 undefined 的情况
+//   return result
+// }
 
 // const updateRPractise = async () => {
 //   const list = await getAllPractise()

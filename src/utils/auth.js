@@ -7,11 +7,14 @@ export function setUser(user, perms) {
 }
 
 export function getId() {
+  console.log(wx.getStorageSync('_id'), '=========================')
   return wx.getStorageSync('_id')
 }
 
 export function setId(tokenPayload) {
   const _id = tokenPayload._id
+  // const _id = 'ab3cf87b64f06bae0014c4014505dcde'
+
   wx.setStorageSync('_id', _id)
 }
 

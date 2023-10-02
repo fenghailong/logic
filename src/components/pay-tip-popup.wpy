@@ -5,9 +5,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-around;
-  .logic-index-popup-title{
+  .logic-index-popup-title {
     text-align: center;
     padding: 0 0 10px;
+  }
+  .logic-index-popup-text {
+    color: #666;
+    font-size: 14px;
+    padding-bottom: 5px;
   }
   .logic-index-popup-input{
     width: 100%;
@@ -44,13 +49,8 @@
   }
   .logic-index-popup-member-text {
     color: #666;
-    font-size: 12px;
-    padding: 0 20px;
-  }
-  .logic-index-popup-member-tip {
-    color: #666;
-    font-size: 12px;
-    // position: relative;
+    font-size: 14px;
+    padding-bottom: 5px;
   }
   .logic-index-popup-member-button {
     width: 100%;
@@ -97,6 +97,8 @@
   <div class="logic-index-popup">
     <van-popup get-container="#app" @click-overlay="closePopup" :show="tipsShow" position="bottom">
       <div v-if="isIOS" class="logic-index-popup-box">
+        <div class="logic-index-popup-title">解锁提示</div>
+        <div class="logic-index-popup-text">活动期间，一次激活永久有效，解锁所有功能(激活码获取，请联系客服)</div>
         <div class="logic-index-popup-userpower">
           <div class="logic-index-popup-userpower-text">普通用户(权限)</div>
           <div class="logic-index-popup-userpower-list" style="justify-content: space-around;">
@@ -141,9 +143,13 @@
               <image class="logic-index-popup-userpower-icon" src="../assets/images/quantity.png" />
               <div class="logic-index-popup-userpower-name">规范词</div>
             </div>
+            <div class="logic-index-popup-userpower-item" style="width: 30%;">
+              <image class="logic-index-popup-userpower-icon" src="../assets/images/dataany.png" />
+              <div class="logic-index-popup-userpower-name">百日刷题</div>
+            </div>
           </div>
         </div>
-        <div class="logic-index-popup-title">激活提示</div>
+
         <div class="logic-index-popup-input">
           <van-field
             :value="currentCode"
@@ -152,7 +158,6 @@
             @change = "codeChange"
           />
         </div>
-        <div class="logic-index-popup-tip">Tips: 活动期间，激活会员永久有效，「行测模块」后续可能移入会员权益,「刷题计划」即将上线！(激活码获取，请联系客服)</div>
         <!-- <div class="logic-index-popup-tip-two"></div> -->
         <div class="logic-index-popup-footer">
           <div class="logic-index-popup-button">
@@ -165,6 +170,8 @@
         </div>
       </div>
       <div v-else class="logic-index-popup-member-box">
+        <div class="logic-index-popup-member-title">解锁提示</div>
+        <div class="logic-index-popup-member-text">活动期间会员价格19.9元，一次激活永久有效，解锁所有功能</div>
         <div class="logic-index-popup-userpower">
           <div class="logic-index-popup-userpower-text">普通用户(权限)</div>
           <div class="logic-index-popup-userpower-list" style="justify-content: space-around;">
@@ -209,10 +216,12 @@
               <image class="logic-index-popup-userpower-icon" src="../assets/images/quantity.png" />
               <div class="logic-index-popup-userpower-name">申论规范词</div>
             </div>
+            <div class="logic-index-popup-userpower-item" style="width: 30%;">
+              <image class="logic-index-popup-userpower-icon" src="../assets/images/dataany.png" />
+              <div class="logic-index-popup-userpower-name">百日刷题</div>
+            </div>
           </div>
         </div>
-        <div class="logic-index-popup-member-title">解锁提示</div>
-        <div class="logic-index-popup-member-text">Tips: 活动期间，开通会员永久有效，「行测模块」后续可能移入会员权益,「刷题计划」即将上线！</div>
         <!-- <image src="../assets/images/member.png" /> -->
         <div class="logic-index-popup-member-button">
           <!-- <van-button round type="info" open-type="contact" @contact="onCustomerServiceButtonClick">联系客服</van-button> -->

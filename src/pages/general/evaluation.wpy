@@ -250,7 +250,7 @@
                 item.subjects.splice(dindex, 1)
               }
             })
-            console.log(item.answer)
+            item.answer = item.answer + ''
             item.answers = item.answer.split('#')
             let index = 0;
             item.finallData = item.subjects.map((element, subsIndex)=> element === "#" ? {

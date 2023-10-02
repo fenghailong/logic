@@ -87,7 +87,8 @@
   <div>
     <div v-if="questionItem.exa_type === '1'" class="logic-index-question-item">
       <div class="logic-index-question-title">
-        <rich-text nodes="{{ questionItem.title }}"></rich-text>
+        <!-- <rich-text nodes="{{ questionItem.title }}"></rich-text> -->
+        <mp-html @imgtap="imgtapTitle" content="{{ questionItem.title }}" />
       </div>
       <div v-if="questionItem.isShowAnswer" class="logic-index-question-options">
         <div class="logic-index-question-options-isAnswer" v-for="(value, key) in questionItem.option" :key="key">
@@ -106,12 +107,14 @@
       </div>
       <div v-if="questionItem.isShowAnswer" class="logic-index-question-analysis">
         【解析】：
-        <rich-text nodes="{{ questionItem.analysis }}"></rich-text>
+        <!-- <rich-text nodes="{{ questionItem.analysis }}"></rich-text> -->
+        <mp-html content="{{ questionItem.analysis }}" />
       </div>
     </div>
     <div v-else-if="questionItem.exa_type === '2'" class="logic-index-question-item">
       <div class="logic-index-question-title">
-        <rich-text nodes="{{ questionItem.title }}"></rich-text>
+        <!-- <rich-text nodes="{{ questionItem.title }}"></rich-text> -->
+        <mp-html @imgtap="imgtapTitle" content="{{ questionItem.title }}" />
       </div>
       <div v-if="questionItem.isShowAnswer" class="logic-index-question-options">
         <div class="logic-index-question-options-isAnswer" v-for="(value, key) in questionItem.option" :key="key">
@@ -139,7 +142,8 @@
       </div>
       <div v-if="questionItem.isShowAnswer" class="logic-index-question-analysis">
         【解析】：
-        <rich-text nodes="{{ questionItem.analysis }}"></rich-text>
+        <!-- <rich-text nodes="{{ questionItem.analysis }}"></rich-text> -->
+        <mp-html content="{{ questionItem.analysis }}" />
       </div>
     </div>
   </div>
@@ -152,6 +156,7 @@
       "van-radio-group": "../libs/vant/radio-group/index",
       "van-checkbox": "../libs/vant/checkbox/index",
       "van-checkbox-group": "../libs/vant/checkbox-group/index",
+      "mp-html": "./mp-html/index"
     }
   }
 </config>
@@ -184,6 +189,10 @@
     created () {
     },
     methods: {
+      //做题时点击图片
+      imgtapTitle() {
+        this.$emit('imgtapTitle')
+      },
       // 单选
       onChange(item, key, index) {
         this.questionItem.youAnswer = key

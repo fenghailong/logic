@@ -24,7 +24,7 @@ var getters = {
 const actions = {
   async login ({ dispatch, commit }) {
     const authResponse = await login()
-    console.log(authResponse, '========login')
+    // console.log(authResponse, '========login')
     console.log(authResponse.result[0], '========login')
     commit('setId', authResponse.result[0])
     commit('setUser', authResponse.result[0])
@@ -60,8 +60,8 @@ const mutations = {
   },
   setId(state, tokenPayload) {
     state._id = tokenPayload._id
+    // state._id = 'ab3cf87b64f06bae0014c4014505dcde'
   },
-
   resetState: (state) => {
     Object.assign(state, getDefaultState())
   }

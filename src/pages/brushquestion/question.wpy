@@ -145,7 +145,7 @@
       <div v-if="questionList.length > 0" v-for="(item, index) in questionList" :key="index" class="logic-index-question-list">
         <van-tag v-if="item.exa_type === '1'" type="primary" size="large" style="margin-bottom: 5px">{{index+1}}.单选题</van-tag>
         <van-tag v-else-if="item.exa_type === '2'" type="primary" size="large" style="margin-bottom: 5px">{{index+1}}.多选题</van-tag>
-        <question-item style="flex:1;" :questionItem="item" :questionIndex="index" @onChange="onChange" @onMoreChange="onMoreChange"></question-item>
+        <question-item style="flex:1;" :questionItem="item" :questionIndex="index" @onChange="onChange" @onMoreChange="onMoreChange" @imgtapTitle="imgtapTitle"></question-item>
       </div>
     </div>
     <div v-if="disableScroll" class="logic-index-complete" @click="closeCanvasPen">关</div>
@@ -184,7 +184,7 @@
       "van-button": "../../libs/vant/button/index",
       "van-popup": "../../libs/vant/popup/index",
       "van-dialog": "../../libs/vant/dialog/index",
-      "question-item": "~@/components/question-item"
+      "question-item": "~@/components/question-item",
     }
   }
 </config>
@@ -217,6 +217,7 @@
       minutes: 0,
       seconds: 0,
       disableScroll: false, //默认没有画
+      isPreview: false // 是否预览图片
     },
     async onLoad(options) {
       this.moudleId = options.moudleId
@@ -234,31 +235,13 @@
       context.setLineCap('round');
       //设置两条线连接处更加圆润
       context.setLineJoin('round');
-      // wx.createSelectorQuery()
-      // .select('#canvas') // 在 WXML 中填入的 id
-      // .fields({
-      //   node: true,
-      //   size: true
-      // })
-      // .exec((res) => {
-      //   // Canvas 对象
-      //   const canvas = res[0].node
-      //   mCanvas = res[0].node
-      //   context = canvas.getContext('2d')
-      //   // Canvas 画布的实际绘制宽高
-      //   const width = res[0].width
-      //   const height = res[0].height
-      //   // 初始化画布大小
-      //   const dpr = wx.getWindowInfo().pixelRatio
-      //   console.log(dpr)
-      //   canvas.width = width * dpr
-      //   canvas.height = height * dpr
-      //   console.log(canvas.width, canvas.height)
-      //   context.scale(dpr, dpr)
-      // })
       wx.setNavigationBarTitle({title: options.title})
     },
     async onShow() {
+      if (this.isPreview) {
+        this.isPreview = false
+        return
+      }
       wx.showLoading({title: '加载中'})
       await this.getQuestionsList()
       wx.hideLoading()
@@ -275,13 +258,16 @@
       }, 1000)
     },
     async onHide() {
+      if (this.isPreview) return
       if (this.questionList.length > 0) {
+        wx.showLoading({title: '保存练习'})
         await updatePractise ({
           practise_id: this.practiseId,
           isComplete: this.isComplete,
           questions: this.questionList,
           useTime: this.nowTime,
         })
+        wx.hideLoading()
       }
       clearInterval(this.timer2) // 清空计时器
     },
@@ -302,6 +288,10 @@
       clearInterval(this.timer2)
     },
     methods: {
+      imgtapTitle () {
+        this.isPreview = true
+        console.log(1)
+      },
       openCanvasPen () {
         this.disableScroll = true
         wx.setPageStyle({
