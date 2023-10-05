@@ -91,6 +91,7 @@ wepy.app({
       'pages/index/searchDetail',
       'pages/index/web-view',
       'pages/words/index',
+      'pages/words/evaluation',
       'pages/undertaking/index',
       'pages/undertaking/list',
       'pages/undertaking/detail',

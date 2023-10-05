@@ -7,6 +7,7 @@ cloud.init({
 const db = cloud.database();
 const collection = db.collection('words');
 const reCollection = db.collection('wordsRecord');
+const evaCollection = db.collection('wordsEvaluation');
 const _ = db.command
 
 // 获取所有词语
@@ -55,6 +56,123 @@ const getAllStudyWords = async (data) => {
   },[])
   result.data = result.data || [] // 处理 没有数据时 reduce 结果 undefined 的情况
   return result
+}
+
+// 获取所有以评测词语
+const getAllEvaluationWords = async (data) => {
+  const countResult = await evaCollection.where({ user_id: data.user_id, rightCount: _.lt(3) }).count()
+  const total = countResult.total
+  // 计算需分几次取
+  const batchTimes = Math.ceil(total / 100)
+  // 承载所有读操作的 promise 的数组
+  const tasks = []
+  for (let i = 0; i < batchTimes; i++) {
+    const promise = evaCollection.where({ user_id: data.user_id, rightCount: _.lt(3) }).skip(i * 100).limit(100).get()
+    tasks.push(promise)
+  }
+  // 等待所有
+  let result = (await Promise.all(tasks)).reduce((acc, cur) => {
+    if(acc.length <= 0) acc.data = []
+    if(cur.length <= 0) cur.data = []
+    return {
+      data: acc.data.concat(cur.data),
+      errMsg: acc.errMsg,
+    }
+  },[])
+  result.data = result.data || [] // 处理 没有数据时 reduce 结果 undefined 的情况
+  return result
+}
+
+// 获取模块下的已经掌握的题目数量 和 模块下面的题目（除去已经掌握的）
+const getWordByRandom = async (options) => {
+  let word = {}
+  const result = await getAllWords()
+  const resultRecord = await getAllEvaluationWords(options)
+  let allWord = result.data
+  allWord= allWord.filter((item) => item.type == 1 && item.synonym && item.synonym.length>0);
+  // 过滤已经回答正确的题目
+  let resultWord = allWord.filter(item => {
+    return !resultRecord.data.find(element => {
+      return element.words_id == item._id
+    })
+  })
+  resultWord = shuffle(resultWord)[0] || {}
+  if (resultWord) {
+    options.word_id = resultWord._id
+    resultWord.evaluationData  = await reflashWordsEvaluation(options);
+    resultWord.option = []
+    let result = await getSynonymWords(resultWord.synonym)
+    result.data.forEach(item => {
+      resultWord.option.push(item.implication)
+    })
+    resultWord.option = resultWord.option.slice(0,3)
+    resultWord.option.push(resultWord.implication)
+    resultWord.option = shuffle(resultWord.option)
+
+    resultWord.synonymList = result.data
+  }
+  return resultWord;
+}
+
+const reflashWordsEvaluation = async (options) => {
+  let res = {
+    rightCount: 0,
+    errCount: 0
+  }
+  const hasWord = await evaCollection.where({ words_id: options.word_id, user_id: options.user_id}).get();
+  if (Array.isArray(hasWord.data) && hasWord.data.length === 0) {
+    await addWordsEvaluation(options);
+  } else {
+    res.rightCount = hasWord.data[0].rightCount,
+    res.errCount = hasWord.data[0].errCount
+  }
+  return res
+}
+
+const upDateWordsEvaluation = async (options) => {
+  let rightCount = 0;
+  let errCount = 0;
+  const hasWord = await evaCollection.where({ words_id: options.word_id, user_id: options.user_id}).get();
+  if(options.isRight){
+    rightCount = hasWord.data[0].rightCount + 1
+  }else {
+    errCount = hasWord.data[0].errCount + 1
+  }
+  await evaCollection.where({words_id: options.word_id, user_id: options.user_id}).update({
+    // data 传入需要局部更新的数据
+    data: {
+      rightCount,
+      errCount,
+      _updateTime: Date.now()
+    }
+  })
+}
+
+
+const addWordsEvaluation = async (options) => {
+  await evaCollection.add({
+    data: {
+      words_id: options.word_id,
+      user_id: options.user_id,
+      rightCount: 0,
+      errCount: 0,
+      _createTime: Date.now(),
+      _updateTime: Date.now()
+    }
+  })
+}
+
+
+// 数组乱序
+const shuffle = (array) => {
+	var j, x, i;
+	for (i = array.length; i; i--) {
+		j = Math.floor(Math.random() * i);
+		x = array[i - 1];
+		array[i - 1] = array[j];
+		array[j] = x;
+	}
+	return array;
 }
 
 
@@ -120,6 +238,8 @@ const getWordsList = async (data) => {
   }
   return res;
 }
+
+
 
 const getWordsDetail = async (options) => {
   let word;
@@ -194,6 +314,12 @@ exports.main = async (event, context) => {
   }
   else if (func === 'getWAllList') {
     res = await getWAllList();
+  }
+  else if (func === 'getWordByRandom') {
+    res = await getWordByRandom(data);
+  }
+  else if (func === 'upDateWordsEvaluation') {
+    res = await upDateWordsEvaluation(data);
   }
   return res;
 }

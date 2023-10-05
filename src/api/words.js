@@ -1,5 +1,25 @@
 import { request, authRequest } from '@/utils/request'
 
+export async function getWordByRandom(data) {
+  return await wx.cloud.callFunction({
+    name: 'words',
+    data: {
+      func: 'getWordByRandom',
+      data
+    },
+  })
+}
+
+export async function upDateWordsEvaluation(data) {
+  return await wx.cloud.callFunction({
+    name: 'words',
+    data: {
+      func: 'upDateWordsEvaluation',
+      data
+    },
+  })
+}
+
 export async function getWordsCount(data) {
   return await wx.cloud.callFunction({
     name: 'words',
