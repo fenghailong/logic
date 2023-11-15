@@ -1,5 +1,55 @@
 import { request, authRequest } from '@/utils/request'
 
+export async function getEvaluationWordsQueryPage(data) {
+  return await wx.cloud.callFunction({
+    name: 'words',
+    data: {
+      func: 'getEvaluationWordsQueryPage',
+      data
+    },
+  })
+}
+
+export async function getAlredyEvaluationWordsQueryPage(data) {
+  return await wx.cloud.callFunction({
+    name: 'words',
+    data: {
+      func: 'getAlredyEvaluationWordsQueryPage',
+      data
+    },
+  })
+}
+
+export async function getErrEvaluationWordsQueryPage(data) {
+  return await wx.cloud.callFunction({
+    name: 'words',
+    data: {
+      func: 'getErrEvaluationWordsQueryPage',
+      data
+    },
+  })
+}
+
+export async function getSentenceById(data) {
+  return await wx.cloud.callFunction({
+    name: 'words',
+    data: {
+      func: 'getSentenceById',
+      data
+    },
+  })
+}
+
+export async function getAllEvaluationWordsCount(data) {
+  return await wx.cloud.callFunction({
+    name: 'words',
+    data: {
+      func: 'getAllEvaluationWordsCount',
+      data
+    },
+  })
+}
+
 export async function getWordByRandom(data) {
   return await wx.cloud.callFunction({
     name: 'words',

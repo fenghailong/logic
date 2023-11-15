@@ -183,6 +183,7 @@ const getPractiseByUserModdule = async (options) => {
   const practise = await practiseCollection.where({
     module_id: options.module_id,
     user_id: options.user_id,
+    isHistory: _.neq('1')
   }).get();
   return practise.data[0] || {};
 }
@@ -223,6 +224,19 @@ const getModulesByPractise = async (options) => {
   return {currPage: options.currPage, pageSize: options.pageSize, totalPage, totalCount, data: { list: result.data }}
 }
 
+// 清除百日刷题练习记录，将练习记录设置为历史
+const clearQusetion = async (options) => {
+  console.log(options)
+  await practiseCollection.where({
+    _id: options.practise_id
+  }).update({
+    // data 传入需要局部更新的数据
+    data: {
+      isHistory: '1'
+    }
+  })
+}
+
 exports.main = async (event, context) => {
   const { func, data } = event;
   // const { OPENID, APPID, UNIONID } = cloud.getWXContext();
@@ -244,6 +258,8 @@ exports.main = async (event, context) => {
     res = await addEvaluationRecord(data);
   } else if (func === 'getEvaluationRecordCount') {
     res = await getEvaluationRecordCount(data);
+  } else if (func === 'clearQusetion') {
+    res = await clearQusetion(data);
   }
   return res;
 }

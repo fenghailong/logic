@@ -137,8 +137,7 @@
       "van-icon": "../../libs/vant/icon/index",
       "van-dialog": "../../libs/vant/dialog/index",
       "van-tag": "../../libs/vant/tag/index",
-      "van-popup": "../../libs/vant/popup/index",
-      "pay-tip-popup": "~@/components/pay-tip-popup"
+      "van-popup": "../../libs/vant/popup/index"
     }
   }
 </config>

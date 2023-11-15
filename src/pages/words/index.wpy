@@ -93,8 +93,9 @@ mixins: [ subscribe ],
 store,
 data: {
     detail: {
-    count: 0,
-    type: ''
+      count: 0,
+      type: '',
+      user_id: ''
     },
     studyCount: 0,
     starValue: 0,
@@ -108,16 +109,17 @@ computed: {
 onLoad(options) {
     this.detail.type = options.type
     this.detail.user_id = this._id
+    console.log(this.detail,'========')
     eventHub.$on('refresh-words-info', (...args) => {
-    console.log('app-launch event emitted, the params are:');
-    console.log(args, '=========')
-    this.wordsList = JSON.parse(JSON.stringify(args[0].wordsList))
-    this.currentId = JSON.parse(JSON.stringify(args[0].currentWord_id))
-    let count = 0
-    this.wordsList.forEach(element => {
-        if(element.isStudyed)count = count + 1
-    });
-    this.studyCount = count
+      console.log('app-launch event emitted, the params are:');
+      console.log(args, '=========')
+      this.wordsList = JSON.parse(JSON.stringify(args[0].wordsList))
+      this.currentId = JSON.parse(JSON.stringify(args[0].currentWord_id))
+      let count = 0
+      this.wordsList.forEach(element => {
+          if(element.isStudyed)count = count + 1
+      });
+      this.studyCount = count
     });
     this.getWordsStudyCount(this.detail)
 },
@@ -125,6 +127,7 @@ methods: {
     // 获取已学习
     async getWordsStudyCount(options) {
         wx.showLoading({title: '加载中'})
+        console.log(options,'========')
         let result = await getWordsStudyCount(options)
         console.log(result)
         this.studyCount = result.result.studyCount

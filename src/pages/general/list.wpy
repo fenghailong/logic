@@ -89,6 +89,7 @@
       </div> -->
     </div>
     <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
+    <privacy-dialog id="pay-tip-popup-4" wx:if="{{showPrivacy}}" />
   </div>
 </template>
 <config>
@@ -117,7 +118,8 @@
       moudleList: [],
       generalCount: 100,
       studyGeneralCount: 0,
-      tipsShow: false
+      tipsShow: false,
+      showPrivacy: false
     },
     // 计算的属性
     computed: {
@@ -136,6 +138,12 @@
       });
       this.module_id = options.id
       this.getAllGeneralInfoData()
+    },
+    onShow() {
+      this.showPrivacy = true
+    },
+    onHide() {
+      this.showPrivacy = false
     },
     methods: {
       openPayTipPopup () {

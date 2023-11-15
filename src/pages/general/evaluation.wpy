@@ -157,6 +157,7 @@
         </div>
       </div>
       <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
+      <privacy-dialog id="pay-tip-popup-4" wx:if="{{showPrivacy}}" />
     </div>
     <van-empty v-else description="没有更多题目了" />
     <div
@@ -222,7 +223,8 @@
       windowHeight: '',
       ctInput_top: '',
       inputValue: '', // 输入框的内容
-      tipsShow: false // 会员判断框
+      tipsShow: false, // 会员判断框
+      showPrivacy: false
     },
     async onLoad(options) {
       await this.getWindowData()
@@ -230,6 +232,12 @@
       await this.getEvaluationByIdData(true)
       //识别语音
       this.initRecord();
+    },
+    onShow() {
+      this.showPrivacy = true
+    },
+    onHide() {
+      this.showPrivacy = false
     },
     methods: {
       // 获取模块题目列表

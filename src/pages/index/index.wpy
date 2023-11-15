@@ -390,7 +390,7 @@
         <div class="logic-index-box-middle-left" @click="toBrushQuestion()">
           <image src="../../assets/images/words-bg.png" />
           <div class="logic-index-box-middle-left-title">百日刷题</div>
-          <text class="logic-index-box-middle-left-text">第一期：百日刷题上80+</text>
+          <text class="logic-index-box-middle-left-text">第1/10期：百日刷题上80+</text>
           <text class="logic-index-box-middle-left-text">开始时间：2023.08.14</text>
           <text class="logic-index-box-middle-left-text">结束时间：2023.11.21</text>
         </div>
@@ -418,13 +418,25 @@
           <image src="../../assets/images/person.png" />
           <div class="logic-index-box-hot-item-text">人物素材</div>
         </div>
-        <div class="logic-index-box-hot-item"  @click="toPractise()" style="width: 40%;">
+        <div class="logic-index-box-hot-item"  @click="toCustomer()">
+          <image src="../../assets/images/dataany.png"/>
+          <div class="logic-index-box-hot-item-text">会员礼包</div>
+        </div>
+        <div class="logic-index-box-hot-item"  @click="toPractise()">
           <image src="../../assets/images/studytalk.png"/>
           <div class="logic-index-box-hot-item-text">练习记录</div>
         </div>
-        <div class="logic-index-box-hot-item" @click="toErrquestion()" style="width: 40%;">
-          <image src="../../assets/images/studytalk.png" />
+        <div class="logic-index-box-hot-item" @click="toErrquestion()">
+          <image src="../../assets/images/person.png" />
           <div class="logic-index-box-hot-item-text">我的错题</div>
+        </div>
+        <div class="logic-index-box-hot-item"  @click="toReportError()">
+          <image src="../../assets/images/dataany.png"/>
+          <div class="logic-index-box-hot-item-text">报错修复</div>
+        </div>
+        <div class="logic-index-box-hot-item"  @click="toPayAttention()">
+          <image src="../../assets/images/person.png"/>
+          <div class="logic-index-box-hot-item-text">关注我们</div>
         </div>
       </div>
     </div>
@@ -446,6 +458,7 @@
       </div>
     </div>
     <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
+    <privacy-dialog id="pay-tip-popup-1" wx:if="{{showPrivacy}}" />
   </div>
 </template>
 <!-- navigationStyle: 'custom', -->
@@ -494,7 +507,8 @@
       // 事业单位模块
       undertaking: [],
       isIOS: false,
-      tipsShow: false
+      tipsShow: false,
+      showPrivacy: false
     },
     computed: {
       ...mapGetters([ 'isLoggedIn', 'user' ])
@@ -505,6 +519,12 @@
       this.getUserCount()
       this.getAllModulesData()
       // await sendMessage() //调用模版消息
+    },
+    onShow() {
+      this.showPrivacy = true
+    },
+    onHide() {
+      this.showPrivacy = false
     },
     async onPullDownRefresh() {
       wx.stopPullDownRefresh()
@@ -539,7 +559,8 @@
         this.chooseType = type
         this.listBoxHeight = this.chooseType== '2' ? '165px' : '95px'
       },
-      toWords (type) {
+
+      toWords () {
         if (this.isLoggedIn) {
           wx.navigateTo({
             url: `/pages/words/index`,
@@ -552,6 +573,21 @@
             url: `/pages/index/detail?type=${type}`,
           })
         }
+      },
+      toCustomer () {
+        wx.navigateTo({
+          url: `/pages/customer/index`,
+        })
+      },
+      toReportError () {
+        wx.navigateTo({
+          url: `/pages/reporterror/index`,
+        })
+      },
+      toPayAttention () {
+        wx.navigateTo({
+          url: `/pages/payattention/index`,
+        })
       },
       searchChange (e) {
          //执行函数

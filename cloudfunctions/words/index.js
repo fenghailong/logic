@@ -8,7 +8,9 @@ const db = cloud.database();
 const collection = db.collection('words');
 const reCollection = db.collection('wordsRecord');
 const evaCollection = db.collection('wordsEvaluation');
+const senCollection = db.collection('sentence');
 const _ = db.command
+const $ = db.command.aggregate
 
 // 获取所有词语
 const getAllWords = async () => {
@@ -83,19 +85,134 @@ const getAllEvaluationWords = async (data) => {
   return result
 }
 
+// 分页获取已评测记录 正确次数大于1 小于3
+const getEvaluationWordsQueryPage = async (options) => {
+  console.log(options)
+  const skipCount = (options.currPage - 1) * options.pageSize
+  const countResult = await evaCollection.where({ user_id: options.user_id, rightCount: _.in([1, 2]) }).count();
+  console.log(countResult,'============')
+  const totalCount = countResult.total
+  const totalPage = totalCount === 0 ? 0 : totalCount <= options.pageSize ? 1 : parseInt(totalCount / options.pageSize) + 1
+  const aggregateInstance = evaCollection.aggregate()
+  .lookup({
+    from: 'words',
+    localField: 'words_id',
+    foreignField: '_id',
+    as: 'wordList',
+  })
+  const data = await aggregateInstance
+  .match({
+    user_id: options.user_id,
+    rightCount: _.in([1, 2])
+  })
+  .addFields({
+    word: $.arrayElemAt(['$wordList', 0])
+  })
+  .project({
+    wordList: 0
+  })
+  .sort({'_updateTime': -1})
+  .skip(skipCount)
+  .limit(options.pageSize)
+  .end()
+  return {currPage: options.currPage, pageSize: options.pageSize, totalPage, totalCount, data}
+}
+
+// 分页获取已掌握记录 正确次数大于3
+const getAlredyEvaluationWordsQueryPage = async (options) => {
+  const skipCount = (options.currPage - 1) * options.pageSize
+  const countResult = await evaCollection.where({ user_id: options.user_id, rightCount: _.gte(3) }).count();
+  const totalCount = countResult.total
+  const totalPage = totalCount === 0 ? 0 : totalCount <= options.pageSize ? 1 : parseInt(totalCount / options.pageSize) + 1
+  const aggregateInstance = evaCollection.aggregate()
+  .lookup({
+    from: 'words',
+    localField: 'words_id',
+    foreignField: '_id',
+    as: 'wordList',
+  })
+  const data = await aggregateInstance
+  .match({
+    user_id: options.user_id,
+    rightCount: _.gte(3)
+  })
+  .addFields({
+    word: $.arrayElemAt(['$wordList', 0]),
+  })
+  .project({
+    wordList: 0
+  })
+  .sort({'_updateTime': -1})
+  .skip(skipCount)
+  .limit(options.pageSize)
+  .end()
+  return {currPage: options.currPage, pageSize: options.pageSize, totalPage, totalCount, data}
+}
+
+// 分页获取错误记录 错误次数大于0
+const getErrEvaluationWordsQueryPage = async (options) => {
+  const skipCount = (options.currPage - 1) * options.pageSize
+  const countResult = await evaCollection.where({ user_id: options.user_id, errCount: _.gt(0) }).count();
+  const totalCount = countResult.total
+  const totalPage = totalCount === 0 ? 0 : totalCount <= options.pageSize ? 1 : parseInt(totalCount / options.pageSize) + 1
+  const aggregateInstance = evaCollection.aggregate()
+  .lookup({
+    from: 'words',
+    localField: 'words_id',
+    foreignField: '_id',
+    as: 'wordList',
+  })
+  const data = await aggregateInstance
+  .match({
+    user_id: options.user_id,
+    errCount: _.gt(0)
+  })
+  .addFields({
+    word: $.arrayElemAt(['$wordList', 0]),
+  })
+  .project({
+    wordList: 0
+  })
+  .sort({'_updateTime': -1})
+  .skip(skipCount)
+  .limit(options.pageSize)
+  .end()
+  return {currPage: options.currPage, pageSize: options.pageSize, totalPage, totalCount, data}
+}
+
+// 获取总数，已学数，已经掌握数
+const getAllEvaluationWordsCount = async (data) => {
+  let allcount = 0;
+  let studycount = 0;
+  let readycount = 0;
+  const countResult = await collection.where({ type: 1, synonym: _.exists(true)}).count()
+  const evaCountResult1 = await evaCollection.where({ user_id: data.user_id}).count()
+  // const evaCountResult2 = await evaCollection.where({ user_id: data.user_id, errCount: _.gt(0) }).count()
+  const evareadyCountResult = await evaCollection.where({ user_id: data.user_id, rightCount: _.gte(3) }).count()
+  allcount = countResult.total
+  studycount = evaCountResult1.total
+  readycount = evareadyCountResult.total
+  return {
+    allcount,
+    studycount,
+    readycount
+  }
+}
+
 // 获取模块下的已经掌握的题目数量 和 模块下面的题目（除去已经掌握的）
 const getWordByRandom = async (options) => {
-  let word = {}
   const result = await getAllWords()
   const resultRecord = await getAllEvaluationWords(options)
   let allWord = result.data
-  allWord= allWord.filter((item) => item.type == 1 && item.synonym && item.synonym.length>0);
+  allWord = allWord.filter((item) => item.type == 1 && item.synonym && item.synonym.length>0);
+  console.log(allWord, '=============')
   // 过滤已经回答正确的题目
   let resultWord = allWord.filter(item => {
     return !resultRecord.data.find(element => {
-      return element.words_id == item._id
+      return element.words_id == item._id && (item.rightCount < 3 || item.rightCount == 3)
     })
   })
+  console.log(resultWord, '=============')
   resultWord = shuffle(resultWord)[0] || {}
   if (resultWord) {
     options.word_id = resultWord._id
@@ -111,7 +228,8 @@ const getWordByRandom = async (options) => {
 
     resultWord.synonymList = result.data
   }
-  return resultWord;
+  console.log(resultWord, '=============')
+  return resultWord
 }
 
 const reflashWordsEvaluation = async (options) => {
@@ -175,6 +293,15 @@ const shuffle = (array) => {
 	return array;
 }
 
+// 获取词语的例句
+const getSentenceById = async (options) => {
+  console.log(options,'liju')
+  const result= await senCollection.where({ word_id: options.word_id}).get();
+  let res = {
+    sentence: result.data
+  }
+  return res;
+}
 
 const getWAllList = async () => {
   const result = await getAllWords()
@@ -188,6 +315,7 @@ const getWAllList = async () => {
 }
 
 const getWordsStudyCount = async (data) => {
+  console.log(data)
   const result = await getAllWords()
   const resultRecord = await getAllStudyWords(data)
   let wordsList = result.data.sort((a,b)=>{ return b.count-a.count})
@@ -320,6 +448,21 @@ exports.main = async (event, context) => {
   }
   else if (func === 'upDateWordsEvaluation') {
     res = await upDateWordsEvaluation(data);
+  }
+  else if (func === 'getSentenceById') {
+    res = await getSentenceById(data);
+  }
+  else if (func === 'getAllEvaluationWordsCount') {
+    res = await getAllEvaluationWordsCount(data);
+  }
+  else if (func === 'getEvaluationWordsQueryPage') {
+    res = await getEvaluationWordsQueryPage(data);
+  }
+  else if (func === 'getAlredyEvaluationWordsQueryPage') {
+    res = await getAlredyEvaluationWordsQueryPage(data);
+  }
+  else if (func === 'getErrEvaluationWordsQueryPage') {
+    res = await getErrEvaluationWordsQueryPage(data);
   }
   return res;
 }

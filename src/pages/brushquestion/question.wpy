@@ -11,6 +11,7 @@
     padding: 5px 15px;
     color: #fff;
     line-height: 1;
+    z-index: 999;
   }
   .logic-index-header-title {
     margin-bottom: 10px;
@@ -129,48 +130,50 @@
 }
 </style>
 <template>
-  <!-- <page-meta page-style="overflow: {{disableScroll ? 'hidden' : 'visible'}}" /> -->
+  <page-meta page-style="overflow: {{disableScroll ? 'hidden' : 'visible'}}" />
   <div class="page">
-    <div class="logic-index-header">
-      <div class="logic-index-header-box">
-        <div class="logic-index-header-left">专项练习</div>
-        <div class="logic-index-header-middle">
-          <van-icon name="underway-o" size="16px" />
-          <div class="logic-index-header-time">{{nowTime}}</div>
+    <!-- <scroll-view scroll-x="false" scroll-y="true"> -->
+      <div class="logic-index-header">
+        <div class="logic-index-header-box">
+          <div class="logic-index-header-left">专项练习</div>
+          <div class="logic-index-header-middle">
+            <van-icon name="underway-o" size="16px" />
+            <div class="logic-index-header-time">{{nowTime}}</div>
+          </div>
+          <div class="logic-index-header-right">共 {{questionList.length}} 题</div>
         </div>
-        <div class="logic-index-header-right">共 {{questionList.length}} 题</div>
       </div>
-    </div>
-    <div class="logic-index-box">
-      <div v-if="questionList.length > 0" v-for="(item, index) in questionList" :key="index" class="logic-index-question-list">
-        <van-tag v-if="item.exa_type === '1'" type="primary" size="large" style="margin-bottom: 5px">{{index+1}}.单选题</van-tag>
-        <van-tag v-else-if="item.exa_type === '2'" type="primary" size="large" style="margin-bottom: 5px">{{index+1}}.多选题</van-tag>
-        <question-item style="flex:1;" :questionItem="item" :questionIndex="index" @onChange="onChange" @onMoreChange="onMoreChange" @imgtapTitle="imgtapTitle"></question-item>
+      <div class="logic-index-box">
+        <div v-if="questionList.length > 0" v-for="(item, index) in questionList" :key="index" class="logic-index-question-list">
+          <van-tag v-if="item.exa_type === '1'" type="primary" size="large" style="margin-bottom: 5px">{{index+1}}.单选题</van-tag>
+          <van-tag v-else-if="item.exa_type === '2'" type="primary" size="large" style="margin-bottom: 5px">{{index+1}}.多选题</van-tag>
+          <question-item style="flex:1;" :questionItem="item" :questionIndex="index" @onChange="onChange" @onMoreChange="onMoreChange" @imgtapTitle="imgtapTitle"></question-item>
+        </div>
       </div>
-    </div>
-    <div v-if="disableScroll" class="logic-index-complete" @click="closeCanvasPen">关</div>
-    <div v-if="disableScroll" class="logic-index-pen" @click="clearCanvasPen">清</div>
-    <div v-if="!disableScroll" class="logic-index-pen" @click="openCanvasPen">笔</div>
-    <div v-if="!disableScroll" class="logic-index-complete" @click="openCompletePopup">交卷</div>
-    <van-popup get-container="#app" @click-overlay="closeCompletePopup" :show="isCompleteShow" position="bottom">
-      <div class="logic-index-popup-box" :style="{ height: '30vh' }">
-        <div class="logic-index-popup-title">交卷提示</div>
-        <div class="logic-index-popup-list">
-          <div v-if="questionList.length > 0" v-for="(item, index) in questionList" :key="index">
-            <div class="logic-index-popup-item" :class="{ 'logic-index-popup-item-empty': item.youAnswer == '' }">
-              {{index + 1}}
+      <div v-if="disableScroll" class="logic-index-complete" @click="closeCanvasPen">关</div>
+      <div v-if="disableScroll" class="logic-index-pen" @click="clearCanvasPen">清</div>
+      <div v-if="!disableScroll" class="logic-index-pen" @click="openCanvasPen">笔</div>
+      <div v-if="!disableScroll" class="logic-index-complete" @click="openCompletePopup">交卷</div>
+      <van-popup get-container="#app" @click-overlay="closeCompletePopup" :show="isCompleteShow" position="bottom">
+        <div class="logic-index-popup-box" :style="{ height: '30vh' }">
+          <div class="logic-index-popup-title">交卷提示</div>
+          <div class="logic-index-popup-list">
+            <div v-if="questionList.length > 0" v-for="(item, index) in questionList" :key="index">
+              <div class="logic-index-popup-item" :class="{ 'logic-index-popup-item-empty': item.youAnswer == '' }">
+                {{index + 1}}
+              </div>
             </div>
           </div>
+          <div class="logic-index-popup-button">
+            <van-button round type="info" @click="doSubmit">立刻交卷</van-button>
+          </div>
         </div>
-        <div class="logic-index-popup-button">
-          <van-button round type="info" @click="doSubmit">立刻交卷</van-button>
-        </div>
-      </div>
-    </van-popup>
-    <div class="logic-index-canvas" :class="{ 'logic-index-canvas-close': !disableScroll}">
-      <canvas style="height: 90vh; width:100vw" canvas-id="canvas" disable-scroll="true" @touchstart="canvasStart" @touchmove="canvasMove" @touchend="touchEnd"></canvas>
-      <!-- <canvas v-else style="height: 0; width:0" id="canvas" type="2d" disable-scroll="true"></canvas> -->
-    </div>
+      </van-popup>
+      <view class="logic-index-canvas" :class="{ 'logic-index-canvas-close': !disableScroll}" catchtouchmove="stopScroll">
+        <canvas style="height: 90vh; width:100vw" canvas-id="canvas" disable-scroll="true" @touchstart="canvasStart" @touchmove="canvasMove" @touchend="touchEnd"></canvas>
+      </view>
+    <!-- </scroll-view> -->
+
     <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
   </div>
 </template>
@@ -321,6 +324,9 @@
           context.moveTo(event.touches[0].clientX, event.touches[0].clientY);
         }
       },
+      // 阻止背景滑动
+      stopScroll () {
+      },
       //过程
       canvasMove (event) {
         if(this.disableScroll) {
@@ -386,7 +392,7 @@
       },
       async getQuestionsList () {
         let questionList = []
-        if (this.practiseId) {
+        if (this.practiseId) { //如果存在练习ID
           let result = await getPractiseById({
             practise_id: this.practiseId
           })

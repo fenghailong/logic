@@ -32,10 +32,10 @@ const getAllMessages = async (data) => {
 const sendMessage = async () => {
   let result = await getAllMessages();
   let messageList = result.data.filter(function(item,index,self){
-    return self.findIndex(el=>(el.wechat_openid==item.wechat_openid && item.isUse === '2' && item._createTime < 1694570709610))===index
+    return self.findIndex(el=>(el.wechat_openid==item.wechat_openid && item.isUse === '2' && item._createTime < 1697848445716))===index
     // return self.findIndex(el=>(el.wechat_openid==item.wechat_openid && item.isUse === '2'))===index
   })
-  // messageList=messageList.slice(0,1)
+  // messageList=messageList.slice(0,100)
   console.log(messageList)
   for(var i =0;i<messageList.length;i++){
     sendMessageItem(messageList[i])
@@ -43,6 +43,7 @@ const sendMessage = async () => {
 }
 
 const sendMessageItem = async (item) => {
+  let count = 0
   try {
     const result = await cloud.openapi.subscribeMessage.send({
       "touser": item.wechat_openid,
@@ -50,13 +51,13 @@ const sendMessageItem = async (item) => {
       "lang": 'zh_CN',
       "data": {
         "thing1": {
-          "value": '8000G网课大礼包'
+          "value": '申论规范词507条已更新'
         },
         "thing2": {
-          "value": '230篇人民日报精读解析'
+          "value": '人物素材224个已更新'
         },
         "thing5": {
-          "value": '会员联系客服立刻领取'
+          "value": '会员群资料包已更新（申论急救包）'
         }
       },
       "templateId": item.templateId,
@@ -76,6 +77,7 @@ const sendMessageItem = async (item) => {
     console.log(result,'==========')
     return result
   } catch (err) {
+    console.log(err,'==========')
     return err
   }
 }
@@ -95,6 +97,9 @@ const addMessage = async (data, OPENID) => {
     console.log(result)
     return result;
   } catch (err) {
+    count = count + 1
+    console.log(count)
+    console.log(err)
     return err;
   }
 };

@@ -5,6 +5,10 @@
   height: auto;
   .logic-index-box {
     padding: 20px 20px;
+    padding-bottom: 100px;
+    .logic-index-header {
+      color: #666;
+    }
     .logic-index-word {
       padding-top: 20px;
       .logic-index-word-name {
@@ -44,11 +48,12 @@
       }
     }
     .logic-index-expamle {
-      height: 100px;
+      height: 120px;
       background-color: rgba(255,255,255,0.6);
       padding: 10px 10px;
       border-radius: 5px;
       font-size: 16px;
+      color: #666;
       margin: 20px 0;
     }
     .logic-index-synonym-list {
@@ -61,6 +66,9 @@
         .logic-index-synonym-item-name  {
           font-weight: bold;
         }
+        .logic-index-synonym-item-implication {
+          color: #666;
+        }
       }
     }
     .logic-index-list-footer {
@@ -71,119 +79,15 @@
       text-align: center;
       font-weight: bold;
     }
-    .logic-index-item {
-      background-color: #fff;
-      height: 70vh;
-      border-radius: 20px;
-      padding: 0 20px;
-      overflow: auto;
-      .logic-index-item-name {
-        padding: 10px;
-        font-size: 30px;
-        text-align: center;
-      }
-      .logic-index-item-tag {
-        display: flex;
-        align-items: center;
-        .logic-index-item-count {
-          line-height: 1;
-          font-size: 14px;
-          color: #999;
-          margin-right: 30px;
-        }
-        van-tag {
-          line-height: 1;
-          margin-right: 10px;
-        }
-        van-rate {
-          line-height: 1;
-        }
-      }
-      .logic-index-item-implication {
-        display: flex;
-        align-items: flex-start;
-        margin-top: 20px;
-        .logic-index-item-implication-info {
-          font-size: 14px;
-          color: #666;
-          width: 80%;
-        }
-        van-tag {
-          line-height: 1;
-          margin-right: 10px;
-        }
-      }
-      .logic-index-item-synonym {
-        display: flex;
-        align-items: flex-start;
-        margin-top: 20px;
-        .logic-index-item-synonym-list {
-          font-size: 14px;
-          color: #999;
-          width: 80%;
-          display: flex;
-          flex-direction: column;
-          .logic-index-item-synonym-item {
-            margin-bottom: 5px;
-            .logic-index-item-synonym-item-name {
-              color: #000;
-            }
-            .logic-index-item-synonym-item-implication {
-              font-size: 14px;
-            }
-          }
-        }
-        van-tag {
-          line-height: 1;
-          margin-right: 10px;
-        }
-        .logic-index-item-synonym-nodata {
-          font-size: 14px;
-          color: #999;
-        }
-      }
-      .logic-index-item-title {
-        text-align: right;
-        font-size: 16px;
-        padding: 0 20px;
-        color: #999;
-      }
-      .logic-index-item-introduce {
-        font-size: 18px;
-        padding: 0 10px;
-        margin-top: 10px;
-        color: #666;
-      }
-      .logic-index-item-tag-person {
-        font-size: 18px;
-        padding: 0 10px;
-        margin-top: 10px;
-        font-weight: 500;
-      }
-      .logic-index-item-name-article {
-        padding: 10px;
-        font-size: 20px;
-        text-align: center;
-      }
-      .logic-index-item-title-article {
-        text-align: right;
-        font-size: 14px;
-        padding: 0 20px;
-        color: #999;
-      }
-      .logic-index-item-introduce-article {
-        font-size: 14px;
-        padding: 0 10px;
-        margin-top: 10px;
-        color: #666;
-      }
-    }
   }
 }
 </style>
 <template>
   <div class="page">
-    <div class="logic-index-box">
+    <div v-if="wordDetail.name" class="logic-index-box">
+      <div class="logic-index-header" @click="viewList">
+        已学习：{{ studycount }}/{{ allcount }} ，已掌握 {{ readycount }}/{{ allcount }} ，查看
+      </div>
       <div class="logic-index-word">
         <div class="logic-index-word-name">
           <div class="logic-index-word-text">{{wordDetail.name}}</div>
@@ -199,9 +103,14 @@
       </div>
       <div v-if="active === '2'">
         <swiper class="logic-index-expamle" indicator-dots="{{true}}" duration="{{500}}">
-          <block v-for="(item, index) in background" :key="index">
+          <block v-if="sentenceList.length > 0">
+            <swiper-item v-for="(item, index) in sentenceList" :key="index">
+              <div class="swiper-item">{{item.content}}</div>
+            </swiper-item>
+          </block>
+          <block v-else>
             <swiper-item>
-              <div class="swiper-item">{{item}}</div>
+              <div class="swiper-item">部分例句正在补充中，敬请期待</div>
             </swiper-item>
           </block>
         </swiper>
@@ -217,6 +126,9 @@
         <div v-if="active === '2'" @click="nextWord">下一词</div>
       </div>
     </div>
+    <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
+    <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
+    <privacy-dialog id="pay-tip-popup-6" wx:if="{{showPrivacy}}" />
   </div>
 </template>
 <config>
@@ -224,8 +136,8 @@
     navigationBarTitleText: '词语含义',
     usingComponents: {
       "van-rate": "../../libs/vant/rate/index",
-      "van-tag": "../../libs/vant/tag/index",
-      "van-button": "../../libs/vant/button/index",
+      "pay-tip-popup": "~@/components/pay-tip-popup",
+      "van-dialog": "../../libs/vant/dialog/index",
     }
   }
 </config>
@@ -234,27 +146,45 @@
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
   import eventHub from '@/common/eventHub'
-  import { getWordByRandom, upDateWordsEvaluation } from '@/api/words'
+  import Dialog from '../../libs/vant/dialog/dialog';
+  import { getWordByRandom, upDateWordsEvaluation, getSentenceById, getAllEvaluationWordsCount } from '@/api/words'
   wepy.page({
     store,
     computed: {
       // 用户信息
-      ...mapGetters(['_id'])
+      ...mapGetters(['user', '_id'])
     },
     data: {
       active: '1',
       wordDetail: {},
+      allcount: 0,
+      studycount: 0,
+      readycount: 0,
+      sentenceList: [],
       yourChoose: '',
       isSelected: false,
       isRight: false,
-      background: ['demo-text-1', 'demo-text-2', 'demo-text-3'],
       indicatorDots: true,
-      duration: 500
+      duration: 500,
+      tipsShow: false,
+      showPrivacy: false
     },
     async onLoad() {
       await this.getWordsDetail()
     },
+    onShow() {
+      this.showPrivacy = true
+    },
+    onHide() {
+      this.showPrivacy = false
+    },
     methods: {
+      openPayTipPopup () {
+        this.tipsShow = true
+      },
+      closePayPopup () {
+        this.tipsShow = false
+      },
       // 获取单个词语
       async getWordsDetail() {
         wx.showLoading({title: '加载中'})
@@ -262,26 +192,74 @@
           user_id: this._id
         })
         this.wordDetail = result.result
+        console.log(this.wordDetail,'============')
+        await this.getWordsCount()
+        await this.getSentenceList(this.wordDetail._id)
         wx.hideLoading()
+        if(this.user.isMember === '2') {
+          if (this.studycount > 10) {
+            Dialog.confirm({
+              message: '普通用户可以免费体验10个成语评测，开通会员解锁所有成语评测',
+              confirmButtonText: '立即开通'
+            }).then(async () => {
+              this.openPayTipPopup()
+            }).catch(() => {
+              wx.navigateBack({
+                delta: 1
+              })
+            });
+          }
+        }
+      },
+      async getWordsCount() {
+        let result = await getAllEvaluationWordsCount({
+          user_id: this._id
+        })
+        this.allcount = result.result.allcount
+        this.studycount = result.result.studycount
+        this.readycount = result.result.readycount
+      },
+      // 获取例句
+       async getSentenceList(id) {
+        let result = await getSentenceById({
+          word_id: id
+        })
+        this.sentenceList = result.result.sentence
+        console.log(this.sentenceList)
       },
       async chooseOption (item) {
+        if(this.user.isMember === '2') {
+          if (this.studycount > 10) {
+            this.openPayTipPopup()
+            return
+          }
+        }
         if(!this.isSelected) {
           this.yourChoose = item
           this.isRight = this.wordDetail.implication === item
           this.isSelected = true
+          if(this.isRight){
+            this.wordDetail.evaluationData.rightCount += 1
+          }
           await upDateWordsEvaluation({
-            words_id: this.wordDetail._id,
+            word_id: this.wordDetail._id,
             user_id: this._id,
             isRight: this.isRight
           })
         }
       },
       async viewAnswer () {
+        if(this.user.isMember === '2') {
+          if (this.studycount > 10) {
+            this.openPayTipPopup()
+            return
+          }
+        }
         if(!this.isSelected) {
           this.isRight = false
           this.isSelected = true
           await upDateWordsEvaluation({
-            words_id: this.wordDetail._id,
+            word_id: this.wordDetail._id,
             user_id: this._id,
             isRight: this.isRight
           })
@@ -290,9 +268,21 @@
         }
       },
       async nextWord () {
-        await this.getWordsDetail()
+        if(this.user.isMember === '2') {
+          if (this.studycount > 10) {
+            this.openPayTipPopup()
+            return
+          }
+        }
+        this.wordDetail = {}
         this.active = '1'
         this.isSelected = false
+        await this.getWordsDetail()
+      },
+      async viewList () {
+        wx.navigateTo({
+            url: `/pages/words/evaluationList`
+        })
       }
     }
   })

@@ -102,6 +102,7 @@
       </div>
     </van-popup>
     <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
+    <privacy-dialog id="pay-tip-popup-4" wx:if="{{showPrivacy}}" />
   </div>
 </template>
 <config>
@@ -139,13 +140,20 @@
       detail: {},
       moudleList: {},
       showPopup: false, // 列表弹框
-      tipsShow: false // 兑换码提示弹框
+      tipsShow: false, // 兑换码提示弹框
+      showPrivacy: false
     },
     async onLoad(options) {
       this.moudleList = JSON.parse((decodeURIComponent(options.moudleList)))
       this.id = options.id
       await this.getDetail()
       wx.setNavigationBarTitle({title: this.detail.title})
+    },
+    onShow() {
+      this.showPrivacy = true
+    },
+    onHide() {
+      this.showPrivacy = false
     },
     methods: {
       // 获取模块知识点详情

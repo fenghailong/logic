@@ -97,6 +97,7 @@
       </div>
     </div>
     <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
+    <privacy-dialog id="pay-tip-popup-6" wx:if="{{showPrivacy}}" />
   </div>
 </template>
 <config>
@@ -127,7 +128,8 @@
     data: {
       moudleId: '',
       moudleList: [],
-      tipsShow: false
+      tipsShow: false,
+      showPrivacy: false
     },
     // 计算的属性
     computed: {
@@ -136,6 +138,12 @@
     onLoad(options) {
       this.moudleId = options.id
       this.getModulesByIdData(this.moudleId)
+    },
+    onShow() {
+      this.showPrivacy = true
+    },
+    onHide() {
+      this.showPrivacy = false
     },
     methods: {
       openPayTipPopup () {
@@ -153,7 +161,7 @@
       },
       clearQusetion (id) {
         Dialog.confirm({
-          message: '清除进度后，该模块之前的做题记录会清楚，切无法恢复，是否清除？'
+          message: '清除进度后，该模块之前的做题记录会清除，且无法恢复，是否清除？'
         }).then(async () => {
           wx.showLoading({title: '清除中'})
           await clearQusetion({

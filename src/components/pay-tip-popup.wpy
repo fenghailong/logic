@@ -165,7 +165,7 @@
           </div>
           <div class="logic-index-popup-button">
             <van-button v-if="user.phoneNumber" round type="info" @click="doActivate">立刻激活</van-button>
-            <van-button v-else round type="info" @getphonenumber="getphonenumber"  open-type="getPhoneNumber">立刻激活</van-button>
+            <van-button v-else round type="info" @getphonenumber="handlePhoneNumber"  open-type="getPhoneNumber">立刻激活</van-button>
           </div>
         </div>
       </div>
@@ -226,11 +226,11 @@
         <div class="logic-index-popup-member-button">
           <!-- <van-button round type="info" open-type="contact" @contact="onCustomerServiceButtonClick">联系客服</van-button> -->
           <van-button v-if="user.phoneNumber" round type="info" block @click="pay">开通会员</van-button>
-          <van-button v-else round type="info" block @getphonenumber="getphonenumber"  open-type="getPhoneNumber">开通会员</van-button>
+          <!-- <button open-type="getPhoneNumber" bindgetphonenumber="handlePhoneNumber">手机号授权</button> -->
+          <van-button v-else round type="info" block @getphonenumber="handlePhoneNumber"  open-type="getPhoneNumber">开通会员</van-button>
         </div>
       </div>
     </van-popup>
-    <privacy-dialog id="logic-login" wx:if="{{showPrivacy}}" />
   </div>
 </template>
 <config>
@@ -269,16 +269,9 @@
     data: {
       currentCode: '',
       isIOS: false,
-      showPrivacy: true
     },
     created () {
       this.getSystemInfo()
-    },
-    onShow() {
-      this.showPrivacy = true
-    },
-    onHide() {
-      this.showPrivacy = false
     },
     methods: {
       getSystemInfo () {
@@ -322,21 +315,6 @@
         }
         console.log(res)
       },
-      onCustomerServiceButtonClick (e) {
-        console.log(e)
-      },
-      // tocontact(){
-      //   this.tipsShow = false
-      //   this.$emit("closePayPopup",this.tipsShow);
-      //   // 联系客服
-      //   wx.openCustomerServiceChat({
-      //     extInfo: {url: 'https://work.weixin.qq.com/kfid/kfcffeb6bea0dd3ea9c'},
-      //     corpId: 'wwa3b7b5ecaf98ba59',
-      //     success(res) {
-      //       console.log(res)
-      //     }
-      //   })
-      // },
       closePopup() {
         this.tipsShow = false
         this.$emit("closePayPopup",this.tipsShow);
@@ -344,7 +322,8 @@
       codeChange(e) {
         this.currentCode = e.$wx.detail
       },
-      async getphonenumber (e) {
+      async handlePhoneNumber (e) {
+        console.log(e)
         let code = e.$wx.detail.code //开放数据ID
         if (!code) {
             wx.showToast({title: '用户未授权'})

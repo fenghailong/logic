@@ -92,6 +92,7 @@ wepy.app({
       'pages/index/web-view',
       'pages/words/index',
       'pages/words/evaluation',
+      'pages/words/evaluationList',
       'pages/undertaking/index',
       'pages/undertaking/list',
       'pages/undertaking/detail',
@@ -122,6 +123,8 @@ wepy.app({
       'pages/brushquestion/questionResult',
       'pages/brushquestion/rank',
       'pages/customer/index',
+      'pages/reporterror/index',
+      'pages/payattention/index',
       'pages/auth/login'
     ],
     window: {

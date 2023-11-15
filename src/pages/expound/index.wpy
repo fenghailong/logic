@@ -110,6 +110,7 @@
       </div>
     </div>
     <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
+    <privacy-dialog id="pay-tip-popup-3" wx:if="{{showPrivacy}}" />
   </div>
 </template>
 <config>
@@ -139,11 +140,18 @@
     data: {
       moudleId: '',
       moudleList: [],
-      tipsShow: false
+      tipsShow: false,
+      showPrivacy: false
     },
     // 计算的属性
     computed: {
       ...mapGetters(['_id', 'user']),
+    },
+    onShow() {
+      this.showPrivacy = true
+    },
+    onHide() {
+      this.showPrivacy = false
     },
     onLoad(options) {
       this.moudleId = options.id
