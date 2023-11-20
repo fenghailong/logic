@@ -96,23 +96,23 @@
       </div>
       <div class="logic-index-content">
         <div class="logic-index-content-icon">
-          <image 	show-menu-by-longpress src="cloud://prod-2gzhco766f4e1e27.7072-prod-2gzhco766f4e1e27-1304834920/customer/customer.jpeg" />
+          <image 	show-menu-by-longpress src="https://7072-prod-2gzhco766f4e1e27-1304834920.tcb.qcloud.la/customer/payattention.jpg?sign=334d0f29c7d27449cd17c4377ddd141e&t=1700117156" />
         </div>
-        <div class="logic-index-content-message">长按识别找客服报错</div>
+        <div class="logic-index-content-message">长按关注微信公众号</div>
       </div>
-      <van-divider style="width: 100%;" contentPosition="center" borderColor="#1989fa" textColor="#1989fa" fontSize="18">报错赢大奖</van-divider>
+      <van-divider style="width: 100%;" contentPosition="center" borderColor="#1989fa" textColor="#1989fa" fontSize="18">加入公考圈</van-divider>
       <div class="logic-index-box-hot">
         <div class="logic-index-box-hot-item">
           <image src="../../assets/images/realpolitics.png" />
-          <div class="logic-index-box-hot-item-text">提出意见</div>
+          <div class="logic-index-box-hot-item-text">考友交流</div>
         </div>
         <div class="logic-index-box-hot-item">
           <image src="../../assets/images/changshi.png" />
-          <div class="logic-index-box-hot-item-text">功能报错</div>
+          <div class="logic-index-box-hot-item-text">学习技巧</div>
         </div>
         <div class="logic-index-box-hot-item">
           <image src="../../assets/images/person.png" />
-          <div class="logic-index-box-hot-item-text">赢取红包</div>
+          <div class="logic-index-box-hot-item-text">考试资料</div>
         </div>
       </div>
     </div>
