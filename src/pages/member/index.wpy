@@ -233,6 +233,32 @@
     bottom: 0;
     height: 100px;
     background-color: #232323;
+    left: 0;
+    right: 0;
+    padding: 0 20px;
+    .logic-member-footer-content {
+      padding-top: 5px;
+      .van-checkbox__label {
+        font-size: 12px;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        color: #F2BC6C;
+      }
+      image {
+        width: 17px;
+        height: 17px;
+      }
+    }
+    .logic-member-footer-button {
+      width: 100%;
+      margin-top: 15px;
+      .van-button__text {
+        font-size: 17px;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 500;
+        color: #764700;
+      }
+    }
   }
 }
 </style>
@@ -241,10 +267,10 @@
     <div class="logic-member-card">
       <image class="logic-member-card-bg" src="../../assets/images/page-member-card.png" />
       <div class="logic-member-card-box">
-        <div v-if="isIOS" class="logic-member-card-top">
-          <div>解锁终身会员</div>
-          <div>活动期间，一次激活终身有效</div>
-          <div>获取激活码，请联系客服</div>
+        <div v-if="!isIOS" class="logic-member-card-top">
+          <div style="font-size: 14px;font-weight: 500;color: #B56600;margin-bottom: 14px;line-height: 1;">解锁终身会员</div>
+          <div style="font-size: 12px;font-weight: 400;color: #B56600;margin-bottom: 10px;line-height: 1;">活动期间，一次激活终身有效</div>
+          <div style="font-size: 12px;font-weight: 400;color: #B56600;line-height: 1;">获取激活码，请联系客服</div>
         </div>
         <div v-else class="logic-member-card-top">
           <div style="font-size: 13px;">终生会员</div>
@@ -255,9 +281,9 @@
           </div>
           <div style="font-size: 11px;">一次激活终身有效 解锁所有功能</div>
         </div>
-        <div v-if="isIOS" class="logic-member-card-bottom">
+        <div v-if="!isIOS" class="logic-member-card-bottom">
           <div class="logic-member-card-button">
-            <van-button round type="info" color="linear-gradient(to right, #623C02, #DA9C3B)" @click="openPayTipPopup">立即激活</van-button>
+            <van-button round type="info" color="linear-gradient(to right, #623C02, #DA9C3B)" @click="openPayTipPopup">获取激活码</van-button>
           </div>
         </div>
         <div v-else class="logic-member-card-bottom">
@@ -351,8 +377,22 @@
         </div>
       </div>
     </div>
-    <div class="logic-member-footer">
-
+    <div v-if="!isIOS" class="logic-member-footer">
+      <div class="logic-member-footer-button">
+        <van-button color="linear-gradient(to right, #F2D2A1, #FFC977)" round type="info" block open-type="contact" @contact="onCustomerServiceButtonClick">联系客服，获取激活码</van-button>
+      </div>
+    </div>
+    <div v-else class="logic-member-footer">
+      <div class="logic-member-footer-content">
+        <van-checkbox use-icon-slot value="{{ isChecked }}" bind:change="onChange">
+          我已阅读并同意《会员服务协议》
+          <image slot="icon" src="{{ isChecked ? '../../assets/images/member-selected.png' : '../../assets/images/member-noselected.png' }}" />
+        </van-checkbox>
+      </div>
+      <div class="logic-member-footer-button">
+        <van-button v-if="user.phoneNumber" color="linear-gradient(to right, #F2D2A1, #FFC977)" round type="info" block @click="pay">开通会员</van-button>
+        <van-button v-else color="linear-gradient(to right, #F2D2A1, #FFC977)" round type="info" block @getphonenumber="handlePhoneNumber"  open-type="getPhoneNumber">开通会员</van-button>
+      </div>
     </div>
   </div>
 </template>
@@ -364,6 +404,8 @@
       "van-button": "../../libs/vant/button/index",
       "van-popup": "../../libs/vant/popup/index",
       "van-field": "../../libs/vant/field/index",
+      "van-checkbox": "../../libs/vant/checkbox/index",
+      "van-checkbox-group": "../../libs/vant/checkbox-group/index"
     }
   }
 </config>
@@ -384,11 +426,16 @@
     data: {
       currentCode: '',
       isIOS: false,
+      isChecked: true
     },
     created () {
       this.getSystemInfo()
     },
     methods: {
+      onChange (e) {
+        // console.log(e.$wx.detail)
+        this.isChecked = e.$wx.detail
+      },
       getSystemInfo () {
         let that = this
         wx.getSystemInfo({
