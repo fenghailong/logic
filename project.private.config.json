@@ -9,16 +9,16 @@
     "miniprogram": {
       "list": [
         {
-          "name": "",
-          "pathName": "pages/index/index",
+          "name": "pages/member/index",
+          "pathName": "pages/member/index",
           "query": "",
           "launchMode": "default",
           "scene": null
         },
         {
-          "name": "pages/index/detail",
-          "pathName": "pages/index/detail",
-          "query": "type='国考高频成语'&count=2",
+          "name": "",
+          "pathName": "pages/index/index",
+          "query": "",
           "launchMode": "default",
           "scene": null
         },

@@ -125,12 +125,13 @@ wepy.app({
       'pages/customer/index',
       'pages/reporterror/index',
       'pages/payattention/index',
-      'pages/auth/login'
+      'pages/auth/login',
+      'pages/member/index'
     ],
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#387ffb',
-      navigationBarTitleText: 'LaraBBS',
+      navigationBarTitleText: '逻辑填空',
       navigationBarTextStyle: 'white'
     },
     "usingComponents": {

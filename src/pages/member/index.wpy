@@ -1,0 +1,495 @@
+<style lang="less">
+.logic-member {
+  background-image: url('https://7072-prod-2gzhco766f4e1e27-1304834920.tcb.qcloud.la/index/member/page-member-bg.png?sign=5439a6ae9e50fe0977837c5d62dee475&t=1701420918');
+  background-repeat:no-repeat;
+  background-size: 100%;
+  background-color: #232323;
+  padding: 20px 20px 140px;
+  position: relative;
+  .logic-member-card {
+    position: relative;
+    height: 150px;
+    text-align: center;
+    .logic-member-card-bg {
+      width: 100%;
+      position: absolute;
+      z-index: 0;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
+    }
+    .logic-member-card-box {
+      position: absolute;
+      z-index: 1;
+      right: 0;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      margin: auto 0;
+      padding-left: 15px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      .logic-member-card-top {
+        color: #B56600;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .logic-member-card-bottom {
+        display: flex;
+        align-items: center;
+        margin-top: 15px;
+        .logic-member-card-button {
+          height: 28px;
+          border-radius: 14px;
+          flex: 1;
+          text-align: left;
+          .van-button {
+            height: 28px;
+            font-size: 12px;
+            padding: 5px 15px;
+            font-weight: 400;
+            color: #fff;
+          }
+        }
+        .logic-member-card-jihuo {
+          position: relative;
+          width: 115px;
+          height: 28px;
+          display: flex;
+          align-items: center;
+          .logic-member-card-jihuo-bg {
+            width: 100%;
+            position: absolute;
+            z-index: 1;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+          }
+          .logic-member-card-jihuo-text {
+            font-size: 12px;
+            font-family: PingFangSC, PingFang SC;
+            font-weight: 500;
+            color: #B56600;
+            line-height: 12px;
+            position: absolute;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            .logic-member-card-jihuo-icon {
+              width: 5px;
+              height: 8px;
+              padding-right: 10px;
+            }
+          }
+        }
+      }
+    }
+  }
+  .logic-member-differ {
+    display: flex;
+    align-items: center;
+    margin-top: 48px;
+    background: #2E2E2E;
+    border-radius: 15px;
+    height: 214px;
+    .logic-member-differ-left {
+      position: relative;
+      height: 275px;
+      text-align: center;
+      width: 200px;
+      .logic-member-differ-left-bg {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        z-index: 0;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+      }
+      .logic-member-differ-left-box {
+        position: absolute;
+        z-index: 0;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        .logic-member-differ-left-title {
+          font-size: 15px;
+          font-family: PingFangSC, PingFang SC;
+          font-weight: 600;
+          color: #F6D3A0;
+          line-height: 15px;
+          padding: 34px 0 20px;
+          line-height: 1;
+        }
+        .logic-member-differ-left-list {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          font-size: 13px;
+          font-family: PingFangSC, PingFang SC;
+          font-weight: 400;
+          color: #F6D3A0;
+          .logic-member-differ-left-item {
+            display: flex;
+            align-items: center;
+            padding-bottom: 20px;
+            .logic-member-differ-left-item-text {
+              line-height: 1;
+              margin-right: 62px;
+            }
+            .logic-member-differ-left-item-icon {
+              width: 12px;
+              height: 12px;
+            }
+          }
+        }
+      }
+    }
+    .logic-member-differ-right {
+      flex: 1;
+      text-align: center;
+      height: 214px;
+      .logic-member-differ-right-title {
+        font-size: 13px;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 600;
+        color: #FFFFFF;
+        line-height: 13px;
+        padding: 25px 0;
+        padding-right: 10px;
+      }
+      .logic-member-differ-right-list {
+        font-size: 12px;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 400;
+        color: #FFFFFF;
+        .logic-member-differ-right-item {
+          line-height: 12px;
+          margin-bottom: 20px;
+          padding-right: 10px;
+        }
+      }
+    }
+  }
+  .logic-member-userpower-title {
+    font-size: 18px;
+    font-family: PingFangSC, PingFang SC;
+    font-weight: 600;
+    color: #F6D3A0;
+    line-height: 18px;
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .logic-member-userpower-title-icon {
+      width: 64px;
+      height: 6px;
+    }
+  }
+  .logic-member-userpower {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    background-color: #2E2E2E;
+    border-radius: 15px;
+    padding: 25px 36px 0;
+    .logic-member-userpower-list {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      width: 100%;
+      justify-content: flex-start;
+    }
+    .logic-member-userpower-item {
+      flex: 1;
+      margin: 0 0 25px 0; // 间隙为5px
+      width: calc((100% - 10px) / 3);  // 这里的10px = (分布个数3-1)*间隙5px, 可以根据实际的分布个数和间隙区调整
+      min-width: calc((100% - 10px) / 3); // 加入这两个后每个item的宽度就生效了
+      max-width: calc((100% - 10px) / 3); // 加入这两个后每个item的宽度就生效了
+      font-size: 12px;
+      font-family: PingFangSC, PingFang SC;
+      font-weight: 400;
+      color: #F6D3A0;
+      line-height: 12px;
+      &:nth-child(3n) { // 去除第3n个的margin-right
+        text-align: right;
+      }
+      &:nth-child(3n+2) { // 去除第3n个的margin-right
+        text-align: center;
+      }
+    }
+    .logic-member-userpower-icon {
+      width: 40px;
+      height: 40px;
+    }
+  }
+  .logic-member-footer {
+    position: fixed;
+    bottom: 0;
+    height: 100px;
+    background-color: #232323;
+  }
+}
+</style>
+<template>
+  <div class="logic-member">
+    <div class="logic-member-card">
+      <image class="logic-member-card-bg" src="../../assets/images/page-member-card.png" />
+      <div class="logic-member-card-box">
+        <div v-if="isIOS" class="logic-member-card-top">
+          <div>解锁终身会员</div>
+          <div>活动期间，一次激活终身有效</div>
+          <div>获取激活码，请联系客服</div>
+        </div>
+        <div v-else class="logic-member-card-top">
+          <div style="font-size: 13px;">终生会员</div>
+          <div style="display: flex; align-items: center;align-items: flex-end;line-height: 1;margin: 10px 0;">
+            <div style="font-size: 18px;font-weight: bold;">￥</div>
+            <div style="font-size: 26px;font-weight: bold;margin-right: 10px;">19.9</div>
+            <div style="font-size: 12px;">(活动价)</div>
+          </div>
+          <div style="font-size: 11px;">一次激活终身有效 解锁所有功能</div>
+        </div>
+        <div v-if="isIOS" class="logic-member-card-bottom">
+          <div class="logic-member-card-button">
+            <van-button round type="info" color="linear-gradient(to right, #623C02, #DA9C3B)" @click="openPayTipPopup">立即激活</van-button>
+          </div>
+        </div>
+        <div v-else class="logic-member-card-bottom">
+          <div class="logic-member-card-button">
+            <van-button round type="info" color="linear-gradient(to right, #623C02, #DA9C3B)" @click="openPayTipPopup">开通会员</van-button>
+          </div>
+          <div class="logic-member-card-jihuo">
+              <image class="logic-member-card-jihuo-bg" src="../../assets/images/android-jihuo-bg.png" />
+              <div class="logic-member-card-jihuo-text">
+                <div style="flex: 1;text-align: left;padding-left: 8px;">点击输入激活码</div>
+                <image class="logic-member-card-jihuo-icon" src="../../assets/images/right-icon.png" />
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="logic-member-differ">
+      <div class="logic-member-differ-left">
+        <image class="logic-member-differ-left-bg" src="../../assets/images/member-differ.png" />
+        <div class="logic-member-differ-left-box">
+          <div class="logic-member-differ-left-title">会员用户专享</div>
+          <div class="logic-member-differ-left-list">
+            <div class="logic-member-differ-left-item">
+              <div class="logic-member-differ-left-item-text">公基模块</div>
+              <image class="logic-member-differ-left-item-icon" src="../../assets/images/member-differ-icon.png" />
+            </div>
+            <div class="logic-member-differ-left-item">
+              <div class="logic-member-differ-left-item-text">时政模块</div>
+              <image class="logic-member-differ-left-item-icon" src="../../assets/images/member-differ-icon.png" />
+            </div>
+            <div class="logic-member-differ-left-item">
+              <div class="logic-member-differ-left-item-text">常识积累</div>
+              <image class="logic-member-differ-left-item-icon" src="../../assets/images/member-differ-icon.png" />
+            </div>
+            <div class="logic-member-differ-left-item">
+              <div class="logic-member-differ-left-item-text">百日刷题</div>
+              <image class="logic-member-differ-left-item-icon" src="../../assets/images/member-differ-icon.png" />
+            </div>
+            <div class="logic-member-differ-left-item">
+              <div class="logic-member-differ-left-item-text">申论积累</div>
+              <image class="logic-member-differ-left-item-icon" src="../../assets/images/member-differ-icon.png" />
+            </div>
+            <div class="logic-member-differ-left-item">
+              <div class="logic-member-differ-left-item-text">会员礼包</div>
+              <image class="logic-member-differ-left-item-icon" src="../../assets/images/member-differ-icon.png" />
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="logic-member-differ-right">
+        <div class="logic-member-differ-right-title">普通用户</div>
+        <div class="logic-member-differ-right-list">
+          <div class="logic-member-differ-right-item">高频成语</div>
+          <div class="logic-member-differ-right-item">行测模块</div>
+          <div class="logic-member-differ-right-item">人物素材</div>
+          <div class="logic-member-differ-right-item">其他体验</div>
+        </div>
+      </div>
+    </div>
+    <div class="logic-member-userpower-title">
+      <image class="logic-member-userpower-title-icon" src="../../assets/images/member-left-icon.png" />
+     <div style="margin: 0 10px;">尊享会员6大权益</div>
+      <image class="logic-member-userpower-title-icon" src="../../assets/images/member-right-icon.png" />
+    </div>
+    <div class="logic-member-userpower">
+      <div class="logic-member-userpower-list">
+        <div class="logic-member-userpower-item">
+          <image class="logic-member-userpower-icon" src="../../assets/images/power-icon1.png" />
+          <div class="logic-member-userpower-name">公基模块</div>
+        </div>
+        <div class="logic-member-userpower-item">
+          <image class="logic-member-userpower-icon" src="../../assets/images/power-icon2.png" />
+          <div class="logic-member-userpower-name">时事政治</div>
+        </div>
+        <div class="logic-member-userpower-item">
+          <image class="logic-member-userpower-icon" src="../../assets/images/power-icon3.png" />
+          <div class="logic-member-userpower-name">常识积累</div>
+        </div>
+        <div class="logic-member-userpower-item">
+          <image class="logic-member-userpower-icon" src="../../assets/images/power-icon4.png" />
+          <div class="logic-member-userpower-name">申论积累</div>
+        </div>
+        <div class="logic-member-userpower-item">
+          <image class="logic-member-userpower-icon" src="../../assets/images/power-icon5.png" />
+          <div class="logic-member-userpower-name">百日刷题</div>
+        </div>
+        <div class="logic-member-userpower-item">
+          <image class="logic-member-userpower-icon" src="../../assets/images/power-icon6.png" />
+          <div class="logic-member-userpower-name">会员礼包</div>
+        </div>
+      </div>
+    </div>
+    <div class="logic-member-footer">
+
+    </div>
+  </div>
+</template>
+<config>
+  {
+    navigationBarTitleText: '逻辑填空',
+    navigationBarBackgroundColor: '#232323',
+    usingComponents: {
+      "van-button": "../../libs/vant/button/index",
+      "van-popup": "../../libs/vant/popup/index",
+      "van-field": "../../libs/vant/field/index",
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import { mapGetters } from '@wepy/x'
+  import { addActivateRecord } from '@/api/activate'
+  import { getPhoneNum } from '@/api/auth'
+  import { doPay } from '@/api/pay'
+
+  wepy.component({
+    store,
+    computed: {
+      // 用户信息
+      ...mapGetters(['_id', 'user'])
+    },
+    data: {
+      currentCode: '',
+      isIOS: false,
+    },
+    created () {
+      this.getSystemInfo()
+    },
+    methods: {
+      getSystemInfo () {
+        let that = this
+        wx.getSystemInfo({
+          success (res) {
+            that.isIOS = res.platform === 'ios'
+            // that.isIOS = true
+          }
+        })
+      },
+      async pay () {
+        this.closePopup()
+        wx.showLoading({
+          title: '发起支付中',
+          mask: true
+        })
+        let res = await doPay({ totalFee: 1990 })
+        if(res.result && res.result.payment) {
+          let payment = res.result.payment
+          let that = this
+          wx.requestPayment({
+          ...payment,
+          async success (res) {
+            wx.hideLoading()
+            wx.showToast({
+              title: '支付成功',
+              icon: 'success'
+            })
+            await that.$store.dispatch('login')
+            console.log('pay success', res)
+          },
+          fail (err) {
+            wx.hideLoading()
+            wx.showToast({
+              title: '支付失败，如有疑问，请联系客服'
+            })
+            console.error('pay fail', err)
+          }
+        })
+        }
+        console.log(res)
+      },
+      closePopup() {
+        this.tipsShow = false
+        this.$emit("closePayPopup",this.tipsShow);
+      },
+      codeChange(e) {
+        this.currentCode = e.$wx.detail
+      },
+      async handlePhoneNumber (e) {
+        console.log(e)
+        let code = e.$wx.detail.code //开放数据ID
+        if (!code) {
+            wx.showToast({title: '用户未授权'})
+            return
+        }
+        wx.showLoading({
+          title: '加载中',
+          mask: true
+        })
+        let res = await getPhoneNum({ code: code })
+        wx.hideLoading()
+        wx.showToast({
+          title: '授权成功',
+          icon: 'success'
+        })
+        if (res.result === '用户手机号已经更新') {
+          await this.$store.dispatch('login')
+          if (this.isIOS) {
+            await this.doActivate()
+          } else {
+            await this.pay()
+          }
+        } else {
+          wx.showToast({
+            title: '手机号获取失败'
+          })
+        }
+      },
+      async doActivate () {
+        if(this.currentCode) {
+          this.closePopup()
+          wx.showLoading({title: '激活中'})
+          let result = await addActivateRecord({user_id: this._id, activate_code_id: this.currentCode})
+          wx.hideLoading()
+          if (result.result === '激活成功') {
+            wx.showToast({
+              title: '激活成功',
+              icon: 'success'
+            })
+            await this.$store.dispatch('login')
+          } else {
+            wx.showToast({
+              title: '激活失败'
+            })
+          }
+        } else {
+          wx.showToast({
+            title: '请输入激活码'
+          })
+        }
+      }
+    }
+  })
+</script>
