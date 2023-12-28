@@ -14,6 +14,7 @@
     // flex-direction: column;
     justify-content: space-between;
     width: 100%;
+    margin-top: 10px;
   }
   .logic-detail-content {
     display: flex;
@@ -108,6 +109,11 @@
 </style>
 <template>
   <div class="page">
+    <div>
+      <van-dropdown-menu>
+        <van-dropdown-item value="{{ timeItem }}" options="{{ times }}" @change="dropChange"/>
+      </van-dropdown-menu>
+    </div>
     <div class="logic-detail-box">
       <div style="width: 30%;" v-for="(item, index) in moudleList" :key="index">
         <div v-if="item.isCanUse === '1'">
@@ -173,8 +179,6 @@
         </div>
       </van-popup>
     </div>
-    <pay-tip-popup :tipsShow="tipsPayShow" @closePayPopup="closePayPopup"></pay-tip-popup>
-    <privacy-dialog id="pay-tip-popup-2" wx:if="{{showPrivacy}}" />
     <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
   </div>
 </template>
@@ -184,10 +188,10 @@
     enablePullDownRefresh: true,
     usingComponents: {
       "van-button": "../../libs/vant/button/index",
-      "van-progress": "../../libs/vant/progress/index",
       "van-popup": "../../libs/vant/popup/index",
       "van-dialog": "../../libs/vant/dialog/index",
-      "pay-tip-popup": "~@/components/pay-tip-popup"
+      "van-dropdown-menu": "../../libs/vant/dropdown-menu/index",
+      "van-dropdown-item": "../../libs/vant/dropdown-item/index"
     }
   }
 </config>
@@ -207,13 +211,16 @@
       moudleId: '',
       moudleList: [],
       tipsShow: false,
-      tipsPayShow: false,
       popupDetail: {},
       popupType: '1',
       currPage: 1,
       pageSize: 18,
       noMoreData: false,
-      showPrivacy: false
+      times: [
+        { text: '第一期', value: '01' },
+        { text: '第二期', value: '02' },
+      ],
+      timeItem: '02'
     },
     // 计算的属性
     computed: {
@@ -232,16 +239,8 @@
       this.moudleId = options.id
       this.getModulesByIdData()
     },
-    onShow() {
-      this.showPrivacy = true
-    },
-    onHide() {
-      this.showPrivacy = false
-    },
     async onUnload() {
-      // eventHub.$destroy('refresh-brushquestion-list')
       eventHub._events['refresh-brushquestion-list'] = undefined
-      console.log(eventHub)
     },
     async onPullDownRefresh() {
       this.currPage = 1
@@ -257,6 +256,12 @@
       }
     },
     methods: {
+      async dropChange (e) {
+        this.currPage = 1
+        this.moudleList = []
+        this.timeItem = e.$wx.detail
+        await this.getModulesByIdData()
+      },
       // 获取已学习
       async getModulesByIdData() {
         wx.showLoading({title: '加载中'})
@@ -266,10 +271,10 @@
           pageSize: this.pageSize,
           parent_id: this.moudleId,
           module_type: '2',
-          user_id: this._id
+          user_id: this._id,
+          time: this.timeItem
         }
         let result = await getModulesByPractise(params)
-        console.log(result.result.data.list, '????????????')
         if (result.result.data.list.length > 0) {
           this.moudleList = this.moudleList.length > 0 ? this.moudleList.concat(result.result.data.list) : result.result.data.list
         } else {
@@ -277,17 +282,10 @@
         }
         wx.hideLoading()
       },
-      openPayTipPopup () {
-        this.tipsPayShow = true
-      },
-      closePayPopup (e) {
-        this.tipsPayShow = false
-      },
       closePopup () {
         this.tipsShow = false
       },
       clearQusetion (item) {
-        console.log(item, '=========')
         Dialog.confirm({
           message: '选择重新刷题后，该模块之前的做题记录会清除，且无法恢复，是否清除？'
         }).then(async () => {
@@ -302,11 +300,13 @@
           await this.getModulesByIdData()
         });
       },
+
       openPopup (item, type, index) {
         if (item.isCanUse === '1') {
           if (index > 1 && this.user.isMember != '1') {
-            this.tipsPayShow = true
-            return
+            wx.navigateTo({
+              url: `../member/pages/index`,
+            })
           } else {
             this.tipsShow = true
             this.popupDetail = item

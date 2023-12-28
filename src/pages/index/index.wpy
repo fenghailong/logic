@@ -334,6 +334,7 @@
               <image v-else src="../../assets/images/noMember.png" />
             </div>
           </div>
+          <!-- <div>{{user.wechat_openid}}</div> -->
           <div class="logic-index-box-user-count">已有{{ userCount }}人加入学习</div>
         </div>
       </div>
@@ -345,8 +346,8 @@
             开通会员，享受更多特权
           </div>
           <div class="logic-index-box-member-button">
-            <van-button v-if="isIOS" round type="info" color="#675A48" @click="openPayTipPopup">立即激活</van-button>
-            <van-button v-else round type="info" color="#675A48" @click="openPayTipPopup">开通会员</van-button>
+            <van-button v-if="isIOS" round type="info" color="#675A48" @click="toMember">立即激活</van-button>
+            <van-button v-else round type="info" color="#675A48" @click="toMember">开通会员</van-button>
           </div>
         </div>
       </div>
@@ -390,9 +391,9 @@
         <div class="logic-index-box-middle-left" @click="toBrushQuestion()">
           <image src="../../assets/images/words-bg.png" />
           <div class="logic-index-box-middle-left-title">百日刷题</div>
-          <text class="logic-index-box-middle-left-text">第一期（总十期）：刷题上80+</text>
-          <text class="logic-index-box-middle-left-text">开始时间：2023.08.14</text>
-          <text class="logic-index-box-middle-left-text">结束时间：2023.11.21</text>
+          <text class="logic-index-box-middle-left-text">第二期（总十期）：刷题上80+</text>
+          <text class="logic-index-box-middle-left-text">开始时间：2023.12.08</text>
+          <text class="logic-index-box-middle-left-text">结束时间：2024.03.16</text>
         </div>
         <div class="logic-index-box-middle-right">
           <div class="logic-index-box-middle-right-item" @click="toWords">
@@ -457,7 +458,7 @@
         </van-button>
       </div>
     </div>
-    <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
+    <!-- <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup> -->
     <privacy-dialog id="pay-tip-popup-1" wx:if="{{showPrivacy}}" />
   </div>
 </template>
@@ -507,7 +508,7 @@
       // 事业单位模块
       undertaking: [],
       isIOS: false,
-      tipsShow: false,
+      // tipsShow: false,
       showPrivacy: false
     },
     computed: {
@@ -530,12 +531,14 @@
       wx.stopPullDownRefresh()
     },
     methods: {
-      openPayTipPopup () {
-        this.tipsShow = true
+      toMember () {
+        wx.navigateTo({
+          url: `../member/pages/index`,
+        })
       },
-      closePayPopup (e) {
-        this.tipsShow = e
-      },
+      // closePayPopup (e) {
+      //   this.tipsShow = e
+      // },
       getSystemInfo () {
         let that = this
         wx.getSystemInfo({
@@ -622,17 +625,19 @@
       },
       // toKnowledgeModules
       async toUndertaking (id) {
+        console.log(id)
         if (this.isLoggedIn) {
           wx.navigateTo({
-            url: `/pages/undertaking/index?id=${id}`,
+            url: `../knowedge/pages/undertaking/index?id=${id}`,
           })
         }
       },
       // toKnowledgeModules
       async toLinetest (id) {
+        console.log(id)
         if (this.isLoggedIn) {
           wx.navigateTo({
-            url: `/pages/linetest/index?id=${id}`,
+            url: `../knowedge/pages/linetest/index?id=${id}`,
           })
         }
       },

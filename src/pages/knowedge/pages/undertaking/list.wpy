@@ -49,12 +49,12 @@
   {
   navigationBarTitleText: '知识点详情',
     usingComponents: {
-      "van-search": "../../libs/vant/circle/index",
-      "van-notice-bar": "../../libs/vant/notice-bar/index",
-      "van-button": "../../libs/vant/button/index",
-      "van-rate": "../../libs/vant/rate/index",
-      "van-empty": "../../libs/vant/empty/index",
-      "van-icon": "../../libs/vant/icon/index",
+      "van-search": "../../../../libs/vant/circle/index",
+      "van-notice-bar": "../../../../libs/vant/notice-bar/index",
+      "van-button": "../../../../libs/vant/button/index",
+      "van-rate": "../../../../libs/vant/rate/index",
+      "van-empty": "../../../../libs/vant/empty/index",
+      "van-icon": "../../../../libs/vant/icon/index",
     }
   }
 </config>
@@ -63,7 +63,6 @@
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
   import { getModulesById } from '@/api/knowledgeModule'
-  import eventHub from '@/common/eventHub'
 
   wepy.page({
     store,

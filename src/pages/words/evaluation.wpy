@@ -127,8 +127,6 @@
       </div>
     </div>
     <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
-    <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
-    <privacy-dialog id="pay-tip-popup-6" wx:if="{{showPrivacy}}" />
   </div>
 </template>
 <config>
@@ -136,7 +134,6 @@
     navigationBarTitleText: '词语含义',
     usingComponents: {
       "van-rate": "../../libs/vant/rate/index",
-      "pay-tip-popup": "~@/components/pay-tip-popup",
       "van-dialog": "../../libs/vant/dialog/index",
     }
   }
@@ -145,7 +142,6 @@
   import wepy from '@wepy/core'
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
-  import eventHub from '@/common/eventHub'
   import Dialog from '../../libs/vant/dialog/dialog';
   import { getWordByRandom, upDateWordsEvaluation, getSentenceById, getAllEvaluationWordsCount } from '@/api/words'
   wepy.page({
@@ -166,8 +162,6 @@
       isRight: false,
       indicatorDots: true,
       duration: 500,
-      tipsShow: false,
-      showPrivacy: false
     },
     async onLoad() {
       await this.getWordsDetail()
@@ -179,11 +173,10 @@
       this.showPrivacy = false
     },
     methods: {
-      openPayTipPopup () {
-        this.tipsShow = true
-      },
-      closePayPopup () {
-        this.tipsShow = false
+      toMember () {
+        wx.navigateTo({
+          url: `../member/pages/index`,
+        })
       },
       // 获取单个词语
       async getWordsDetail() {
@@ -202,7 +195,9 @@
               message: '普通用户可以免费体验10个成语评测，开通会员解锁所有成语评测',
               confirmButtonText: '立即开通'
             }).then(async () => {
-              this.openPayTipPopup()
+              wx.navigateTo({
+                url: `../member/pages/index`,
+              })
             }).catch(() => {
               wx.navigateBack({
                 delta: 1
@@ -230,7 +225,7 @@
       async chooseOption (item) {
         if(this.user.isMember === '2') {
           if (this.studycount > 10) {
-            this.openPayTipPopup()
+            this.toMember()
             return
           }
         }
@@ -251,7 +246,7 @@
       async viewAnswer () {
         if(this.user.isMember === '2') {
           if (this.studycount > 10) {
-            this.openPayTipPopup()
+            this.toMember()
             return
           }
         }
@@ -270,7 +265,7 @@
       async nextWord () {
         if(this.user.isMember === '2') {
           if (this.studycount > 10) {
-            this.openPayTipPopup()
+            this.toMember()
             return
           }
         }

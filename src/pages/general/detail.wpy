@@ -85,10 +85,9 @@
         <van-button round type="info" @click="nextGeneral">下一个</van-button>
       </div>
     </div>
-    <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
     <van-popup @click-overlay="clickOverlay" :show="showPopup" position="bottom" round>
       <div class="logic-index-list-popup-list" :style="{ height: '70vh' }">
-        <div v-for="(item, index) in moudleList" :key="index" class="logic-index-list-popup-item {{ index > 20 && user.isMember != '1' ? 'logic-index-list-popup-item-opticty' : ''}}"  @click="{{ index > 20 && user.isMember != '1' ? openPayTipPopup(item,index) : toGeneral(item._id)}}">
+        <div v-for="(item, index) in moudleList" :key="index" class="logic-index-list-popup-item {{ index > 20 && user.isMember != '1' ? 'logic-index-list-popup-item-opticty' : ''}}"  @click="{{ index > 20 && user.isMember != '1' ? toMember(item,index) : toGeneral(item._id)}}">
           <div class="logic-index-list-popup-index">{{index + 1}}</div>
           <div class="logic-index-list-popup-title" >{{item.title}}</div>
           <div v-if="index > 20 && user.isMember != '1'">
@@ -101,8 +100,7 @@
         </div>
       </div>
     </van-popup>
-    <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
-    <privacy-dialog id="pay-tip-popup-4" wx:if="{{showPrivacy}}" />
+    <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
   </div>
 </template>
 <config>
@@ -117,7 +115,6 @@
       "van-dialog": "../../libs/vant/dialog/index",
       "van-tag": "../../libs/vant/tag/index",
       "van-popup": "../../libs/vant/popup/index",
-      "pay-tip-popup": "~@/components/pay-tip-popup"
     }
   }
 </config>
@@ -140,20 +137,12 @@
       detail: {},
       moudleList: {},
       showPopup: false, // 列表弹框
-      tipsShow: false, // 兑换码提示弹框
-      showPrivacy: false
     },
     async onLoad(options) {
       this.moudleList = JSON.parse((decodeURIComponent(options.moudleList)))
       this.id = options.id
       await this.getDetail()
       wx.setNavigationBarTitle({title: this.detail.title})
-    },
-    onShow() {
-      this.showPrivacy = true
-    },
-    onHide() {
-      this.showPrivacy = false
     },
     methods: {
       // 获取模块知识点详情
@@ -172,8 +161,8 @@
         let nextIndex = 0
         let index = this.moudleList.findIndex((item) => item._id == this.id)
         nextIndex = index + 1
-        if (nextIndex > 2 && this.user.isMember != '1'){
-          this.tipsShow = true // 打开提示框
+        if (nextIndex > 20 && this.user.isMember != '1'){
+          this.toMember()
           return
         }
         if (nextIndex > (this.moudleList.length - 1)) {
@@ -186,11 +175,11 @@
           this.getDetail()
         }
       },
-      openPayTipPopup () {
-        this.tipsShow = true
-      },
-      closePayPopup (e) {
-        this.tipsShow = e
+      toMember () {
+        this.showPopup = false
+        wx.navigateTo({
+          url: `../member/pages/index`,
+        })
       },
       async previousGeneral () {
         let previousIndex = 0

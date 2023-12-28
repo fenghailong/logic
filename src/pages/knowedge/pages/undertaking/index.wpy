@@ -69,7 +69,7 @@
   <div class="page">
     <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，在进行刷题效果会更好哦" />
     <div class="logic-detail-box">
-      <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content">
+      <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content {{ index > 0 && user.isMember != '1' ? 'logic-detail-content-opticty' : ''}}" @click="{{ index > 0 && user.isMember != '1' ? toMember() : ''}}">
         <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->
         <div class="logic-detail-content-title">{{item.name}}</div>
         <div class="logic-detail-content-describe">总结{{item.name}}模块的知识点，需要掌握熟记，学习完后最好配合FB对应的刷题模块。</div>
@@ -78,27 +78,27 @@
           <van-rate readonly value="{{ starValue }}" allow-half/>
         </div> -->
         <div class="logic-detail-content-footer">
-          <van-button class="logic-detail-content-button" color="#4755EB" round @click="toList(item._id, item.name)">开始学习</van-button>
-          <!-- <van-button class="logic-detail-content-button" color="#54BBCB" round @click="{{index > 0 && user.isMember != '1' ? '' : toEvaluation(item._id, item.name)}}">考点评测</van-button> -->
+          <van-button class="logic-detail-content-button" color="#4755EB" round @click="{{index > 0 && user.isMember != '1' ? '' : toList(item._id, item.name)}}">开始学习</van-button>
+          <van-button class="logic-detail-content-button" color="#54BBCB" round @click="{{index > 0 && user.isMember != '1' ? '' : toEvaluation(item._id, item.name)}}">考点评测</van-button>
         </div>
-        <!-- <div v-if="index > 0 && user.isMember != '1'">
-          <image class="logic-detail-content-locked" src="../../assets/images/locked.png" />
-        </div> -->
+        <div v-if="index > 0 && user.isMember != '1'">
+          <image class="logic-detail-content-locked" src="../../images/locked.png" />
+        </div>
 
       </div>
     </div>
-    <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
+    <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
   </div>
 </template>
 <config>
   {
-  navigationBarTitleText: '言语理解',
+  navigationBarTitleText: '知识点详情',
     usingComponents: {
-      "van-search": "../../libs/vant/circle/index",
-      "van-notice-bar": "../../libs/vant/notice-bar/index",
-      "van-button": "../../libs/vant/button/index",
-      "van-rate": "../../libs/vant/rate/index",
-      "pay-tip-popup": "~@/components/pay-tip-popup"
+      "van-search": "../../../../libs/vant/circle/index",
+      "van-notice-bar": "../../../../libs/vant/notice-bar/index",
+      "van-button": "../../../../libs/vant/button/index",
+      "van-rate": "../../../../libs/vant/rate/index",
+      "van-dialog": "../../../../libs/vant/dialog/index"
     }
   }
 </config>
@@ -108,8 +108,7 @@
   import subscribe from '@/mixins/subscribe.js'
   import { mapGetters } from '@wepy/x'
   import { getModulesById } from '@/api/knowledgeModule'
-  import { addMessage } from '@/api/subscribe'
-  import eventHub from '@/common/eventHub'
+  import Dialog from '../../../../libs/vant/dialog/dialog';
 
   wepy.page({
     store,
@@ -117,7 +116,6 @@
     data: {
       moudleId: '',
       moudleList: [],
-      tipsShow: false
     },
     // 计算的属性
     computed: {
@@ -128,11 +126,10 @@
       this.getModulesByIdData(this.moudleId)
     },
     methods: {
-      openPayTipPopup () {
-        this.tipsShow = true
-      },
-      closePayPopup (e) {
-        this.tipsShow = e
+      toMember () {
+        wx.navigateTo({
+          url: `../../../member/pages/index`,
+        })
       },
       // 获取已学习
       async getModulesByIdData(moudleId) {
@@ -146,14 +143,14 @@
           await this.onSubscribe()
         }
         wx.navigateTo({
-          url: `/pages/linetest/list?id=${id}&name=${name}`,
+          url: `/pages/undertaking/list?id=${id}&name=${name}`,
         })
       },
-      // toEvaluation (id, name) {
-      //   wx.navigateTo({
-      //     url: `/pages/undertaking/evaluation?id=${id}&name=${name}`,
-      //   })
-      // },
+      toEvaluation (id, name) {
+        wx.navigateTo({
+          url: `/pages/undertaking/evaluation?id=${id}&name=${name}`,
+        })
+      },
       formdate(date){
         var year = date.getFullYear();
         var month = date.getMonth() + 1;

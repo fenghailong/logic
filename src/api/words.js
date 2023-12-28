@@ -1,5 +1,28 @@
 import { request, authRequest } from '@/utils/request'
 
+// 获取用户当前学习成语或者词语的id
+export async function getCurrenStudyWordId(data) {
+  return await wx.cloud.callFunction({
+    name: 'words',
+    data: {
+      func: 'getCurrenStudyWordId',
+      data
+    },
+  })
+}
+
+// 获取已学习的信息
+export async function getWordList(data) {
+  return await wx.cloud.callFunction({
+    name: 'words',
+    data: {
+      func: 'getWordList',
+      data
+    },
+  })
+}
+
+
 export async function getEvaluationWordsQueryPage(data) {
   return await wx.cloud.callFunction({
     name: 'words',

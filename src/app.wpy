@@ -91,12 +91,10 @@ wepy.app({
       'pages/index/searchDetail',
       'pages/index/web-view',
       'pages/words/index',
+      'pages/words/detail',
+      'pages/words/newDetail',
       'pages/words/evaluation',
       'pages/words/evaluationList',
-      'pages/undertaking/index',
-      'pages/undertaking/list',
-      'pages/undertaking/detail',
-      'pages/undertaking/evaluation',
       'pages/general/index',
       'pages/general/list',
       'pages/general/detail',
@@ -107,10 +105,6 @@ wepy.app({
       'pages/realpolitics/evaluation',
       'pages/realpolitics/question',
       'pages/realpolitics/questionResult',
-      'pages/linetest/index',
-      'pages/linetest/list',
-      'pages/linetest/detail',
-      'pages/linetest/evaluation',
       'pages/practise/index',
       'pages/errorquestion/index',
       'pages/errorquestion/list',
@@ -125,8 +119,31 @@ wepy.app({
       'pages/customer/index',
       'pages/reporterror/index',
       'pages/payattention/index',
-      'pages/auth/login',
-      'pages/member/index'
+      'pages/auth/login'
+    ],
+    "subPackages": [
+      {
+        "root": "pages/knowedge",
+        "name": "knowedge",
+        "pages": [
+          'pages/undertaking/index',
+          'pages/undertaking/list',
+          'pages/undertaking/detail',
+          'pages/undertaking/evaluation',
+          'pages/linetest/index',
+          'pages/linetest/list',
+          'pages/linetest/detail',
+          'pages/linetest/evaluation'
+        ]
+      },
+      {
+        "root": "pages/member",
+        "name": "member",
+        "pages": [
+          'pages/index',
+          'pages/agreement'
+        ]
+      }
     ],
     window: {
       backgroundTextStyle: 'light',

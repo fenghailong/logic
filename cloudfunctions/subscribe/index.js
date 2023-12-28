@@ -32,7 +32,7 @@ const getAllMessages = async (data) => {
 const sendMessage = async () => {
   let result = await getAllMessages();
   let messageList = result.data.filter(function(item,index,self){
-    return self.findIndex(el=>(el.wechat_openid==item.wechat_openid && item.isUse === '2' && item._createTime < 1697963707814))===index
+    return self.findIndex(el=>(el.wechat_openid==item.wechat_openid && item.isUse === '2' && item._createTime < 1699811421694))===index
     // return self.findIndex(el=>(el.wechat_openid==item.wechat_openid && item.isUse === '2'))===index
   })
   // messageList=messageList.slice(0,100)
@@ -51,13 +51,13 @@ const sendMessageItem = async (item) => {
       "lang": 'zh_CN',
       "data": {
         "thing1": {
-          "value": '申论规范词507条已更新'
+          "value": '百日刷题第二期已开启'
         },
         "thing2": {
-          "value": '人物素材224个已更新'
+          "value": '申论规范词507条已更新'
         },
         "thing5": {
-          "value": '会员群资料包已更新（申论急救包）'
+          "value": '申论万能开头结尾已更新'
         }
       },
       "templateId": item.templateId,

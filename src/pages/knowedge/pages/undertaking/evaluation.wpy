@@ -143,16 +143,16 @@
       </div>
       <div v-else class="logic-index-footer">
         <div class="logic-index-footer-input" @click="showInputBox">
-          <image src="../../assets/images/input.png" />
+          <image src="../../images/input.png" />
           <div class="logic-index-footer-text">输入文字</div>
           <!-- <input type="text" 	:adjust-position="false" 	@confirm="inputConfirm" /> -->
         </div>
         <div class="logic-index-footer-img" @touchstart="touchStart" @touchend="touchEnd">
-          <image src="../../assets/images/speak.png" />
+          <image src="../../images/speak.png" />
           <div class="logic-index-footer-text">长按说话</div>
         </div>
         <div class="logic-index-footer-next" @click="viewAnswer">
-          <image src="../../assets/images/next.png" />
+          <image src="../../images/next.png" />
           <div class="logic-index-footer-text">查看答案</div>
         </div>
       </div>
@@ -183,8 +183,8 @@
   {
     navigationBarTitleText: '马克思主义哲学',
     usingComponents: {
-      "van-empty": "../../libs/vant/empty/index",
-      "van-button": "../../libs/vant/button/index"
+      "van-empty": "../../../../libs/vant/empty/index",
+      "van-button": "../../../../libs/vant/button/index"
     }
   }
 </config>
@@ -192,7 +192,6 @@
   import wepy from '@wepy/core'
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
-  import eventHub from '@/common/eventHub'
   import { getEvaluationById, addEvaluationRecord } from '@/api/knowledgeModule'
   import { getSystemData, queryNodes } from '@/utils/util'
   let plugin = requirePlugin("WechatSI")

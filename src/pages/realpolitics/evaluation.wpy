@@ -156,8 +156,6 @@
           <div class="logic-index-footer-text">查看答案</div>
         </div>
       </div>
-      <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
-      <privacy-dialog id="pay-tip-popup-5" wx:if="{{showPrivacy}}" />
     </div>
     <van-empty v-else description="没有更多题目了" />
     <div
@@ -186,8 +184,7 @@
     navigationBarTitleText: '马克思主义哲学',
     usingComponents: {
       "van-empty": "../../libs/vant/empty/index",
-      "van-button": "../../libs/vant/button/index",
-      "pay-tip-popup": "~@/components/pay-tip-popup"
+      "van-button": "../../libs/vant/button/index"
     }
   }
 </config>
@@ -223,8 +220,6 @@
       windowHeight: '',
       ctInput_top: '',
       inputValue: '', // 输入框的内容
-      tipsShow: false, // 会员判断框
-      showPrivacy: false
     },
     async onLoad(options) {
       await this.getWindowData()
@@ -337,12 +332,6 @@
           this.currentAnswer.speak = res.result.replace(/[。，\/#！$%\^&\*；：{}=\-_`~()]/g,"");
           this.checkAnswer(this.currentAnswer.speak)
         }
-      },
-      openPayTipPopup () {
-        this.tipsShow = true
-      },
-      closePayPopup (e) {
-        this.tipsShow = e
       },
       // 查看答案
       async viewAnswer () {

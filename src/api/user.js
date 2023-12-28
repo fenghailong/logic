@@ -1,5 +1,27 @@
 import { request, authRequest, uploadFile } from '@/utils/request'
 
+// 获取所有用户学习某个模块的次数
+export async function getUserCountInfo(data) {
+  return await wx.cloud.callFunction({
+    name: 'user',
+    data: {
+      func: 'getUserCountInfo',
+      data,
+    },
+  })
+}
+
+// 更新是否学习成语 实词
+export async function reflashUserCount(data) {
+  return await wx.cloud.callFunction({
+    name: 'user',
+    data: {
+      func: 'reflashUserCount',
+      data,
+    },
+  })
+}
+
 export async function getUser(data) {
   return await wx.cloud.callFunction({
     name: 'user',

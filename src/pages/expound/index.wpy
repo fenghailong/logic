@@ -77,7 +77,7 @@
   <div class="page">
     <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，在进行考点评测效果会更好哦" />
     <div class="logic-detail-box">
-      <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content {{ user.isMember != '1' ? 'logic-detail-content-opticty' : ''}}" @click="{{ user.isMember != '1' ? openPayTipPopup() : ''}}">
+      <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content {{ user.isMember != '1' ? 'logic-detail-content-opticty' : ''}}" @click="{{ user.isMember != '1' ? toMember() : ''}}">
         <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->
         <div class="logic-detail-content-title">
           <div class="logic-detail-content-title-text">{{item.name}}</div>
@@ -109,8 +109,7 @@
         </div>
       </div>
     </div>
-    <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
-    <privacy-dialog id="pay-tip-popup-3" wx:if="{{showPrivacy}}" />
+    <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
   </div>
 </template>
 <config>
@@ -121,7 +120,7 @@
       "van-notice-bar": "../../libs/vant/notice-bar/index",
       "van-button": "../../libs/vant/button/index",
       "van-rate": "../../libs/vant/rate/index",
-      "pay-tip-popup": "~@/components/pay-tip-popup"
+      "van-dialog": "../../libs/vant/dialog/index"
     }
   }
 </config>
@@ -131,8 +130,7 @@
   import subscribe from '@/mixins/subscribe.js'
   import { mapGetters } from '@wepy/x'
   import { getModulesById } from '@/api/knowledgeModule'
-  import { addMessage } from '@/api/subscribe'
-  import eventHub from '@/common/eventHub'
+  import Dialog from '../../libs/vant/dialog/dialog';
 
   wepy.page({
     store,
@@ -140,29 +138,20 @@
     data: {
       moudleId: '',
       moudleList: [],
-      tipsShow: false,
-      showPrivacy: false
     },
     // 计算的属性
     computed: {
       ...mapGetters(['_id', 'user']),
-    },
-    onShow() {
-      this.showPrivacy = true
-    },
-    onHide() {
-      this.showPrivacy = false
     },
     onLoad(options) {
       this.moudleId = options.id
       this.getModulesByIdData(this.moudleId)
     },
     methods: {
-      openPayTipPopup () {
-        this.tipsShow = true
-      },
-      closePayPopup (e) {
-        this.tipsShow = e
+      toMember () {
+        wx.navigateTo({
+          url: `../member/pages/index`,
+        })
       },
       // 获取已学习
       async getModulesByIdData(moudleId) {

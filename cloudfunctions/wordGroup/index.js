@@ -5,10 +5,15 @@ cloud.init({
   env:'prod-2gzhco766f4e1e27'
 });
 const db = cloud.database();
-const collection = db.collection('words');
-const reCollection = db.collection('wordsRecord');
+const collection = db.collection('wordGroup');
+const wordcollection = db.collection('words');
+const reCollection = db.collection('wordGroupRecord');
+
+// todo
 const evaCollection = db.collection('wordsEvaluation');
 const senCollection = db.collection('sentence');
+// todo
+
 const _ = db.command
 const $ = db.command.aggregate
 
@@ -342,42 +347,40 @@ const getWordsStudyCount = async (data) => {
   return res;
 }
 
-const getWordList= async (options) => {
+const getWordGroupList= async (options) => {
   console.log(options)
   const aggregateInstance = collection.aggregate()
   .lookup({
-    from: 'wordsRecord',
+    from: 'wordGroupRecord',
     let: {
-      words_id: '$_id',
+      word_group_id: '$_id',
       user_id: options.user_id
     },
     pipeline: $.pipeline()
       .match(_.expr($.and([
-        $.eq(['$words_id', '$$words_id']),
+        $.eq(['$word_group_id', '$$word_group_id']),
         $.eq(['$user_id', '$$user_id'])
       ])))
       .project({
         _id: 1
       })
       .done(),
-    as: 'wordsRecordList',
+    as: 'wordGroupRecordList',
   })
 
   let result = await aggregateInstance
-  .match({
-    synonym: _.exists(true)
-  })
-  .sort({count: -1})
   .project({
     _id: 1,
     type: 1,
-    count: 1,
-    name: 1,
-    wordsRecordList: 1,
-    isStudyed: $.size('$wordsRecordList')
+    word_type: 1,
+    wordGroupRecordList: 1,
+    isStudyed: $.size('$wordGroupRecordList')
+  })
+  .project({
+    wordGroupRecordList: 0,
   })
   .group({
-    _id: '$type',
+    _id: '$word_type',
     root: {
       $push: "$$ROOT"
     },
@@ -385,13 +388,13 @@ const getWordList= async (options) => {
   })
   .limit(4000)
   .end()
+  console.log(result, '=======================')
   let idiomList;
   let studyIdiomCount;
   let notionalList;
   let studyNotionalCount;
-  console.log(result, '=======================')
   result.list.map(item => {
-    if (item._id === 1) {
+    if (item._id === '1') {
       idiomList = item.root
       studyIdiomCount = item.total
     } else {
@@ -416,22 +419,21 @@ const getWordList= async (options) => {
 }
 
 // 获取用户当前学习成语或者词语的id
-const getCurrenStudyWordId = async (data) => {
-  const resultIdiom = await reCollection.where({ user_id: data.user_id, word_type: '1' }).orderBy('_updateTime','desc').limit(1).get()
-  const resultNotional = await reCollection.where({ user_id: data.user_id, word_type: '2' }).orderBy('_updateTime','desc').limit(1).get()
+const getCurrenStudyWordGroupId = async (data) => {
+  const resultIdiom = await reCollection.where({ user_id: data.user_id, word_group_type: '1' }).orderBy('_updateTime','desc').limit(1).get()
+  const resultNotional = await reCollection.where({ user_id: data.user_id, word_group_type: '2' }).orderBy('_updateTime','desc').limit(1).get()
   let idiomWordId = ''
   let notionalWordId = ''
-  console.log(resultIdiom, '?????????????')
   if (resultIdiom.data.length > 0) {
-    idiomWordId = resultIdiom.data[0].words_id
+    idiomWordId = resultIdiom.data[0].word_group_id
   } else {
-    const idionWord = await collection.where({ type: 1, synonym: _.exists(true)}).orderBy('count','desc').limit(1).get()
+    const idionWord = await collection.where({ word_type: '1'}).limit(1).get()
     idiomWordId = idionWord.data.length > 0 ? idionWord.data[0]._id : ''
   }
   if (resultNotional.data.length > 0) {
-    notionalWordId = resultNotional.data[0].words_id
+    notionalWordId = resultNotional.data[0].word_group_id
   } else {
-    const notionalWord = await collection.where({ type: 2, synonym: _.exists(true)}).orderBy('count','desc').limit(1).get()
+    const notionalWord = await collection.where({ word_type: '2'}).limit(1).get()
     notionalWordId = notionalWord.data.length > 0 ? notionalWord.data[0]._id : ''
   }
   return {
@@ -445,34 +447,34 @@ const getCurrenStudyWordId = async (data) => {
 }
 
 
-const getWordsDetail = async (options) => {
-  let word;
-  const hasWord = await collection.where({ _id: options.word_id }).get();
+const getWordGroupDetail = async (options) => {
+  let word_group;
+  const hasWord = await collection.where({ _id: options.word_group_id }).get();
   if (Array.isArray(hasWord.data) && hasWord.data.length === 0) {
-    word = {}
+    word_group = {}
   } else {
     await reflashWordsRecord(options);
-    word = hasWord.data[0];
-    if(word.synonym) {
-      let result = await getSynonymWords(word.synonym)
-      word.synonymList = result.data
+    word_group = hasWord.data[0];
+    if(word_group.connective) {
+      let result = await getConnectiveWords(word_group.connective)
+      word_group.connectiveList = result.data
     }else{
-      word.synonymList = []
+      word_group.connectiveList = []
     }
 
   }
-  return word;
+  return word_group;
 }
 
-const getSynonymWords = async (arr) => {
-  const synonymWordList = await collection.where({
+const getConnectiveWords = async (arr) => {
+  const connectiveList = await wordcollection.where({
     _id: _.in(arr)
   }).get();
-  return synonymWordList;
+  return connectiveList;
 }
 
 const reflashWordsRecord = async (options) => {
-  const hasWord = await reCollection.where({ words_id: options.word_id, user_id: options.user_id}).get();
+  const hasWord = await reCollection.where({ word_group_id: options.word_group_id, user_id: options.user_id}).get();
   if (Array.isArray(hasWord.data) && hasWord.data.length === 0) {
     await addWordsRecord(options);
   } else {
@@ -493,9 +495,9 @@ const upDateWordsRecord = async (id) => {
 const addWordsRecord = async (options) => {
   await reCollection.add({
     data: {
-      words_id: options.word_id,
+      word_group_id: options.word_group_id,
       user_id: options.user_id,
-      word_type: options.word_type ? options.word_type : '1',
+      word_group_type: options.word_group_type,
       _createTime: Date.now(),
       _updateTime: Date.now()
     }
@@ -509,14 +511,14 @@ exports.main = async (event, context) => {
   if (func === 'getWordsStudyCount') {
     res = await getWordsStudyCount(data);
   }
-  else if (func === 'getCurrenStudyWordId') { // 获取用户当前学习成语或者词语的id
-    res = await getCurrenStudyWordId(data);
+  else if (func === 'getCurrenStudyWordGroupId') { // 获取用户当前学习成语或者词语的id
+    res = await getCurrenStudyWordGroupId(data);
   }
-  else if (func === 'getWordList') { // 获取成语或者词语列表// 获取已经学习成语，实词数量
-    res = await getWordList(data);
+  else if (func === 'getWordGroupList') { // 获取成语或者词语列表// 获取已经学习成语，实词数量
+    res = await getWordGroupList(data);
   }
-  else if (func === 'getWordsDetail') {
-    res = await getWordsDetail(data);
+  else if (func === 'getWordGroupDetail') {
+    res = await getWordGroupDetail(data);
   }
   else if (func === 'reflashWordsRecord') {
     res = await reflashWordsRecord(data);

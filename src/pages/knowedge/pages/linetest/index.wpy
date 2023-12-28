@@ -69,37 +69,24 @@
   <div class="page">
     <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，在进行刷题效果会更好哦" />
     <div class="logic-detail-box">
-      <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content {{ index > 0 && user.isMember != '1' ? 'logic-detail-content-opticty' : ''}}" @click="{{ index > 0 && user.isMember != '1' ? openPayTipPopup() : ''}}">
-        <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->
+      <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content">
         <div class="logic-detail-content-title">{{item.name}}</div>
         <div class="logic-detail-content-describe">总结{{item.name}}模块的知识点，需要掌握熟记，学习完后最好配合FB对应的刷题模块。</div>
-        <!-- <div class="logic-detail-content-message">
-          <div class="logic-detail-content-message-practice">已练习 {{studyCount}}/{{detail.count}}</div>
-          <van-rate readonly value="{{ starValue }}" allow-half/>
-        </div> -->
         <div class="logic-detail-content-footer">
-          <van-button class="logic-detail-content-button" color="#4755EB" round @click="{{index > 0 && user.isMember != '1' ? '' : toList(item._id, item.name)}}">开始学习</van-button>
-          <van-button class="logic-detail-content-button" color="#54BBCB" round @click="{{index > 0 && user.isMember != '1' ? '' : toEvaluation(item._id, item.name)}}">考点评测</van-button>
+          <van-button class="logic-detail-content-button" color="#4755EB" round @click="toList(item._id, item.name)">开始学习</van-button>
         </div>
-        <div v-if="index > 0 && user.isMember != '1'">
-          <image class="logic-detail-content-locked" src="../../assets/images/locked.png" />
-        </div>
-
       </div>
     </div>
-    <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
-    <privacy-dialog id="pay-tip-popup-6" wx:if="{{showPrivacy}}" />
   </div>
 </template>
 <config>
   {
-  navigationBarTitleText: '知识点详情',
+  navigationBarTitleText: '言语理解',
     usingComponents: {
-      "van-search": "../../libs/vant/circle/index",
-      "van-notice-bar": "../../libs/vant/notice-bar/index",
-      "van-button": "../../libs/vant/button/index",
-      "van-rate": "../../libs/vant/rate/index",
-      "pay-tip-popup": "~@/components/pay-tip-popup"
+      "van-search": "../../../../libs/vant/circle/index",
+      "van-notice-bar": "../../../../libs/vant/notice-bar/index",
+      "van-button": "../../../../libs/vant/button/index",
+      "van-rate": "../../../../libs/vant/rate/index"
     }
   }
 </config>
@@ -109,39 +96,24 @@
   import subscribe from '@/mixins/subscribe.js'
   import { mapGetters } from '@wepy/x'
   import { getModulesById } from '@/api/knowledgeModule'
-  import { addMessage } from '@/api/subscribe'
-  import eventHub from '@/common/eventHub'
 
   wepy.page({
     store,
     mixins: [ subscribe ],
     data: {
       moudleId: '',
-      moudleList: [],
-      tipsShow: false,
-      showPrivacy: false
+      moudleList: []
     },
     // 计算的属性
     computed: {
       ...mapGetters(['_id', 'user']),
     },
     onLoad(options) {
+      console.log(1)
       this.moudleId = options.id
       this.getModulesByIdData(this.moudleId)
     },
-    onShow() {
-      this.showPrivacy = true
-    },
-    onHide() {
-      this.showPrivacy = false
-    },
     methods: {
-      openPayTipPopup () {
-        this.tipsShow = true
-      },
-      closePayPopup (e) {
-        this.tipsShow = e
-      },
       // 获取已学习
       async getModulesByIdData(moudleId) {
         wx.showLoading({title: '加载中'})
@@ -154,12 +126,7 @@
           await this.onSubscribe()
         }
         wx.navigateTo({
-          url: `/pages/undertaking/list?id=${id}&name=${name}`,
-        })
-      },
-      toEvaluation (id, name) {
-        wx.navigateTo({
-          url: `/pages/undertaking/evaluation?id=${id}&name=${name}`,
+          url: `/pages/linetest/list?id=${id}&name=${name}`,
         })
       },
       formdate(date){
@@ -176,7 +143,7 @@
         // 标题是话题标题
         title: '知识模块',
         // 路径为话题详情路径
-        path: '/pages/undertaking/index?id=' + this.moudleId,
+        path: '/pages/linetest/index?id=' + this.moudleId,
       }
     },
   })

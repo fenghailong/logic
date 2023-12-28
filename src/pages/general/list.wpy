@@ -72,7 +72,7 @@
     <div class="logic-detail-box">
       <div v-if="moudleList.length > 0" class="logic-detail-title">已学习 {{studyGeneralCount}}/{{generalCount}}</div>
       <div class="logic-detail-list">
-        <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content" @click="{{ index > 20 && user.isMember != '1' ? openPayTipPopup() : toDetail(item._id)}}">
+        <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content" @click="{{ index > 20 && user.isMember != '1' ? toMember() : toDetail(item._id)}}">
           <div class="logic-detail-content-title {{ index > 20 && user.isMember != '1' ? 'logic-detail-content-opticty' : ''}}">{{item.title}}</div>
           <div v-if="index > 20 && user.isMember != '1'">
             <image class="logic-detail-content-locked" src="../../assets/images/locked.png" />
@@ -88,8 +88,7 @@
         <van-button color="#4755EB" round @click="nextSubject">换一批</van-button>
       </div> -->
     </div>
-    <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
-    <privacy-dialog id="pay-tip-popup-4" wx:if="{{showPrivacy}}" />
+    <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
   </div>
 </template>
 <config>
@@ -100,7 +99,7 @@
       "van-notice-bar": "../../libs/vant/notice-bar/index",
       "van-button": "../../libs/vant/button/index",
       "van-rate": "../../libs/vant/rate/index",
-      "pay-tip-popup": "~@/components/pay-tip-popup"
+      "van-dialog": "../../libs/vant/dialog/index"
     }
   }
 </config>
@@ -110,16 +109,14 @@
   import { mapGetters } from '@wepy/x'
   import { getAllGeneralInfo } from '@/api/general'
   import eventHub from '@/common/eventHub'
-
+  import Dialog from '../../libs/vant/dialog/dialog';
   wepy.page({
     store,
     data: {
       module_id: '',
       moudleList: [],
       generalCount: 100,
-      studyGeneralCount: 0,
-      tipsShow: false,
-      showPrivacy: false
+      studyGeneralCount: 0
     },
     // 计算的属性
     computed: {
@@ -139,18 +136,11 @@
       this.module_id = options.id
       this.getAllGeneralInfoData()
     },
-    onShow() {
-      this.showPrivacy = true
-    },
-    onHide() {
-      this.showPrivacy = false
-    },
     methods: {
-      openPayTipPopup () {
-        this.tipsShow = true
-      },
-      closePayPopup (e) {
-        this.tipsShow = e
+      toMember () {
+        wx.navigateTo({
+          url: `../member/pages/index`,
+        })
       },
       // 获取已学习
       async getAllGeneralInfoData() {

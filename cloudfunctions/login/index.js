@@ -85,7 +85,7 @@ const updateUser = async (options, OPENID) => {
 //获取人数
 const getUserCount = async (options, OPENID) => {
   let userCount = await collection.count();
-  userCount.total =  Number(userCount.total) + 20000
+  userCount.total =  Number(userCount.total) + 18000
   return userCount
 }
 

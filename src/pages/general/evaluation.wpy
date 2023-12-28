@@ -156,10 +156,9 @@
           <div class="logic-index-footer-text">查看答案</div>
         </div>
       </div>
-      <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
-      <privacy-dialog id="pay-tip-popup-4" wx:if="{{showPrivacy}}" />
     </div>
     <van-empty v-else description="没有更多题目了" />
+    <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
     <div
         id="ctInput"
         class="logic-index-input"
@@ -187,7 +186,7 @@
     usingComponents: {
       "van-empty": "../../libs/vant/empty/index",
       "van-button": "../../libs/vant/button/index",
-      "pay-tip-popup": "~@/components/pay-tip-popup"
+      "van-dialog": "../../libs/vant/dialog/index"
     }
   }
 </config>
@@ -195,9 +194,9 @@
   import wepy from '@wepy/core'
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
-  import eventHub from '@/common/eventHub'
   import { getEvaluationById, addEvaluationRecord, getEvaluationRecordCount } from '@/api/knowledgeModule'
   import { getSystemData, queryNodes } from '@/utils/util'
+  import Dialog from '../../libs/vant/dialog/dialog';
   let plugin = requirePlugin("WechatSI")
   let manager = plugin.getRecordRecognitionManager()
   wepy.page({
@@ -223,8 +222,6 @@
       windowHeight: '',
       ctInput_top: '',
       inputValue: '', // 输入框的内容
-      tipsShow: false, // 会员判断框
-      showPrivacy: false
     },
     async onLoad(options) {
       await this.getWindowData()
@@ -232,12 +229,6 @@
       await this.getEvaluationByIdData(true)
       //识别语音
       this.initRecord();
-    },
-    onShow() {
-      this.showPrivacy = true
-    },
-    onHide() {
-      this.showPrivacy = false
     },
     methods: {
       // 获取模块题目列表
@@ -337,11 +328,10 @@
           this.checkAnswer(this.currentAnswer.speak)
         }
       },
-      openPayTipPopup () {
-        this.tipsShow = true
-      },
-      closePayPopup (e) {
-        this.tipsShow = e
+      toMember () {
+        wx.navigateTo({
+          url: `../member/pages/index`,
+        })
       },
       // 查看答案
       async viewAnswer () {
@@ -354,7 +344,7 @@
           console.log(result)
           if (result.result.total > 20) {
             wx.hideLoading()
-            this.openPayTipPopup()
+            this.toMember()
             return
           }
         }

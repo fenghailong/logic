@@ -151,14 +151,14 @@
   {
     navigationBarTitleText: '知识点',
     usingComponents: {
-      "van-button": "../../libs/vant/button/index",
-      "van-empty": "../../libs/vant/empty/index",
-      "van-field": "../../libs/vant/field/index",
-      "van-swipe-cell": "../../libs/vant/swipe-cell/index",
-      "van-icon": "../../libs/vant/icon/index",
-      "van-dialog": "../../libs/vant/dialog/index",
-      "van-radio": "../../libs/vant/radio/index",
-      "van-radio-group": "../../libs/vant/radio-group/index",
+      "van-button": "../../../../libs/vant/button/index",
+      "van-empty": "../../../../libs/vant/empty/index",
+      "van-field": "../../../../libs/vant/field/index",
+      "van-swipe-cell": "../../../../libs/vant/swipe-cell/index",
+      "van-icon": "../../../../libs/vant/icon/index",
+      "van-dialog": "../../../../libs/vant/dialog/index",
+      "van-radio": "../../../../libs/vant/radio/index",
+      "van-radio-group": "../../../../libs/vant/radio-group/index",
       "question-item": "~@/components/question-item"
     }
   }
@@ -169,7 +169,7 @@
   import { mapGetters } from '@wepy/x'
   import eventHub from '@/common/eventHub'
   import { getKnowledgeDetail, addNotes, getNotes, deleteNotes, getQuestions } from '@/api/knowledgeModule'
-  import Dialog from '../../libs/vant/dialog/dialog';
+  import Dialog from '../../../../libs/vant/dialog/dialog';
 
   wepy.page({
     store,

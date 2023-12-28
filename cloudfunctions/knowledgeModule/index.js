@@ -194,12 +194,13 @@ const getExaminationCollectionByUserModdule = async (options) => {
   return examination.data[0] || {};
 }
 const getModulesByPractise = async (options) => {
+  console.log(options, '===============')
   const skipCount = (options.currPage - 1) * options.pageSize
-  const countResult = await collection.where({ new_parent_id: options.parent_id, module_type: options.module_type}).count();
+  const countResult = await collection.where({ new_parent_id: options.parent_id, module_type: options.module_type, time: options.time}).count();
   const totalCount = countResult.total
   const totalPage = totalCount === 0 ? 0 : totalCount <= options.pageSize ? 1 : parseInt(totalCount / options.pageSize) + 1
   const result = await collection
-  .where({ new_parent_id: options.parent_id, module_type: options.module_type})
+  .where({ new_parent_id: options.parent_id, module_type: options.module_type, time: options.time})
   .orderBy('sort', 'asc')
   .skip(skipCount)
   .limit(options.pageSize)

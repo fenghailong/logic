@@ -1,9 +1,10 @@
 <style lang="less">
 .page{
     background-color: #eee;
+    padding-top: 10px;
     .logic-detail-box {
         padding: 0 10px;
-        margin-top: 10px;
+        margin-bottom: 10px;
     }
     .logic-detail-content {
         background-color: #fff;
@@ -23,7 +24,7 @@
         text-align: left;
         font-size: 14px;
         color: #999;
-        margin: 20px 0;
+        margin: 20px 0 0;
     }
     .logic-detail-content-message {
         display: flex;
@@ -51,19 +52,33 @@
 </style>
 <template>
     <div class="page">
-        <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，在进行考点评测效果会更好哦" />
         <div class="logic-detail-box">
             <div class="logic-detail-content">
-            <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->
-            <div class="logic-detail-content-title">国考高频成语</div>
+            <div class="logic-detail-content-people">{{idiomUserCount}}人正在学习</div>
+            <div class="logic-detail-content-title">高频成语</div>
             <div class="logic-detail-content-describe">搜集历年国考、省考等考试中“逻辑填空”模块出现的高频成语，需要掌握意思，用法等。</div>
             <div class="logic-detail-content-message">
-                <div class="logic-detail-content-message-practice">已练习 {{studyCount}}/{{detail.count}}</div>
-                <van-rate readonly value="{{ starValue }}" allow-half/>
+                <div class="logic-detail-content-message-practice">已练习 {{studyInfo.studyIdiomCount}}/{{studyInfo.allIdiomCount}}</div>
+                <van-rate readonly value="{{ studyInfo.idiomStarValue }}" allow-half/>
             </div>
             <div class="logic-detail-content-footer">
-                <van-button class="logic-detail-content-button" color="#4755EB" round @click="toList">开始学习</van-button>
+                <van-button class="logic-detail-content-button" color="#4755EB" round @click="toidiomDetail">开始学习</van-button>
                 <van-button class="logic-detail-content-button" color="#54BBCB" round @click="toEvaluation">成语评测</van-button>
+            </div>
+            </div>
+        </div>
+        <div class="logic-detail-box">
+            <div class="logic-detail-content">
+            <div class="logic-detail-content-people">{{notionalUserCount}}人正在学习</div>
+            <div class="logic-detail-content-title">高频实词</div>
+            <div class="logic-detail-content-describe">搜集历年国考、省考等考试中“逻辑填空”模块出现的高频实词，需要掌握意思，用法等。</div>
+            <div class="logic-detail-content-message">
+                <div class="logic-detail-content-message-practice">已练习 {{studyInfo.studyNotionalCount}}/{{studyInfo.allNotionalCount}}</div>
+                <van-rate readonly value="{{ studyInfo.notionalstarValue }}" allow-half/>
+            </div>
+            <div class="logic-detail-content-footer">
+                <van-button class="logic-detail-content-button" color="#4755EB" round @click="tonotionalDetail">开始学习</van-button>
+                <van-button class="logic-detail-content-button" color="#54BBCB" round @click="toEvaluation">实词评测</van-button>
             </div>
             </div>
         </div>
@@ -71,10 +86,9 @@
 </template>
 <config>
 {
-    navigationBarTitleText: '知识点详情',
+    navigationBarTitleText: '高频成语',
     usingComponents: {
         "van-search": "../../libs/vant/circle/index",
-        "van-notice-bar": "../../libs/vant/notice-bar/index",
         "van-button": "../../libs/vant/button/index",
         "van-rate": "../../libs/vant/rate/index",
     }
@@ -85,65 +99,106 @@ import wepy from '@wepy/core'
 import store from '@/store'
 import subscribe from '@/mixins/subscribe.js'
 import { mapGetters } from '@wepy/x'
-import { getWordsStudyCount } from '@/api/words'
+import { getWordGroupList, getCurrenStudyWordGroupId } from '@/api/wordGroup'
+import { getUserCountInfo } from '@/api/user'
 import eventHub from '@/common/eventHub'
 
 wepy.page({
 mixins: [ subscribe ],
 store,
 data: {
-    detail: {
-      count: 0,
-      type: '',
-      user_id: ''
-    },
-    studyCount: 0,
-    starValue: 0,
-    currentId: '',
-    wordsList: []
+    studyInfo: {
+      allIdiomCount: 0,
+      allNotionalCount: 0,
+      studyIdiomCount: 0,
+      studyNotionalCount: 0,
+      idiomStarValue: "0",
+      notionalstarValue: "0",
+      idiomList: [],
+      notionalList: []
+    }, //已学习信息
+    idiomUserCount: 0,
+    notionalUserCount: 0,
+    idiomCurrentId: '',
+    notionalCurrentId: '',
 },
 // 计算的属性
 computed: {
     ...mapGetters(['_id', 'user']),
 },
-onLoad(options) {
-    this.detail.type = options.type
-    this.detail.user_id = this._id
-    console.log(this.detail,'========')
+async onLoad() {
     eventHub.$on('refresh-words-info', (...args) => {
       console.log('app-launch event emitted, the params are:');
-      console.log(args, '=========')
-      this.wordsList = JSON.parse(JSON.stringify(args[0].wordsList))
-      this.currentId = JSON.parse(JSON.stringify(args[0].currentWord_id))
-      let count = 0
-      this.wordsList.forEach(element => {
-          if(element.isStudyed)count = count + 1
-      });
-      this.studyCount = count
+      if ( JSON.parse(JSON.stringify(args[0].word_type)) === '1') {
+        this.idiomCurrentId = JSON.parse(JSON.stringify(args[0].currentWordGroup_id))
+        this.studyInfo.idiomList = JSON.parse(JSON.stringify(args[0].wordGroupList))
+        let count = 0
+        this.studyInfo.idiomList.forEach(element => {
+          if(element.isStudyed === 1)count = count + 1
+        });
+        this.studyInfo.studyIdiomCount = count
+      } else {
+        this.notionalCurrentId = JSON.parse(JSON.stringify(args[0].currentWordGroup_id))
+        this.studyInfo.notionalList = JSON.parse(JSON.stringify(args[0].wordGroupList))
+        let count = 0
+        this.studyInfo.notionalList.forEach(element => {
+          if(element.isStudyed === 1)count = count + 1
+        });
+        this.studyInfo.studyNotionalCount = count
+      }
     });
-    this.getWordsStudyCount(this.detail)
+    wx.showLoading({title: '加载中'})
+    await this.getUserCountInfo()
+    await this.getCurrenStudyWordGroupId()
+    await this.getWordGroupList()
+    wx.hideLoading()
 },
 methods: {
-    // 获取已学习
-    async getWordsStudyCount(options) {
-        wx.showLoading({title: '加载中'})
-        console.log(options,'========')
-        let result = await getWordsStudyCount(options)
-        console.log(result)
-        this.studyCount = result.result.studyCount
-        this.starValue = result.result.starValue
-        this.detail.count = result.result.wordCount
-        this.currentId = result.result.currentWordId
-        this.wordsList = result.result.wordsList
-        wx.hideLoading()
+    // 获取有多少人已学习
+    async getUserCountInfo() {
+      // 成语
+      let isIdiomData = await getUserCountInfo({
+        isIdiom: '1'
+      })
+      // 实词
+      let isNotionalData = await getUserCountInfo({
+        isNotional: '1'
+      })
+      this.idiomUserCount = isIdiomData.result.data.count + 52378
+      this.notionalUserCount = isNotionalData.result.data.count + 987
     },
-    async toList () {
+    // 获取当前id
+    async getCurrenStudyWordGroupId() {
+      let result = await getCurrenStudyWordGroupId({
+        user_id: this._id,
+      })
+      this.idiomCurrentId = result.result.data.idiomWordId
+      this.notionalCurrentId = result.result.data.notionalWordId
+      console.log(result,'======')
+    },
+        // 获取已学习信息
+    async getWordGroupList() {
+      let result = await getWordGroupList({
+        user_id: this._id
+      })
+      this.studyInfo = result.result.data
+    },
+    async toidiomDetail () {
         if (this.user.messageCount < 1) {
             await this.onSubscribe()
         }
-        let wordsList = encodeURIComponent(JSON.stringify(this.wordsList))
+        let wordGroupList = encodeURIComponent(JSON.stringify(this.studyInfo.idiomList))
         wx.navigateTo({
-            url: `/pages/index/list?type=国考高频成语&currentId=${this.currentId}&wordsList=${wordsList}`,
+          url: `/pages/words/newDetail?currentId=${this.idiomCurrentId}&type=1&wordGroupList=${wordGroupList}`,
+        })
+    },
+    async tonotionalDetail () {
+        if (this.user.messageCount < 1) {
+            await this.onSubscribe()
+        }
+        let wordGroupList = encodeURIComponent(JSON.stringify(this.studyInfo.notionalList))
+        wx.navigateTo({
+          url: `/pages/words/newDetail?currentId=${this.notionalCurrentId}&type=2&wordGroupList=${wordGroupList}`,
         })
     },
     async toEvaluation () {
@@ -157,10 +212,10 @@ methods: {
 },
 onShareAppMessage () {
     return {
-    // 标题是话题标题
-    title: this.topic.title,
-    // 路径为话题详情路径
-    path: '/pages/topics/show?id=' + this.topic.id,
+      // 标题是话题标题
+      title: this.topic.title,
+      // 路径为话题详情路径
+      path: '/pages/words/list',
     }
 },
 })

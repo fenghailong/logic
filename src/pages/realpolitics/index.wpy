@@ -78,7 +78,7 @@
   <div class="page">
     <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，在进行考点评测效果会更好哦" />
     <div class="logic-detail-box">
-      <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content {{ index != 1 && user.isMember != '1' ? 'logic-detail-content-opticty' : ''}}" @click="{{ index != 1 && user.isMember != '1' ? openPayTipPopup() : ''}}">
+      <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content {{ index != 1 && user.isMember != '1' ? 'logic-detail-content-opticty' : ''}}" @click="{{ index != 1 && user.isMember != '1' ? toMember() : ''}}">
         <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->
         <div class="logic-detail-content-title">
           <div class="logic-detail-content-title-text">{{item.name}}</div>
@@ -93,11 +93,9 @@
         <div v-if="index != 1 && user.isMember != '1'">
           <image class="logic-detail-content-locked" src="../../assets/images/locked.png" />
         </div>
-        <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
       </div>
     </div>
-    <pay-tip-popup :tipsShow="tipsShow" @closePayPopup="closePayPopup"></pay-tip-popup>
-    <privacy-dialog id="pay-tip-popup-6" wx:if="{{showPrivacy}}" />
+    <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
   </div>
 </template>
 <config>
@@ -109,7 +107,6 @@
       "van-button": "../../libs/vant/button/index",
       "van-rate": "../../libs/vant/rate/index",
       "van-dialog": "../../libs/vant/dialog/index",
-      "pay-tip-popup": "~@/components/pay-tip-popup",
     }
   }
 </config>
@@ -128,8 +125,6 @@
     data: {
       moudleId: '',
       moudleList: [],
-      tipsShow: false,
-      showPrivacy: false
     },
     // 计算的属性
     computed: {
@@ -146,11 +141,10 @@
       this.showPrivacy = false
     },
     methods: {
-      openPayTipPopup () {
-        this.tipsShow = true
-      },
-      closePayPopup (e) {
-        this.tipsShow = e
+      toMember () {
+        wx.navigateTo({
+          url: `../member/pages/index`,
+        })
       },
       // 获取已学习
       async getModulesByIdData(moudleId) {
