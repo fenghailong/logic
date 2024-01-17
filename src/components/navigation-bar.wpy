@@ -56,23 +56,11 @@
 <template>
   <div>
     <div class="logic-index-navigation-bar" style="height:{{navBarHeight}}px;" >
-      <!-- <div class="logic-index-navigation-bar-bg">
-        <image src="../assets/images/bar-bg.png" />
-      </div> -->
       <div class="logic-index-navigation-bar-content" style="bottom:{{menuBotton}}px;">
         <div class="logic-index-navigation-bar-title">逻辑填空</div>
         <div class="logic-index-navigation-bar-search">
           <input placeholder="搜索词语" @input="searchChange" style="height:{{menuHeight}}px; min-height:{{menuHeight}}px; line-height:{menuHeight}}px;"/>
         </div>
-            <!-- <div class="logic-index-search">
-        <van-search value="{{ value }}" shape="round" background="#387ffb" placeholder="请输入搜索词语" @change="searchChange">
-        </van-search>
-        <div class="logic-index-search-list">
-          <div class="logic-index-search-item" v-for="(item, index) in searchList" :key="index"  @click.stop="sureCompany(item._id)">
-              {{item.name}}
-          </div>
-        </div>
-      </div> -->
       </div>
       <div class="logic-index-search-list" style="top:{{navBarHeight}}px;">
           <div class="logic-index-search-item" v-for="(item, index) in searchList" :key="index"  @click.stop="sureCompany(item._id)">
@@ -82,7 +70,7 @@
     </div>
     <div class="content" style="padding-top:{{navBarHeight}}px;"></div>
   </div>
- 
+
 </template>
 <config>
   {

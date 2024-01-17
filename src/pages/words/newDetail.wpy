@@ -1,119 +1,195 @@
 <style lang="less">
 .page{
-  background-color: #eee;
-  .logic-index-box {
-    padding: 20px 20px;
-    .logic-index-item {
-      background-color: #fff;
-      height: 70vh;
-      border-radius: 20px;
-      padding: 0 20px;
-      overflow: auto;
-      .logic-index-item-name {
-        padding: 10px;
-        font-size: 30px;
-        text-align: center;
+  background-color: #F5F7FA;
+  padding-bottom: 80px;
+  .logic-index-title {
+    background: #FFFFFF;
+    border-radius: 10px;
+    //position: relative;
+    position: fixed;
+    left: 15px;
+    right: 15px;
+    height: 120px;
+    margin-top: 10px;
+    .logic-index-title-header {
+      height: 25px;
+      background: linear-gradient(90deg, #E0EBFF 0%, rgba(255,255,255,0) 100%);
+      border-radius: 10px 10px 0px 0px;
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      right: 3px;
+      display: flex;
+      align-items: center;
+      .logic-index-title-text {
+        font-size: 11px;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 500;
+        color: #3C7CFC;
+        line-height: 1;
+        flex: 1;
+        padding-left: 10px;
       }
-      .logic-index-item-tag {
+      .logic-index-title-collect-icon {
+        width: 20px;
+        height: 20px;
+        padding-right: 10px;
+        image {
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+    .logic-index-title-name {
+      padding: 47px 0 20px;
+      .logic-index-title-name-list {
         display: flex;
         align-items: center;
-        .logic-index-item-count {
-          line-height: 1;
-          font-size: 14px;
-          color: #999;
-          margin-right: 30px;
-        }
-        van-tag {
-          line-height: 1;
-          margin-right: 10px;
-        }
-        van-rate {
-          line-height: 1;
+        justify-content: center;
+        font-size: 17px;
+        font-weight: 500;
+        color: #333333;
+        line-height: 17px;
+        .logic-index-title-name-idom {
+          padding: 0 20px;
         }
       }
-      .logic-index-item-implication {
+    }
+  }
+  .logic-index-box {
+    padding: 140px 15px 10px;
+    .logic-index-item {
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 20px 15px;
+      .logic-index-item-header {
         display: flex;
-        align-items: flex-start;
-        margin-top: 20px;
-        .logic-index-item-implication-info {
-          font-size: 14px;
-          color: #666;
-          width: 80%;
-        }
-        van-tag {
-          line-height: 1;
+        align-items: center;
+        .logic-index-item-header-line {
+          width: 3px;
+          height: 10px;
+          background: #FFA124;
+          border-radius: 2px;
           margin-right: 10px;
+        }
+        .logic-index-item-header-text {
+          font-size: 15px;
+          font-family: PingFangSC, PingFang SC;
+          font-weight: 500;
+          color: #333333;
+          line-height: 1;
         }
       }
       .logic-index-item-synonym {
         display: flex;
         align-items: flex-start;
-        margin-top: 20px;
         .logic-index-item-synonym-list {
-          font-size: 14px;
-          color: #999;
           display: flex;
           flex-direction: column;
+          font-size: 14px;
           .logic-index-item-synonym-item {
-            margin-bottom: 5px;
-            .logic-index-item-synonym-item-name {
-              color: #000;
+            padding: 15px 0;
+            border-bottom: 1px solid #EEEEEE;
+            .logic-index-item-synonym-item-word {
+              display: flex;
+              align-items: flex-start;
+              .logic-index-item-synonym-item-name {
+                flex: 0 0 70px;
+                font-family: PingFangSC, PingFang SC;
+                font-weight: 500;
+                color: #3C7CFC;
+              }
+              .logic-index-item-synonym-item-implication {
+                font-weight: 400;
+                color: #333333;
+              }
             }
-            .logic-index-item-synonym-item-implication {
-              font-size: 14px;
+            .logic-index-item-synonym-item-setence {
+              font-family: PingFangSC, PingFang SC;
+              font-weight: 400;
+              color: #333333;
+              line-height: 25px;
+              margin-top: 10px;
             }
           }
+          .logic-index-item-synonym-item:nth-last-child(1){
+            border-bottom: none;
+            padding-bottom: 0;
+          }
         }
-        van-tag {
-          line-height: 1;
-          margin-right: 10px;
-        }
-        .logic-index-item-synonym-nodata {
-          font-size: 14px;
-          color: #999;
-        }
-      }
-      .logic-index-item-title {
-        text-align: right;
-        font-size: 16px;
-        padding: 0 20px;
-        color: #999;
-      }
-      .logic-index-item-introduce {
-        font-size: 18px;
-        padding: 0 10px;
-        margin-top: 10px;
-        color: #666;
-      }
-      .logic-index-item-tag-person {
-        font-size: 18px;
-        padding: 0 10px;
-        margin-top: 10px;
-        font-weight: 500;
-      }
-      .logic-index-item-name-article {
-        padding: 10px;
-        font-size: 20px;
-        text-align: center;
-      }
-      .logic-index-item-title-article {
-        text-align: right;
-        font-size: 14px;
-        padding: 0 20px;
-        color: #999;
-      }
-      .logic-index-item-introduce-article {
-        font-size: 14px;
-        padding: 0 10px;
-        margin-top: 10px;
-        color: #666;
       }
     }
-    .logic-index-list-footer {
+  }
+  .logic-index-list-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    margin-top: 30px;
+    position: fixed;
+    left: 15px;
+    right: 15px;
+    bottom: 20px;
+    .van-button {
+      width: 165px;
+      height: 40px;
+    }
+  }
+  .logic-index-note {
+    padding: 0 15px;
+    .logic-index-note-box {
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 20px 15px;
+    }
+    .logic-index-note-header {
       display: flex;
       align-items: center;
-      justify-content: space-around;
-      margin-top: 30px;
+      .logic-index-note-header-line {
+        width: 3px;
+        height: 10px;
+        background: #FFA124;
+        border-radius: 2px;
+        margin-right: 10px;
+      }
+      .logic-index-note-header-text {
+        font-size: 15px;
+        font-family: PingFangSC, PingFang SC;
+        font-weight: 500;
+        color: #333333;
+        line-height: 1;
+        flex: 1;
+      }
+      .logic-index-note-icon {
+        width: 20px;
+        height: 20px;
+        image {
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+    .logic-index-note-content {
+      margin-top: 10px;
+      font-size: 14px;
+      font-family: PingFangSC, PingFang SC;
+      font-weight: 400;
+      color: #333333;
+    }
+  }
+  .logic-index-note-popup {
+    padding: 20px 15px;
+    .logic-index-note-title {
+      font-size: 16px;
+      font-family: PingFangSC, PingFang SC;
+      font-weight: 500;
+      color: #333333;
+      text-align: center;
+    }
+    .logic-index-note-button {
+      margin-top: 20px;
+      .van-button {
+        width: 100%;
+      }
     }
   }
   .logic-index-list-popup-list {
@@ -133,7 +209,7 @@
       }
       .logic-index-list-popup-words-title {
         flex: 1;
-        font-size: 14 px;
+        font-size: 14px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -146,22 +222,105 @@
 </style>
 <template>
   <div class="page">
+    <word-group-bar @btnClick="btnClick($event)"></word-group-bar>
+    <div class="logic-index-title">
+      <div class="logic-index-title-header">
+        <div class="logic-index-title-text">已有13459人收藏</div>
+        <div class="logic-index-title-collect-icon">
+          <image src="../../assets/images/collect-icon.png" />
+        </div>
+      </div>
+      <div class="logic-index-title-name">
+        <div class="logic-index-title-name-list" v-if="wordGroupDetail.connectiveList.length === 2">
+          <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[0].name}}</div>
+          <div class="logic-index-title-name-idom">·</div>
+          <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[1].name}}</div>
+        </div>
+        <div class="logic-index-title-name-list" v-else-if="wordGroupDetail.connectiveList.length === 3">
+          <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[0].name}}</div>
+          <div class="logic-index-title-name-idom">·</div>
+          <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[1].name}}</div>
+          <div class="logic-index-title-name-idom">·</div>
+          <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[2].name}}</div>
+        </div>
+        <div v-else-if="wordGroupDetail.connectiveList.length === 4">
+          <div class="logic-index-title-name-list" style="margin-bottom: 20px">
+            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[0].name}}</div>
+            <div class="logic-index-title-name-idom">·</div>
+            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[1].name}}</div>
+          </div>
+          <div class="logic-index-title-name-list">
+            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[2].name}}</div>
+            <div class="logic-index-title-name-idom">·</div>
+            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[3].name}}</div>
+          </div>
+        </div>
+        <div v-else-if="wordGroupDetail.connectiveList.length === 5">
+          <div class="logic-index-title-name-list" style="margin-bottom: 20px">
+            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[0].name}}</div>
+            <div class="logic-index-title-name-idom">·</div>
+            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[1].name}}</div>
+          </div>
+          <div class="logic-index-title-name-list">
+            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[2].name}}</div>
+            <div class="logic-index-title-name-idom">·</div>
+            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[3].name}}</div>
+            <div class="logic-index-title-name-idom">·</div>
+            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[4].name}}</div>
+          </div>
+        </div>
+        <div v-else-if="wordGroupDetail.connectiveList.length === 6">
+          <div class="logic-index-title-name-list" style="margin-bottom: 20px">
+            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[0].name}}</div>
+            <div class="logic-index-title-name-idom">·</div>
+            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[1].name}}</div>
+            <div class="logic-index-title-name-idom">·</div>
+            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[2].name}}</div>
+          </div>
+          <div class="logic-index-title-name-list">
+            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[3].name}}</div>
+            <div class="logic-index-title-name-idom">·</div>
+            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[4].name}}</div>
+            <div class="logic-index-title-name-idom">·</div>
+            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[5].name}}</div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="logic-index-box">
       <div class="logic-index-item">
+        <div class="logic-index-item-header">
+          <div class="logic-index-item-header-line"></div>
+          <div class="logic-index-item-header-text">词意辨析</div>
+        </div>
         <div class="logic-index-item-synonym">
           <div class="logic-index-item-synonym-list">
             <div class="logic-index-item-synonym-item" v-for="(item, index) in wordGroupDetail.connectiveList" :key="index">
-              <text class="logic-index-item-synonym-item-name">{{item.name}}：</text>
-              <text class="logic-index-item-synonym-item-implication">{{item.implication}}</text>
+              <div class="logic-index-item-synonym-item-word">
+                <div class="logic-index-item-synonym-item-name">{{item.name}}：</div>
+                <div class="logic-index-item-synonym-item-implication">{{item.implication}}</div>
+              </div>
+              <div class="logic-index-item-synonym-item-setence" v-if="item.sentence.content">例句：{{item.sentence.content}}</div>
             </div>
           </div>
         </div>
       </div>
-      <div class="logic-index-list-footer">
-        <van-button round type="info" @click="previousWord">上一个</van-button>
-        <van-button round type="info" @click="showListPopup">列表</van-button>
-        <van-button round type="info" @click="nextWord">下一个</van-button>
+    </div>
+    <div v-if="notes && notes.content" class="logic-index-note">
+      <div class="logic-index-note-box">
+        <div class="logic-index-note-header">
+          <div class="logic-index-note-header-line"></div>
+          <div class="logic-index-note-header-text">我的笔记</div>
+          <div class="logic-index-note-icon" @click="showNotePopup">
+            <image src="../../assets/images/add-note.png" />
+          </div>
+        </div>
+        <div class="logic-index-note-content">{{notes.content}}</div>
       </div>
+    </div>
+    <div class="logic-index-list-footer">
+      <van-button round type="info" @click="previousWord">上一个</van-button>
+      <van-button round type="info" @click="nextWord">下一个</van-button>
     </div>
     <van-popup @click-overlay="clickOverlay" :show="showPopup" position="bottom" round>
       <div class="logic-index-list-popup-list" :style="{ height: '70vh' }">
@@ -173,16 +332,41 @@
         </div>
       </div>
     </van-popup>
+    <van-popup @click-overlay="noteClickOverlay" :show="noteShowPopup" round>
+      <div class="logic-index-note-popup" :style="{ width: '80vw' }">
+        <div class="logic-index-note-title">记笔记</div>
+        <div class="logic-index-note-input">
+          <van-field
+            :value="currentNote"
+            type="textarea"
+            placeholder="请输入笔记"
+            autosize
+            maxlength="500"
+            show-word-limit
+            @change = "noteChange"
+            :autosize = "{ maxHeight: 100, minHeight: 100 }"
+          />
+        </div>
+        <div class="logic-index-note-button">
+          <van-button color="#4755EB" round @click="doNotes">记笔记</van-button>
+        </div>
+      </div>
+    </van-popup>
   </div>
 </template>
 <config>
   {
-    navigationBarTitleText: '词语含义',
+    navigationBarTitleText: '词语辨析',
+    navigationStyle: 'custom',
+    navigationBarTextStyle: 'black',
+    navigationBarBackgroundColor: '#FFFFFF',
     usingComponents: {
       "van-rate": "../../libs/vant/rate/index",
       "van-tag": "../../libs/vant/tag/index",
       "van-button": "../../libs/vant/button/index",
       "van-popup": "../../libs/vant/popup/index",
+      "van-field": "../../libs/vant/field/index",
+      "word-group-bar": "~@/components/word-group-bar"
     }
   }
 </config>
@@ -193,6 +377,7 @@
   import eventHub from '@/common/eventHub'
   import { getWordGroupDetail } from '@/api/wordGroup'
   import { reflashUserCount } from '@/api/user'
+  import { addNotes, getNotes, updateNotes } from '@/api/knowledgeModule'
 
   wepy.page({
     store,
@@ -203,6 +388,9 @@
     data: {
       allList: [],
       showPopup: false,
+      noteShowPopup: false, // 笔记弹框
+      notes: {}, // 笔记对象
+      currentNote: {}, //当前笔记
       wordGroupDetail: {},
       currentWordGroup_id: '',
       type: ''
@@ -217,6 +405,11 @@
       wx.hideLoading()
     },
     methods: {
+      btnClick (type) {
+        if (type === 'addnote') {
+          this.noteShowPopup = true
+        }
+      },
       // 获取单个词语
       async getWordGroupDetail(word_id) {
         let result = await getWordGroupDetail({
@@ -226,6 +419,7 @@
         })
         this.wordGroupDetail = result.result
         console.log(this.wordGroupDetail,'========')
+        await this.getNote()
         this.currentWordGroup_id = this.wordGroupDetail._id
         let index = this.allList.findIndex((item) => item._id == this.currentWordGroup_id)
         this.allList[index].isStudyed = 1
@@ -281,6 +475,51 @@
       },
       clickOverlay () {
         this.showPopup = false
+      },
+      async getNote () {
+        wx.showLoading({title: '加载中'})
+        let options = {
+          module_id: this.wordGroupDetail._id,
+          user_id: this._id
+        }
+        let data = await getNotes(options)
+        this.notes = data.result.data[0]
+        this.currentNote = this.notes ? this.notes.content : ''
+        console.log(this.notes, '===================')
+        wx.hideLoading()
+      },
+      async doNotes () {
+        wx.showLoading({title: '加载中'})
+        let options = {
+          module_id: this.wordGroupDetail._id,
+          user_id: this._id,
+          content: this.currentNote
+        }
+        if (!options.content) {
+          wx.showToast({ title: '笔记不能为空' })
+          return
+        }
+        if(this.notes) {
+          await updateNotes({
+            id: this.notes._id,
+            content: this.currentNote
+          })
+        }else {
+          await addNotes(options)
+        }
+        await this.getNote()
+        this.noteShowPopup = false
+        wx.hideLoading()
+        wx.showToast({ title: '保存成功' })
+      },
+      noteChange (e) {
+        this.currentNote = e.$wx.detail
+      },
+      showNotePopup () {
+        this.noteShowPopup = !this.noteShowPopup
+      },
+      noteClickOverlay () {
+        this.noteShowPopup = false
       }
     }
   })

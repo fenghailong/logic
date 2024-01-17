@@ -97,6 +97,16 @@ export async function deleteNotes(data) {
   })
 }
 
+export async function updateNotes(data) {
+  return await wx.cloud.callFunction({
+    name: 'note',
+    data: {
+      func: 'updateNotes',
+      data
+    },
+  })
+}
+
 export async function addNotes(data) {
   return await wx.cloud.callFunction({
     name: 'knowledgeDetail',

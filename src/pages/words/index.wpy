@@ -1,7 +1,10 @@
 <style lang="less">
 .page{
-    background-color: #eee;
-    padding-top: 15px;
+    background-color: #F5F7FA;
+    height: 100%;
+    .logic-detail {
+      padding-top: 15px;
+    }
     .logic-detail-box {
         padding: 0 15px;
         margin-bottom: 20px;
@@ -9,83 +12,119 @@
     .logic-detail-content {
         background-color: #fff;
         border-radius: 10px;
-        padding: 10px 20px 20px;
-    .logic-detail-content-people {
-        text-align: right;
-        font-size: 12px;
-        color: #999;
-    }
-    .logic-detail-content-title {
-        text-align: left;
-        font-size: 17px;
-        font-weight: 500;
-        color: #333333;
-        line-height: 1;
-    }
-    .logic-detail-content-describe {
-        text-align: left;
-        font-size: 13px;
-        color: #999999;
-        font-weight: 400;
-        margin-top: 10px;
-        line-height: 1;
-    }
-    .logic-detail-content-message {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        padding: 20px 10px;
-        .logic-detail-content-message-practice {
-        font-size: 12px;
-        color: #999;
-        margin-right: 80px;
-        }
-    }
-    .logic-detail-content-footer {
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
-        .logic-detail-content-button {
-            .van-button {
-                width: 120px;
+        padding: 20px 15px;
+        position: relative;
+        .logic-detail-content-icon {
+            position: absolute;
+            right: 0;
+            top: 5px;
+            image {
+                width: 57px;
+                height: 64px;
             }
         }
-    }
+        .logic-detail-content-people {
+            text-align: right;
+            font-size: 12px;
+            color: #999;
+        }
+        .logic-detail-content-title {
+            text-align: left;
+            font-size: 17px;
+            font-family: PingFangSC, PingFang SC;
+            font-weight: 500;
+            color: #333333;
+            line-height: 1;
+        }
+        .logic-detail-content-describe {
+            text-align: left;
+            font-size: 13px;
+            color: #999999;
+            font-weight: 400;
+            margin-top: 10px;
+            line-height: 1;
+        }
+        .logic-detail-content-progress {
+            margin: 25px 0 10px;
+        }
+        .logic-detail-content-message {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-bottom: 25px;
+            .logic-detail-content-message-practice {
+              font-size: 11px;
+              color: #333333;
+              line-height: 1;
+            }
+        }
+        .logic-detail-content-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .logic-detail-content-button-left {
+                .van-button {
+                    width: 150px;
+                }
+                .van-button__text {
+                    color: #3C7CFC;
+                }
+            }
+            .logic-detail-content-button-right {
+                .van-button {
+                    width: 150px;
+                }
+            }
+        }
     }
 }
 </style>
 <template>
     <div class="page">
+      <div class="logic-detail">
         <div class="logic-detail-box">
-            <div class="logic-detail-content">
-            <div class="logic-detail-content-people">{{idiomUserCount}}人正在学习</div>
+          <div class="logic-detail-content">
+            <div class="logic-detail-content-icon">
+              <image src="../../assets/images/idom-icon.png" />
+            </div>
             <div class="logic-detail-content-title">高频成语</div>
             <div class="logic-detail-content-describe">搜集历年国考、省考等考试中出现的高频成语</div>
+            <div class="logic-detail-content-progress">
+              <van-progress :percentage="studyInfo.idiomPecent" stroke-width="6" :show-pivot="false" color="'#3C7CFC" track-color="#EEF1F6"/>
+            </div>
             <div class="logic-detail-content-message">
-                <div class="logic-detail-content-message-practice">已练习 {{studyInfo.studyIdiomCount}}/{{studyInfo.allIdiomCount}}</div>
-                <van-rate readonly value="{{ studyInfo.idiomStarValue }}" allow-half/>
+              <div class="logic-detail-content-message-practice">已练习 {{studyInfo.studyIdiomCount}}/{{studyInfo.allIdiomCount}}</div>
+              <van-rate readonly value="{{ studyInfo.idiomStarValue }}" style="margin-left: 20px" size="11px" allow-half/>
+              <div class="logic-detail-content-message-practice" style="flex: 1;text-align: right">已有{{idiomUserCount}}人学习</div>
             </div>
             <div class="logic-detail-content-footer">
-                <van-button class="logic-detail-content-button" color="#4755EB" round @click="toidiomDetail">开始学习</van-button>
-                <van-button class="logic-detail-content-button" color="#54BBCB" round @click="toEvaluation">成语评测</van-button>
+              <van-button class="logic-detail-content-button-left" color="#EDF3FF" round @click="toEvaluation">成语评测</van-button>
+              <van-button class="logic-detail-content-button-right" color="#3C7CFC" round @click="toidiomDetail">开始学习</van-button>
             </div>
-            </div>
+          </div>
         </div>
         <div class="logic-detail-box">
-            <div class="logic-detail-content">
-            <div class="logic-detail-content-people">{{notionalUserCount}}人正在学习</div>
+          <div class="logic-detail-content">
+            <div class="logic-detail-content-icon">
+              <image src="../../assets/images/word-icon.png" />
+            </div>
             <div class="logic-detail-content-title">高频实词</div>
             <div class="logic-detail-content-describe">搜集历年国考、省考等考试中出现的高频实词</div>
+            <div class="logic-detail-content-progress">
+              <van-progress :percentage="studyInfo.notionalPecent" stroke-width="6" :show-pivot="false" color="#3C7CFC" track-color='#EEF1F6'/>
+            </div>
             <div class="logic-detail-content-message">
-                <div class="logic-detail-content-message-practice">已练习 {{studyInfo.studyNotionalCount}}/{{studyInfo.allNotionalCount}}</div>
-                <van-rate readonly value="{{ studyInfo.notionalstarValue }}" allow-half/>
+              <div class="logic-detail-content-message-practice">已练习 {{studyInfo.studyNotionalCount}}/{{studyInfo.allNotionalCount}}</div>
+              <van-rate readonly value="{{ studyInfo.notionalstarValue }}" style="margin-left: 20px" size="11px" allow-half/>
+              <div class="logic-detail-content-message-practice" style="flex: 1;text-align: right">已有{{notionalUserCount}}人学习</div>
             </div>
             <div class="logic-detail-content-footer">
-                <van-button class="logic-detail-content-button" color="#4755EB" round @click="tonotionalDetail">开始学习</van-button>
-                <van-button class="logic-detail-content-button" color="#54BBCB" round @click="toEvaluation">实词评测</van-button>
+              <van-button class="logic-detail-content-button-left" color="#EDF3FF" round @click="toEvaluation">实词评测</van-button>
+              <van-button class="logic-detail-content-button-right" color="#3C7CFC" round @click="tonotionalDetail">开始学习</van-button>
             </div>
-            </div>
+          </div>
         </div>
+      </div>
     </div>
 </template>
 <config>
@@ -95,6 +134,7 @@
         "van-search": "../../libs/vant/circle/index",
         "van-button": "../../libs/vant/button/index",
         "van-rate": "../../libs/vant/rate/index",
+        "van-progress": "../../libs/vant/progress/index"
     }
 }
 </config>

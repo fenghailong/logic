@@ -134,7 +134,7 @@
       }
       .logic-index-list-popup-words-title {
         flex: 1;
-        font-size: 14 px;
+        font-size: 14px;
       }
     }
   }
@@ -180,12 +180,12 @@
 </template>
 <config>
   {
-    navigationBarTitleText: '词语含义',
+    navigationBarTitleText: '词语辨析',
     usingComponents: {
       "van-rate": "../../libs/vant/rate/index",
       "van-tag": "../../libs/vant/tag/index",
       "van-button": "../../libs/vant/button/index",
-      "van-popup": "../../libs/vant/popup/index",
+      "van-popup": "../../libs/vant/popup/index"
     }
   }
 </config>

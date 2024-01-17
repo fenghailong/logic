@@ -1,0 +1,120 @@
+<style lang="less">
+.logic-index-navigation-bar{
+  position: fixed;
+  top: 0;
+  width: 100%;
+  color: #fff;
+  background-color: #FFF;
+  z-index: 1000;
+  .logic-index-navigation-bar-bg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    image{
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+.logic-index-navigation-bar-content {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  width: 70%;
+  padding-left: 15px;
+  .logic-index-navigation-bar-title {
+    font-size: 12px;
+    font-weight: 500;
+    color: #3C464F;
+    line-height: 12px;
+    margin-left: 8px;
+    margin-right: 30px;
+  }
+  .logic-index-navigation-bar-iconlist {
+    display: flex;
+    align-items: center;
+    .logic-index-navigation-bar-iconitem {
+      width: 20px;
+      height: 20px;
+      margin-right: 22px;
+      image {
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+}
+</style>
+<template>
+  <div>
+    <div class="logic-index-navigation-bar" style="height:{{navBarHeight}}px;" >
+      <div class="logic-index-navigation-bar-content" style="bottom:{{menuBotton}}px;">
+        <van-icon name="arrow-left" color="#3C464F" size="18px"/>
+        <div class="logic-index-navigation-bar-title">23/719</div>
+        <div class="logic-index-navigation-bar-iconlist">
+          <div class="logic-index-navigation-bar-iconitem">
+            <image src="../assets/images/add-error.png" />
+          </div>
+          <div class="logic-index-navigation-bar-iconitem" @click="btnClick('addnote')">
+            <image src="../assets/images/add-note.png" />
+          </div>
+          <div class="logic-index-navigation-bar-iconitem">
+            <image src="../assets/images/view-list.png" />
+          </div>
+          <div class="logic-index-navigation-bar-iconitem">
+            <image src="../assets/images/add-group.png" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="content" style="padding-top:{{navBarHeight}}px;"></div>
+  </div>
+
+</template>
+<config>
+  {
+    usingComponents: {
+      "van-icon": "../libs/vant/icon/index",
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import { mapGetters } from '@wepy/x'
+  import { getWAllList } from '@/api/words'
+  wepy.component({
+    store,
+    computed: {
+      // 用户信息
+      ...mapGetters(['_id', 'user'])
+    },
+    props: {
+      // 父页面传入，请求参数
+      defaultData: {
+        type: Object,
+        value: {
+          title: "我是默认标题"
+        },
+        observer: function(newVal, oldVal) {}
+      }
+    },
+    data: {
+      navBarHeight: 0,
+      menuRight: 0,
+      menuBotton: 0,
+      menuHeight: 0
+    },
+    async created () {
+      this.navBarHeight = this.$app.$options.globalData.navBarHeight
+      this.menuRight = this.$app.$options.globalData.menuRight
+      this.menuBotton = this.$app.$options.globalData.menuBotton
+      this.menuHeight = this.$app.$options.globalData.menuHeight
+    },
+    methods: {
+      btnClick (type) {
+        this.$emit('btnClick', type)
+      }
+    }
+  })
+</script>

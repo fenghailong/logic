@@ -388,7 +388,6 @@ const getWordGroupList= async (options) => {
   })
   .limit(4000)
   .end()
-  console.log(result, '=======================')
   let idiomList;
   let studyIdiomCount;
   let notionalList;
@@ -412,7 +411,9 @@ const getWordGroupList= async (options) => {
       studyIdiomCount,
       studyNotionalCount,
       idiomStarValue: ( studyIdiomCount/idiomList.length * 5 ).toFixed(1),
-      notionalstarValue: ( studyNotionalCount/notionalList.length * 5 ).toFixed(1)
+      idiomPecent: Number(( studyIdiomCount * 100 / idiomList.length ).toFixed(0)),
+      notionalstarValue: ( studyNotionalCount/notionalList.length * 5 ).toFixed(1),
+      notionalPecent: Number(( studyNotionalCount * 100 / notionalList.length ).toFixed(0))
     },
     message: "ok"
   }
@@ -457,7 +458,7 @@ const getWordGroupDetail = async (options) => {
     word_group = hasWord.data[0];
     if(word_group.connective) {
       let result = await getConnectiveWords(word_group.connective)
-      word_group.connectiveList = result.data
+      word_group.connectiveList = result
     }else{
       word_group.connectiveList = []
     }
@@ -470,7 +471,19 @@ const getConnectiveWords = async (arr) => {
   const connectiveList = await wordcollection.where({
     _id: _.in(arr)
   }).get();
-  return connectiveList;
+  const sentenceList = await senCollection.where({
+    word_id: _.in(arr)
+  }).get();
+  const uniqueArr = sentenceList.data.filter((item, index, self) => {
+    return index === self.findIndex(obj => obj.word_id === item.word_id);
+  });
+  const mergedArr = connectiveList.data.reduce((acc, cur) => {
+    const sentence = uniqueArr.find(obj => obj.word_id === cur._id);
+    acc.push({ ...cur, sentence });
+    return acc;
+  }, []);
+
+  return mergedArr;
 }
 
 const reflashWordsRecord = async (options) => {
