@@ -334,7 +334,7 @@
               <image v-else src="../../assets/images/noMember.png" />
             </div>
           </div>
-          <!-- <div>{{user.wechat_openid}}</div> -->
+<!--           <div>{{user.wechat_openid}}</div>-->
           <div class="logic-index-box-user-count">已有{{ userCount }}人加入学习</div>
         </div>
       </div>

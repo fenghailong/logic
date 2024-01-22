@@ -3,14 +3,17 @@
   background-color: #F5F7FA;
   padding-bottom: 80px;
   .logic-index-title {
-    background: #FFFFFF;
-    border-radius: 10px;
     //position: relative;
-    position: fixed;
-    left: 15px;
-    right: 15px;
-    height: 120px;
-    margin-top: 10px;
+    //position: fixed;
+    position: sticky;
+    padding: 0 15px;
+    margin-bottom: 20px;
+    .logic-index-title-box {
+      padding: 47px 0 20px;
+      background: #FFFFFF;
+      border-radius: 10px;
+      position: relative;
+    }
     .logic-index-title-header {
       height: 25px;
       background: linear-gradient(90deg, #E0EBFF 0%, rgba(255,255,255,0) 100%);
@@ -41,7 +44,9 @@
       }
     }
     .logic-index-title-name {
-      padding: 47px 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       .logic-index-title-name-list {
         display: flex;
         align-items: center;
@@ -57,7 +62,7 @@
     }
   }
   .logic-index-box {
-    padding: 140px 15px 10px;
+    padding: 0 15px 10px;
     .logic-index-item {
       background-color: #fff;
       border-radius: 10px;
@@ -223,69 +228,73 @@
 <template>
   <div class="page">
     <word-group-bar @btnClick="btnClick($event)"></word-group-bar>
-    <div class="logic-index-title">
-      <div class="logic-index-title-header">
-        <div class="logic-index-title-text">已有13459人收藏</div>
-        <div class="logic-index-title-collect-icon">
-          <image src="../../assets/images/collect-icon.png" />
+    <div class="logic-index-title" style="top:{{navBarHeight + 10}}px">
+      <div class="logic-index-title-box">
+        <div class="logic-index-title-header">
+          <div class="logic-index-title-text">已有{{wordGroupDetail.collectCount}}人收藏</div>
+          <div class="logic-index-title-collect-icon" @click="collect">
+            <image v-if="wordGroupDetail.isCollect" src="../../assets/images/collect-icon.png" />
+            <image v-else src="../../assets/images/nocollect-icon.png" />
+          </div>
+        </div>
+        <div class="logic-index-title-name">
+          <div class="logic-index-title-name-list" v-if="wordGroupDetail.connectiveList.length === 2">
+            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[0].name}}</div>
+            <div class="logic-index-title-name-idom">·</div>
+            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[1].name}}</div>
+          </div>
+          <div class="logic-index-title-name-list" v-else-if="wordGroupDetail.connectiveList.length === 3">
+            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[0].name}}</div>
+            <div class="logic-index-title-name-idom">·</div>
+            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[1].name}}</div>
+            <div class="logic-index-title-name-idom">·</div>
+            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[2].name}}</div>
+          </div>
+          <div v-else-if="wordGroupDetail.connectiveList.length === 4">
+            <div class="logic-index-title-name-list" style="margin-bottom: 20px">
+              <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[0].name}}</div>
+              <div class="logic-index-title-name-idom">·</div>
+              <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[1].name}}</div>
+            </div>
+            <div class="logic-index-title-name-list">
+              <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[2].name}}</div>
+              <div class="logic-index-title-name-idom">·</div>
+              <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[3].name}}</div>
+            </div>
+          </div>
+          <div v-else-if="wordGroupDetail.connectiveList.length === 5">
+            <div class="logic-index-title-name-list" style="margin-bottom: 20px">
+              <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[0].name}}</div>
+              <div class="logic-index-title-name-idom">·</div>
+              <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[1].name}}</div>
+            </div>
+            <div class="logic-index-title-name-list">
+              <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[2].name}}</div>
+              <div class="logic-index-title-name-idom">·</div>
+              <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[3].name}}</div>
+              <div class="logic-index-title-name-idom">·</div>
+              <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[4].name}}</div>
+            </div>
+          </div>
+          <div v-else-if="wordGroupDetail.connectiveList.length === 6">
+            <div class="logic-index-title-name-list" style="margin-bottom: 20px">
+              <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[0].name}}</div>
+              <div class="logic-index-title-name-idom">·</div>
+              <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[1].name}}</div>
+              <div class="logic-index-title-name-idom">·</div>
+              <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[2].name}}</div>
+            </div>
+            <div class="logic-index-title-name-list">
+              <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[3].name}}</div>
+              <div class="logic-index-title-name-idom">·</div>
+              <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[4].name}}</div>
+              <div class="logic-index-title-name-idom">·</div>
+              <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[5].name}}</div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="logic-index-title-name">
-        <div class="logic-index-title-name-list" v-if="wordGroupDetail.connectiveList.length === 2">
-          <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[0].name}}</div>
-          <div class="logic-index-title-name-idom">·</div>
-          <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[1].name}}</div>
-        </div>
-        <div class="logic-index-title-name-list" v-else-if="wordGroupDetail.connectiveList.length === 3">
-          <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[0].name}}</div>
-          <div class="logic-index-title-name-idom">·</div>
-          <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[1].name}}</div>
-          <div class="logic-index-title-name-idom">·</div>
-          <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[2].name}}</div>
-        </div>
-        <div v-else-if="wordGroupDetail.connectiveList.length === 4">
-          <div class="logic-index-title-name-list" style="margin-bottom: 20px">
-            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[0].name}}</div>
-            <div class="logic-index-title-name-idom">·</div>
-            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[1].name}}</div>
-          </div>
-          <div class="logic-index-title-name-list">
-            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[2].name}}</div>
-            <div class="logic-index-title-name-idom">·</div>
-            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[3].name}}</div>
-          </div>
-        </div>
-        <div v-else-if="wordGroupDetail.connectiveList.length === 5">
-          <div class="logic-index-title-name-list" style="margin-bottom: 20px">
-            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[0].name}}</div>
-            <div class="logic-index-title-name-idom">·</div>
-            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[1].name}}</div>
-          </div>
-          <div class="logic-index-title-name-list">
-            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[2].name}}</div>
-            <div class="logic-index-title-name-idom">·</div>
-            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[3].name}}</div>
-            <div class="logic-index-title-name-idom">·</div>
-            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[4].name}}</div>
-          </div>
-        </div>
-        <div v-else-if="wordGroupDetail.connectiveList.length === 6">
-          <div class="logic-index-title-name-list" style="margin-bottom: 20px">
-            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[0].name}}</div>
-            <div class="logic-index-title-name-idom">·</div>
-            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[1].name}}</div>
-            <div class="logic-index-title-name-idom">·</div>
-            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[2].name}}</div>
-          </div>
-          <div class="logic-index-title-name-list">
-            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[3].name}}</div>
-            <div class="logic-index-title-name-idom">·</div>
-            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[4].name}}</div>
-            <div class="logic-index-title-name-idom">·</div>
-            <div class="logic-index-title-name-text">{{wordGroupDetail.connectiveList[5].name}}</div>
-          </div>
-        </div>
-      </div>
+
     </div>
     <div class="logic-index-box">
       <div class="logic-index-item">
@@ -378,6 +387,7 @@
   import { getWordGroupDetail } from '@/api/wordGroup'
   import { reflashUserCount } from '@/api/user'
   import { addNotes, getNotes, updateNotes } from '@/api/knowledgeModule'
+  import { addCollection, deleteCollection } from '@/api/collect'
 
   wepy.page({
     store,
@@ -393,9 +403,11 @@
       currentNote: {}, //当前笔记
       wordGroupDetail: {},
       currentWordGroup_id: '',
-      type: ''
+      type: '',
+      navBarHeight: 0
     },
     async onLoad(options) {
+      this.navBarHeight = this.$app.$options.globalData.navBarHeight
       this.currentWordGroup_id = options.currentId
       this.type = Number(options.type)
       wx.showLoading({title: '加载中'})
@@ -405,9 +417,30 @@
       wx.hideLoading()
     },
     methods: {
+      // 收藏
+      collect () {
+        if (this.wordGroupDetail.isCollect){
+          deleteCollection({
+            pro_id: this.wordGroupDetail._id,
+            user_id: this._id
+          })
+          this.wordGroupDetail.isCollect = false
+          this.wordGroupDetail.collectCount -= 1
+        } else {
+          addCollection({
+            pro_id: this.wordGroupDetail._id,
+            user_id: this._id,
+            type: String(this.type),
+          })
+          this.wordGroupDetail.isCollect = true
+          this.wordGroupDetail.collectCount += 1
+        }
+      },
       btnClick (type) {
         if (type === 'addnote') {
           this.noteShowPopup = true
+        } else if (type === 'viewlist') {
+          this.showPopup = true
         }
       },
       // 获取单个词语
@@ -419,6 +452,7 @@
         })
         this.wordGroupDetail = result.result
         console.log(this.wordGroupDetail,'========')
+        this.notes = {}
         await this.getNote()
         this.currentWordGroup_id = this.wordGroupDetail._id
         let index = this.allList.findIndex((item) => item._id == this.currentWordGroup_id)
@@ -428,7 +462,7 @@
           wordGroupList: this.allList,
           currentWordGroup_id: this.currentWordGroup_id
         }
-        eventHub.$emit('refresh-words-info', obj);
+        // eventHub.$emit('refresh-words-info', obj);
       },
       async reflashUserCount() {
         await reflashUserCount({
@@ -485,7 +519,6 @@
         let data = await getNotes(options)
         this.notes = data.result.data[0]
         this.currentNote = this.notes ? this.notes.content : ''
-        console.log(this.notes, '===================')
         wx.hideLoading()
       },
       async doNotes () {

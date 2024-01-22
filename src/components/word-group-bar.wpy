@@ -49,7 +49,7 @@
   <div>
     <div class="logic-index-navigation-bar" style="height:{{navBarHeight}}px;" >
       <div class="logic-index-navigation-bar-content" style="bottom:{{menuBotton}}px;">
-        <van-icon name="arrow-left" color="#3C464F" size="18px"/>
+        <van-icon name="arrow-left" color="#3C464F" size="18px" @click="goBack" />
         <div class="logic-index-navigation-bar-title">23/719</div>
         <div class="logic-index-navigation-bar-iconlist">
           <div class="logic-index-navigation-bar-iconitem">
@@ -58,7 +58,7 @@
           <div class="logic-index-navigation-bar-iconitem" @click="btnClick('addnote')">
             <image src="../assets/images/add-note.png" />
           </div>
-          <div class="logic-index-navigation-bar-iconitem">
+          <div class="logic-index-navigation-bar-iconitem" @click="btnClick('viewlist')">
             <image src="../assets/images/view-list.png" />
           </div>
           <div class="logic-index-navigation-bar-iconitem">
@@ -114,6 +114,10 @@
     methods: {
       btnClick (type) {
         this.$emit('btnClick', type)
+      },
+      goBack () {
+        console.log(1)
+        wx.navigateBack(1)
       }
     }
   })

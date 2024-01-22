@@ -90,7 +90,7 @@
             <div class="logic-detail-content-title">高频成语</div>
             <div class="logic-detail-content-describe">搜集历年国考、省考等考试中出现的高频成语</div>
             <div class="logic-detail-content-progress">
-              <van-progress :percentage="studyInfo.idiomPecent" stroke-width="6" :show-pivot="false" color="'#3C7CFC" track-color="#EEF1F6"/>
+              <van-progress :percentage="studyInfo.idiomPecent" stroke-width="6" :show-pivot="false" color="#3C7CFC" track-color="#EEF1F6"/>
             </div>
             <div class="logic-detail-content-message">
               <div class="logic-detail-content-message-practice">已练习 {{studyInfo.studyIdiomCount}}/{{studyInfo.allIdiomCount}}</div>
@@ -111,7 +111,7 @@
             <div class="logic-detail-content-title">高频实词</div>
             <div class="logic-detail-content-describe">搜集历年国考、省考等考试中出现的高频实词</div>
             <div class="logic-detail-content-progress">
-              <van-progress :percentage="studyInfo.notionalPecent" stroke-width="6" :show-pivot="false" color="#3C7CFC" track-color='#EEF1F6'/>
+              <van-progress :percentage="studyInfo.notionalPecent" stroke-width="6" :show-pivot="false" color="#3C7CFC" track-color="#EEF1F6"/>
             </div>
             <div class="logic-detail-content-message">
               <div class="logic-detail-content-message-practice">已练习 {{studyInfo.studyNotionalCount}}/{{studyInfo.allNotionalCount}}</div>
@@ -171,26 +171,26 @@ computed: {
     ...mapGetters(['_id', 'user']),
 },
 async onLoad() {
-    eventHub.$on('refresh-words-info', (...args) => {
-      console.log('app-launch event emitted, the params are:');
-      if ( JSON.parse(JSON.stringify(args[0].word_type)) === '1') {
-        this.idiomCurrentId = JSON.parse(JSON.stringify(args[0].currentWordGroup_id))
-        this.studyInfo.idiomList = JSON.parse(JSON.stringify(args[0].wordGroupList))
-        let count = 0
-        this.studyInfo.idiomList.forEach(element => {
-          if(element.isStudyed === 1)count = count + 1
-        });
-        this.studyInfo.studyIdiomCount = count
-      } else {
-        this.notionalCurrentId = JSON.parse(JSON.stringify(args[0].currentWordGroup_id))
-        this.studyInfo.notionalList = JSON.parse(JSON.stringify(args[0].wordGroupList))
-        let count = 0
-        this.studyInfo.notionalList.forEach(element => {
-          if(element.isStudyed === 1)count = count + 1
-        });
-        this.studyInfo.studyNotionalCount = count
-      }
-    });
+    // eventHub.$on('refresh-words-info', (...args) => {
+    //   console.log('app-launch event emitted, the params are:');
+    //   if ( JSON.parse(JSON.stringify(args[0].word_type)) === '1') {
+    //     this.idiomCurrentId = JSON.parse(JSON.stringify(args[0].currentWordGroup_id))
+    //     this.studyInfo.idiomList = JSON.parse(JSON.stringify(args[0].wordGroupList))
+    //     let count = 0
+    //     this.studyInfo.idiomList.forEach(element => {
+    //       if(element.isStudyed === 1)count = count + 1
+    //     });
+    //     this.studyInfo.studyIdiomCount = count
+    //   } else {
+    //     this.notionalCurrentId = JSON.parse(JSON.stringify(args[0].currentWordGroup_id))
+    //     this.studyInfo.notionalList = JSON.parse(JSON.stringify(args[0].wordGroupList))
+    //     let count = 0
+    //     this.studyInfo.notionalList.forEach(element => {
+    //       if(element.isStudyed === 1)count = count + 1
+    //     });
+    //     this.studyInfo.studyNotionalCount = count
+    //   }
+    // });
     wx.showLoading({title: '加载中'})
     await this.getUserCountInfo()
     await this.getCurrenStudyWordGroupId()

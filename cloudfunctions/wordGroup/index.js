@@ -447,7 +447,7 @@ const getCurrenStudyWordGroupId = async (data) => {
   }
 }
 
-
+// 获取成语组详情
 const getWordGroupDetail = async (options) => {
   let word_group;
   const hasWord = await collection.where({ _id: options.word_group_id }).get();
@@ -456,6 +456,10 @@ const getWordGroupDetail = async (options) => {
   } else {
     await reflashWordsRecord(options);
     word_group = hasWord.data[0];
+    const hasCollect = await db.collection('collect').where({ pro_id: options.word_group_id, user_id: options.user_id }).get();
+    const collectCount = await db.collection('collect').where({ pro_id: options.word_group_id }).count();
+    word_group.isCollect = hasCollect.data.length > 0 ? true : false
+    word_group.collectCount = collectCount.total
     if(word_group.connective) {
       let result = await getConnectiveWords(word_group.connective)
       word_group.connectiveList = result
