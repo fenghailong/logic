@@ -1,0 +1,188 @@
+<style lang="less">
+.page{
+  background-color: #eee;
+  .logic-index-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #387ffb;
+    padding: 5px 15px;
+    color: #fff;
+    line-height: 1;
+  }
+  .logic-index-header-title {
+    margin-bottom: 10px;
+  }
+  .logic-index-header-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 5px;
+    .logic-index-header-left {
+    }
+    .logic-index-header-middle {
+      display: flex;
+      align-items: center;
+      .logic-index-header-time {
+        margin-left: 10px;
+      }
+    }
+    .logic-index-header-right {
+    }
+  }
+  .logic-index-box {
+    // padding: 20px 20px;
+    // padding-top: 60px;
+    .logic-index-question-list {
+      display: flex;
+      flex-direction: column;
+      // align-items: center;
+      margin-top: 10px;
+      background-color: #fff;
+      font-size: 16px;
+      padding: 15px;
+      transition: all 2s ease-in-out;
+      .van-radio {
+        padding: 5px 0;
+        .van-radio__label {
+          line-height: 26px;
+        }
+      }
+    }
+  }
+}
+</style>
+<template>
+  <div class="page">
+    <div class="logic-index-box">
+      <div v-if="questionList.length > 0" v-for="(item, index) in questionList" :key="index" class="logic-index-question-list">
+        <van-tag v-if="item.question.exa_type === '1'" type="primary" size="large" style="margin-bottom: 5px">{{index+1}}.单选题</van-tag>
+        <van-tag v-else-if="item.question.exa_type === '2'" type="primary" size="large" style="margin-bottom: 5px">{{index+1}}.多选题</van-tag>
+        <question-item :questionItem="item.question" :questionIndex="index" @onChange="onChange" @onMoreChange="onMoreChange" @sumbitMoreAnswer="sumbitMoreAnswer"></question-item>
+      </div>
+      <div class="weui-loadmore weui-loadmore_line" v-if="noMoreData">
+        <div class="weui-loadmore__tips weui-loadmore__tips_in-line">没有更多数据</div>
+      </div>
+    </div>
+    <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
+  </div>
+</template>
+<config>
+  {
+    navigationBarTitleText: '错题刷题',
+    enablePullDownRefresh: true,
+    usingComponents: {
+      "van-tag": "../../libs/vant/tag/index",
+      "question-item": "~@/components/question-item"
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import { mapGetters } from '@wepy/x'
+  import eventHub from '@/common/eventHub'
+  import { getErrQuestionQueryPage, addQuestionRecord} from '@/api/question'
+  import Dialog from '../../libs/vant/dialog/dialog';
+
+  wepy.page({
+    store,
+    computed: {
+      // 用户信息
+      ...mapGetters(['_id'])
+    },
+    data: {
+      moudleId: '', //传入参数 模块id
+      title: '', //传入参数 模块名
+      questionList: [], //题目列表
+      currPage: 1,
+      pageSize: 10,
+      noMoreData: false,
+    },
+    async onLoad(options) {
+      this.moudleId = options.id
+      this.title = options.name
+      await this.getQuestionsList()
+      wx.setNavigationBarTitle({title: options.name})
+    },
+    async onPullDownRefresh() {
+      this.currPage = 1
+      this.questionList = []
+      await this.getQuestionsList()
+      wx.stopPullDownRefresh()
+    },
+    async onReachBottom () {
+      if(!this.noMoreData) {
+        this.currPage = this.currPage + 1
+        await this.getQuestionsList()
+      }
+    },
+    methods: {
+      // 选中题目(单选)
+      onChange(item,key,index) {
+        this.questionList[index].question.youAnswer = key
+        this.questionList[index].question.isRight = key === item.answer
+        this.questionList[index].question.isShowAnswer = true
+        this.questionList = JSON.parse(JSON.stringify(this.questionList))
+        console.log(this.questionList[index].question)
+        this.addRecord(this.questionList[index].question)
+      },
+      // 选中题目（多选）
+      onMoreChange(item,index) {
+        this.questionList[index].question.youAnswer = item.youAnswer
+        this.questionList[index].question.isRight = item.youAnswer === item.answer
+        this.questionList[index].question.isShowMoreButton = true
+        this.questionList = JSON.parse(JSON.stringify(this.questionList))
+      },
+      // 提交题目（多选）
+      sumbitMoreAnswer(item,index) {
+        this.questionList[index].question.isShowAnswer = true
+        this.questionList[index].question.isShowMoreButton = false
+        this.questionList = JSON.parse(JSON.stringify(this.questionList))
+        console.log(this.questionList[index].question)
+        this.addRecord(this.questionList[index].question)
+      },
+      // 提交刷题记录
+      async addRecord(item) {
+        wx.showLoading({title: '加载中'})
+        await addQuestionRecord({
+            question_id: item._id,
+            user_id: this._id,
+            module_id: item.module_id,
+            isRight: item.isRight ? '1' : '2'
+        })
+        wx.hideLoading()
+      },
+      async getQuestionsList () {
+        let options = {
+          user_id: this._id,
+          module_id: this.moudleId,
+          currPage: this.currPage,
+          pageSize: this.pageSize
+        }
+        this.noMoreData = false
+        wx.showLoading({title: '加载中'})
+        let result = await getErrQuestionQueryPage(options)
+        wx.hideLoading()
+        let list = result.result.data.list.map(item => {
+          item.question.title =item.question.title.replace(/\<code/gi,'<code class="logic-code"')
+          item.question.title =item.question.title.replace(/\<p/gi,'<p class="logic-p"')
+          item.question.analysis =item.question.analysis.replace(/\<code/gi,'<code class="logic-code"')
+          item.question.analysis =item.question.analysis.replace(/\<p/gi,'<p class="logic-p"')
+          item.question.isRight = false
+          item.question.youAnswer = ''
+          item.question.isShowAnswer = false
+          item.question.isShowMoreButton = false
+          return item
+        })
+        if (list.length > 0) {
+          this.questionList = this.questionList.length > 0 ? this.questionList.concat(list) : list
+        } else {
+          this.noMoreData = true
+        }
+        console.log(this.questionList)
+      }
+    }
+  })
+</script>

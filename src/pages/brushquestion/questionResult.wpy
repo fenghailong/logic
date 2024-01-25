@@ -167,7 +167,6 @@
         // 获取一条练习记录
         let result = await getPractiseById(options)
         this.practiseData = result.result
-        console.log(this.practiseData,'============')
         if(result.result && result.result.questions.length > 0) {
           this.seconds = Number(result.result.useTime.split(':')[1])
           this.minutes = Number(result.result.useTime.split(':')[0])
