@@ -20,8 +20,6 @@
     "compileHotReLoad": true,
     "lazyloadPlaceholderEnable": false,
     "useMultiFrameRuntime": true,
-    "useApiHook": true,
-    "useApiHostProcess": true,
     "babelSetting": {
       "ignore": [],
       "disablePlugins": [],
@@ -37,25 +35,24 @@
     "showES6CompileOption": false,
     "useCompilerPlugins": false,
     "condition": false,
-    "skylineRenderEnable": false
+    "skylineRenderEnable": false,
+    "ignoreUploadUnusedFiles": true
   },
   "compileType": "miniprogram",
-  "appid": "wx7c73f91c2cd7a522",
-  "projectname": "larabbs",
   "miniprogramRoot": "weapp/",
   "cloudfunctionRoot": "cloudfunctions/",
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},
-  "libVersion": "2.13.2",
-  "packOptions": {
-    "ignore": [],
-    "include": []
-  },
   "cloudfunctionTemplateRoot": "cloudfunctionTemplate/",
   "condition": {},
   "srcMiniprogramRoot": "weapp/",
   "editorSetting": {
     "tabIndent": "insertSpaces",
     "tabSize": 2
-  }
+  },
+  "packOptions": {
+    "ignore": [],
+    "include": []
+  },
+  "appid": "wx7c73f91c2cd7a522"
 }

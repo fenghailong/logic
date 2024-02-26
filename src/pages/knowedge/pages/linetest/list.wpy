@@ -104,17 +104,9 @@
       },
       toDetail (id) {
         wx.navigateTo({
-          url: `/pages/linetest/detail?id=${id}`,
+          url: `../../pages/linetest/detail?id=${id}`,
         })
       }
-    },
-    onShareAppMessage () {
-      return {
-        // 标题是话题标题
-        title: '知识模块',
-        // 路径为话题详情路径
-        path: '/pages/realpolitics/list?id=' + this.moudleId,
-      }
-    },
+    }
   })
 </script>

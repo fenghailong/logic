@@ -419,6 +419,10 @@
           <image src="../../assets/images/person.png" />
           <div class="logic-index-box-hot-item-text">人物素材</div>
         </div>
+        <div class="logic-index-box-hot-item"  @click="toCollect()">
+          <image src="../../assets/images/changshi.png"/>
+          <div class="logic-index-box-hot-item-text">我的收藏</div>
+        </div>
         <div class="logic-index-box-hot-item"  @click="toCustomer()">
           <image src="../../assets/images/dataany.png"/>
           <div class="logic-index-box-hot-item-text">会员礼包</div>
@@ -590,6 +594,11 @@
       toPayAttention () {
         wx.navigateTo({
           url: `/pages/payattention/index`,
+        })
+      },
+      toCollect () {
+        wx.navigateTo({
+          url: `../collect/pages/index`
         })
       },
       searchChange (e) {

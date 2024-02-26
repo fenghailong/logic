@@ -50,9 +50,9 @@
     <div class="logic-index-navigation-bar" style="height:{{navBarHeight}}px;" >
       <div class="logic-index-navigation-bar-content" style="bottom:{{menuBotton}}px;">
         <van-icon name="arrow-left" color="#3C464F" size="18px" @click="goBack" />
-        <div class="logic-index-navigation-bar-title">23/719</div>
+        <div class="logic-index-navigation-bar-title">{{currentIndex}}/{{total}}</div>
         <div class="logic-index-navigation-bar-iconlist">
-          <div class="logic-index-navigation-bar-iconitem">
+          <div class="logic-index-navigation-bar-iconitem" @click="btnClick('error')">
             <image src="../assets/images/add-error.png" />
           </div>
           <div class="logic-index-navigation-bar-iconitem" @click="btnClick('addnote')">
@@ -61,7 +61,7 @@
           <div class="logic-index-navigation-bar-iconitem" @click="btnClick('viewlist')">
             <image src="../assets/images/view-list.png" />
           </div>
-          <div class="logic-index-navigation-bar-iconitem">
+          <div v-if="isCustomIcon" class="logic-index-navigation-bar-iconitem"  @click="btnClick('addWordGroup')">
             <image src="../assets/images/add-group.png" />
           </div>
         </div>
@@ -97,6 +97,18 @@
           title: "我是默认标题"
         },
         observer: function(newVal, oldVal) {}
+      },
+      currentIndex: {
+        type: Number,
+        value: 0
+      },
+      total: {
+        type: Number,
+        value: 0
+      },
+      isCustomIcon: {
+        type: Boolean,
+        value: true
       }
     },
     data: {

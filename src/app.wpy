@@ -94,6 +94,7 @@ wepy.app({
       'pages/words/detail',
       'pages/words/newDetail',
       'pages/words/evaluation',
+      'pages/words/newEvaluation',
       'pages/words/evaluationList',
       'pages/general/index',
       'pages/general/list',
@@ -142,6 +143,15 @@ wepy.app({
         "pages": [
           'pages/index',
           'pages/agreement'
+        ]
+      },
+      {
+        "root": "pages/collect",
+        "name": "collect",
+        "pages": [
+          'pages/index',
+          'pages/list',
+          'pages/detail'
         ]
       }
     ],

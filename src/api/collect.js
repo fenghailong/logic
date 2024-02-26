@@ -19,3 +19,36 @@ export async function deleteCollection(data) {
     },
   })
 }
+
+// 获取收藏列表
+export async function getCollectionList(data) {
+  return await wx.cloud.callFunction({
+    name: 'collect',
+    data: {
+      func: 'getCollectionList',
+      data,
+    },
+  })
+}
+
+// 获取收藏列表
+export async function getCollectionListByType(data) {
+  return await wx.cloud.callFunction({
+    name: 'collect',
+    data: {
+      func: 'getCollectionListByType',
+      data,
+    },
+  })
+}
+
+// 获取收藏列表
+export async function addErrorBack(data) {
+  return await wx.cloud.callFunction({
+    name: 'collect',
+    data: {
+      func: 'addErrorBack',
+      data,
+    },
+  })
+}

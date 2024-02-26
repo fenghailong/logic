@@ -194,7 +194,7 @@
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
   import eventHub from '@/common/eventHub'
-  import { getWordsDetail } from '@/api/words'
+  import { getWordList, getWordsDetail, getCurrenStudyWordId } from '@/api/words'
   import { reflashUserCount } from '@/api/user'
 
   wepy.page({
@@ -211,15 +211,28 @@
       type: ''
     },
     async onLoad(options) {
-      this.currentWord_id = options.currentId
       this.type = Number(options.type)
       wx.showLoading({title: '加载中'})
-      this.allList = JSON.parse((decodeURIComponent(options.wordsList)))
+      await this.getWordGroupList()
+      await this.getCurrenStudyWordId()
       await this.getWordsDetail(this.currentWord_id)
-      await this.reflashUserCount()
       wx.hideLoading()
     },
     methods: {
+      async getWordGroupList() {
+        let result = await getWordList({
+          user_id: this._id
+        })
+        this.allList = result.result.data.idiomList
+      },
+      async getCurrenStudyWordId() {
+        let result = await getCurrenStudyWordId({
+          user_id: this._id
+        })
+        console.log(result, '======')
+        // this.allList = result.result.data.idiomWordId
+        this.currentWord_id = result.result.data.idiomWordId
+      },
       // 获取单个词语
       async getWordsDetail(word_id) {
         let result = await getWordsDetail({
@@ -231,12 +244,6 @@
         this.currentWord_id = this.wordDetail._id
         let index = this.allList.findIndex((item) => item._id == this.currentWord_id)
         this.allList[index].isStudyed = true
-        let obj = {
-          word_type: String(this.type),
-          wordsList: this.allList,
-          currentWord_id: this.currentWord_id
-        }
-        eventHub.$emit('refresh-words-info', obj);
       },
       async reflashUserCount() {
         await reflashUserCount({
