@@ -25,7 +25,7 @@
       display: flex;
       align-items: center;
       .logic-index-title-text {
-        font-size: 13px;
+        font-size: 11px;
         font-family: PingFangSC, PingFang SC;
         font-weight: 500;
         color: #3C7CFC;
@@ -51,7 +51,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 19px;
+        font-size: 17px;
         font-weight: 500;
         color: #333333;
         line-height: 17px;
@@ -78,7 +78,7 @@
           margin-right: 10px;
         }
         .logic-index-item-header-text {
-          font-size: 17px;
+          font-size: 15px;
           font-family: PingFangSC, PingFang SC;
           font-weight: 500;
           color: #333333;
@@ -91,7 +91,7 @@
         .logic-index-item-synonym-list {
           display: flex;
           flex-direction: column;
-          font-size: 16px;
+          font-size: 14px;
           width: 100%;
           .logic-index-item-synonym-item {
             padding: 15px 0;
@@ -100,7 +100,7 @@
               display: flex;
               align-items: flex-start;
               .logic-index-item-synonym-item-name {
-                flex: 0 0 80px;
+                flex: 0 0 70px;
                 font-family: PingFangSC, PingFang SC;
                 font-weight: 500;
                 color: #3C7CFC;
@@ -158,7 +158,7 @@
         margin-right: 10px;
       }
       .logic-index-note-header-text {
-        font-size: 17px;
+        font-size: 15px;
         font-family: PingFangSC, PingFang SC;
         font-weight: 500;
         color: #333333;
@@ -176,7 +176,7 @@
     }
     .logic-index-note-content {
       margin-top: 10px;
-      font-size: 16px;
+      font-size: 14px;
       font-family: PingFangSC, PingFang SC;
       font-weight: 400;
       color: #333333;
@@ -185,7 +185,7 @@
   .logic-index-note-popup {
     padding: 20px 15px;
     .logic-index-note-title {
-      font-size: 18px;
+      font-size: 16px;
       font-family: PingFangSC, PingFang SC;
       font-weight: 500;
       color: #333333;
@@ -215,7 +215,7 @@
       }
       .logic-index-list-popup-words-title {
         flex: 1;
-        font-size: 16px;
+        font-size: 14px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -224,111 +224,18 @@
       }
     }
   }
-  .logic-index-add-word-popup {
-    padding: 20px 15px;
-    width: 80vw;
-    max-height: 70vh;
-    min-height: 40vh;
-    overflow: hidden;
-    position: relative;
-    .logic-index-add-word-title {
-      font-size: 18px;
-      font-family: PingFangSC, PingFang SC;
-      font-weight: 500;
-      color: #333333;
-      text-align: center;
-    }
-    .logic-index-add-word-input {
-      position: relative;
-      .logic-index-add-word-search-list {
-        position: absolute;
-        z-index: 101;
-        max-height: 200px;
-        overflow: hidden;
-        overflow-y: auto;
-        background-color: #fff;
-        border: 1px solid #eee;
-        left: 12px;
-        right: 12px;
-        .logic-index-add-word-search-item {
-          padding: 5px;
-        }
-      }
-      .logic-index-add-word-choose-list {
-        padding: 0 12px;
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        .logic-index-add-word-choose-item {
-          margin-right: 10px;
-        }
-      }
-    }
-    .logic-index-add-word-button {
-      margin-top: 20px;
-      position: fixed;
-      right: 15px;
-      left: 15px;
-      bottom: 20px;
-      .van-button {
-        width: 100%;
-      }
-    }
-  }
-  .logic-index-error-popup {
-    padding: 20px 15px;
-    width: 80vw;
-    max-height: 80vh;
-    min-height: 40vh;
-    overflow: hidden;
-    position: relative;
-    .logic-index-error-title {
-      font-size: 18px;
-      font-family: PingFangSC, PingFang SC;
-      font-weight: 500;
-      color: #333333;
-      text-align: center;
-    }
-    .logic-index-error-type {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-around;
-      margin-top: 10px;
-      .logic-index-error-type-item {
-        padding: 5px;
-        border: 1px solid #ccc;
-        flex: 0 0 25%;
-        text-align: center;
-        margin-bottom: 10px;
-      }
-      .logic-index-error-type-item-active {
-        border: 1px solid #3C7CFC;
-        background-color: #3C7CFC;
-        color: #fff;
-      }
-    }
-    .logic-index-error-input {
-      border: 1px solid #ccc;
-    }
-    .logic-index-error-button {
-      margin-top: 20px;
-      .van-button {
-        width: 100%;
-      }
-    }
-  }
 }
 </style>
 <template>
   <div class="page">
-    <word-group-bar :total="total" :currentIndex="currentIndex" :isCustomIcon="true" @btnClick="btnClick($event)"></word-group-bar>
+    <word-group-bar :total="total" :currentIndex="currentIndex" :isCustomIcon="false" @btnClick="btnClick($event)"></word-group-bar>
     <div class="logic-index-title" style="top:{{navBarHeight + 10}}px">
       <div class="logic-index-title-box">
         <div class="logic-index-title-header">
           <div class="logic-index-title-text">已有{{wordGroupDetail.collectCount}}人收藏</div>
           <div class="logic-index-title-collect-icon" @click="collect">
-            <image v-if="wordGroupDetail.isCollect" src="../../assets/images/collect-icon.png" />
-            <image v-else src="../../assets/images/nocollect-icon.png" />
+            <image v-if="wordGroupDetail.isCollect" src="../../../assets/images/collect-icon.png" />
+            <image v-else src="../../../assets/images/nocollect-icon.png" />
           </div>
         </div>
         <div class="logic-index-title-name">
@@ -403,9 +310,7 @@
                 <div class="logic-index-item-synonym-item-name">{{item.name}}：</div>
                 <div class="logic-index-item-synonym-item-implication">{{item.implication}}</div>
               </div>
-              <div class="logic-index-item-synonym-item-setence" v-if="item.sentence && item.sentence.content">
-                <mp-html content="{{ item.sentence.content }}" />
-              </div>
+              <div class="logic-index-item-synonym-item-setence" v-if="item.sentence.content">例句：{{item.sentence.content}}</div>
             </div>
           </div>
         </div>
@@ -417,32 +322,23 @@
           <div class="logic-index-note-header-line"></div>
           <div class="logic-index-note-header-text">我的笔记</div>
           <div class="logic-index-note-icon" @click="showNotePopup">
-            <image src="../../assets/images/add-note.png" />
+            <image src="../../../assets/images/add-note.png" />
           </div>
         </div>
         <div class="logic-index-note-content">{{notes.content}}</div>
       </div>
     </div>
-    <div v-if="isShowBtn" class="logic-index-list-footer">
+    <div class="logic-index-list-footer">
       <van-button round type="info" @click="previousWord">上一个</van-button>
       <van-button round type="info" @click="nextWord">下一个</van-button>
     </div>
     <van-popup @click-overlay="clickOverlay" :show="showPopup" position="bottom" round>
       <div class="logic-index-list-popup-list" :style="{ height: '70vh' }">
-        <div class="logic-index-list-popup-item" v-for="(item, index) in allList" :key="index" @click="toWords(item._id)">
+        <div class="logic-index-list-popup-item" v-for="(item, index) in allList" :key="index" @click="toWords(item.pro_id)">
           <div class="logic-index-list-popup-index">第{{index + 1}}组</div>
           <div class="logic-index-list-popup-words">{{item.name}}</div>
-          <van-tag style="margin-right: 5px" v-if="item.from === '2'" type="success" size="medium">自定义</van-tag>
-          <van-tag v-if="item.isStudyed === '1'" type="primary" size="medium">已学</van-tag>
-          <van-tag v-else type="primary" plain color="#999999" size="medium">未学</van-tag>
+          <van-tag type="primary" size="medium">已学</van-tag>
         </div>
-        <!-- <div v-if="type === '2'" class="logic-index-list-popup-item" v-for="(item, index) in notionalGroupList" :key="index" @click="toWords(item._id)">
-          <div class="logic-index-list-popup-index">第{{index + 1}}组</div>
-          <div class="logic-index-list-popup-words">{{item.name}}</div>
-          <van-tag style="margin-right: 5px" v-if="item.from === '2'" type="success" size="medium">自定义</van-tag>
-          <van-tag v-if="item.isStudyed === '1'" type="primary" size="medium">{{item.isStudyed}}已学</van-tag>
-          <van-tag v-else type="primary" plain color="#999999" size="medium">{{item.isStudyed}}未学</van-tag>
-        </div> -->
       </div>
     </van-popup>
     <van-popup @click-overlay="noteClickOverlay" :show="noteShowPopup" round>
@@ -455,8 +351,8 @@
             placeholder="请输入笔记"
             maxlength="500"
             show-word-limit
-            @change = "noteChange"
-            :autosize = "{ maxHeight: 100, minHeight: 100 }"
+            @change="noteChange"
+            :autosize="{maxHeight: 100, minHeight: 100 }"
           />
         </div>
         <div class="logic-index-note-button">
@@ -464,53 +360,6 @@
         </div>
       </div>
     </van-popup>
-    <van-popup @click-overlay="addWordClickOverlay" :show="addWordShowPopup" round root-portal lock-scroll :z-index="1">
-      <div class="logic-index-add-word-popup">
-        <div class="logic-index-add-word-title">自定义词组</div>
-        <div class="logic-index-add-word-input">
-          <van-search :value="searchWordName" label="词语" placeholder="请输入搜索词语" bind:change="searchChange"></van-search>
-          <div class="logic-index-add-word-search-list" v-if="searchList.length > 0">
-            <div class="logic-index-add-word-search-item" v-for="(item, index) in searchList" :key="index"  @click.stop="chooseWord(item)">
-                {{item.name}}
-            </div>
-          </div>
-          <div v-if="chooseList.length > 0" class="logic-index-add-word-choose-list">
-            <van-tag custom-class="logic-index-add-word-choose-item" v-for="(item, index) in chooseList" :key="index" closeable size="medium" type="primary" id="primary" @close="onCloseChooseWord(index)">{{item.name}}</van-tag>
-          </div>
-        </div>
-        <div class="logic-index-add-word-button">
-          <van-button color="#4755EB" round @click="addWordGroup">确定添加</van-button>
-        </div>
-      </div>
-    </van-popup>
-    <van-popup @click-overlay="errorClickOverlay" :show="errorShowPopup" round root-portal lock-scroll :z-index="1">
-      <div class="logic-index-error-popup">
-        <div class="logic-index-error-title">问题反馈</div>
-        <div class="logic-index-error-type">
-          <div class="logic-index-error-type-item" :class="{ 'logic-index-error-type-item-active': errorType === '1'}" @click="clickErrorType('1')">错字反馈</div>
-          <div class="logic-index-error-type-item" :class="{ 'logic-index-error-type-item-active': errorType === '2'}" @click="clickErrorType('2')">解释错误</div>
-          <div class="logic-index-error-type-item" :class="{ 'logic-index-error-type-item-active': errorType === '3'}" @click="clickErrorType('3')">缺少成语</div>
-          <div class="logic-index-error-type-item" :class="{ 'logic-index-error-type-item-active': errorType === '4'}" @click="clickErrorType('4')">缺少例句</div>
-          <div class="logic-index-error-type-item" :class="{ 'logic-index-error-type-item-active': errorType === '5'}" @click="clickErrorType('5')">显示错误</div>
-          <div class="logic-index-error-type-item" :class="{ 'logic-index-error-type-item-active': errorType === '99'}" @click="clickErrorType('99')">其他问题</div>
-        </div>
-        <div class="logic-index-error-input">
-          <van-field
-            :value="currentErrorText"
-            type="textarea"
-            placeholder="请输入具体问题反馈"
-            maxlength="500"
-            show-word-limit
-            @change="errorTextChange"
-            :autosize="{ maxHeight: 100, minHeight: 100 }"
-          />
-        </div>
-        <div class="logic-index-error-button">
-          <van-button color="#4755EB" round @click="addErrorBack">确定提交</van-button>
-        </div>
-      </div>
-    </van-popup>
-    <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
   </div>
 </template>
 <config>
@@ -520,17 +369,12 @@
     navigationBarTextStyle: 'black',
     navigationBarBackgroundColor: '#FFFFFF',
     usingComponents: {
-      "van-rate": "../../libs/vant/rate/index",
-      "van-tag": "../../libs/vant/tag/index",
-      "van-button": "../../libs/vant/button/index",
-      "van-popup": "../../libs/vant/popup/index",
-      "van-field": "../../libs/vant/field/index",
-      "van-search": "../../libs/vant/search/index",
-      "van-row": "../../libs/vant/row/index",
-      "van-col": "../../libs/vant/col/index",
-      "word-group-bar": "~@/components/word-group-bar",
-      "mp-html": "~@/components/mp-html/index",
-      "van-dialog": "../../libs/vant/dialog/index",
+      "van-rate": "../../../libs/vant/rate/index",
+      "van-tag": "../../../libs/vant/tag/index",
+      "van-button": "../../../libs/vant/button/index",
+      "van-popup": "../../../libs/vant/popup/index",
+      "van-field": "../../../libs/vant/field/index",
+      "word-group-bar": "~@/components/word-group-bar"
     }
   }
 </config>
@@ -539,148 +383,51 @@
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
   import eventHub from '@/common/eventHub'
-  import { getWordGroupList, getWordGroupDetail, addWordsGroup } from '@/api/wordGroup'
-  import { reflashUserCount } from '@/api/user'
+  import { getWordGroupDetail } from '@/api/wordGroup'
   import { addNotes, getNotes, updateNotes } from '@/api/knowledgeModule'
-  import { addCollection, deleteCollection, addErrorBack } from '@/api/collect'
-  import { getWAllList } from '@/api/words'
-  import Dialog from '../../libs/vant/dialog/dialog';
-  import * as wordGroup from '@/utils/wordGroup'
+  import { addCollection, deleteCollection, getCollectionListByType } from '@/api/collect'
 
   wepy.page({
     store,
     computed: {
       // 用户信息
-      ...mapGetters(['_id', 'user', 'idiomGroupList', 'notionalGroupList', 'idiomGroupId', 'notionalGroupId', 'idiomGroupStudyCount', 'notionalGroupStudyCount'])
-      // allList () {
-      //   return this.type === '1' ? this.idiomGroupList : this.notionalGroupList
-      // }
+      ...mapGetters(['_id'])
     },
     data: {
       allList: [],
       showPopup: false,
-      listdata: [], // 全量成语and词语
-      searchList: [], // 查询出来的词语列表
-      chooseList: [], // 选择出来的词语列表
-      addWordShowPopup: false, // 自定义词组弹框
-      searchWordName: '', //添加成语时当前输入成语
       noteShowPopup: false, // 笔记弹框
       notes: {}, // 笔记对象
       currentNote: '', //当前笔记
-      currentErrorText: '', // 当前报错信息
-      errorShowPopup: false, //报错弹框
-      errorType: '1', // 错误类型
       wordGroupDetail: {},
       currentWordGroup_id: '',
-      type: '', // 1成语 2词语
+      type: '',
       navBarHeight: 0,
       total: 0,
-      customTotal: 0, //自定义词组的数量
-      currentIndex: 0,
-      isShowBtn: true
+      currentIndex: 0
     },
     async onLoad(options) {
       this.navBarHeight = this.$app.$options.globalData.navBarHeight
       this.type = options.type
-      if (options.currentId) {
-        this.currentWordGroup_id = options.currentId
-        this.isShowBtn = false
-      } else {
-        this.currentWordGroup_id = this.type === '1' ? this.idiomGroupId : this.notionalGroupId
-        this.isShowBtn = true
-      }
-      this.allList = JSON.parse(JSON.stringify(this.type === '1' ? this.idiomGroupList : this.notionalGroupList))
-      this.total = this.allList.length
       wx.showLoading({title: '加载中'})
-      // await this.getWordGroupList()
+      await this.getCollectionList()
+      // this.allList = JSON.parse((decodeURIComponent(options.wordGroupList)))
       await this.getWordGroupDetail(this.currentWordGroup_id)
-      await this.reflashUserCount()
       wx.hideLoading()
     },
     methods: {
-      toMember () {
-        wx.navigateTo({
-          url: `../member/pages/index`,
-        })
-      },
-      //获取搜索列表函数（这里是模拟数据）
-      async getListData() {
-        let data = await getWAllList()
-        this.listdata = data.result.allWords
-        console.log(this.listdata)
-      },
-      searchChange (e) {
-         //执行函数
-        let value = e.$wx.detail
-        this.searchList=[]
-        if (value) {
-          console.log(this.listdata)
-          this.listdata.forEach(i=>{
-            //判断遍历是否包含输入字符
-            if(i.name.indexOf(value)!=-1){
-              this.searchList.push(i)
-            }
-          })
+      async getCollectionList () {
+        let options = {
+          user_id: this._id,
+          type: this.type
         }
-        console.log(this.searchList)
-      },
-      // 选择词语
-      chooseWord (obj) {
-        if (this.chooseList.length < 6) {
-          let index = this.chooseList.findIndex(item => item._id === obj._id)
-          if (index < 0) {
-            this.chooseList.push(obj)
-          }
-        } else {
-          wx.showToast({
-            title: '最多添加6个',
-            icon: 'info'
-          })
-        }
-        this.searchList = []
-      },
-      // 删除成语
-      onCloseChooseWord (index) {
-        this.chooseList.splice(index, 1)
-      },
-      // 添加成语组
-      async addWordGroup () {
-        if (this.chooseList.length < 2) {
-          wx.showToast({
-            title: '词语组必须大于2',
-            icon: 'info'
-          })
-        } else {
-          console.log(this.chooseList)
-          let connective = []
-          this.chooseList.forEach(item => {
-            connective.push(item._id)
-          })
-          let params = {
-            connective,
-            user_id: this._id,
-            type: '1',
-            word_type: String(this.type),
-          }
-          wx.showLoading({title: '保存中'})
-          let result = await addWordsGroup(params)
-          this.allList.unshift({
-                _id: result.result.data.id,
-                type: '1',
-                word_type: String(this.type),
-                from: '2',
-                isStudyed: '1'
-          })
-          this.reflashWordGroupList(this.allList)
-          this.customTotal += 1
-          await this.getWordGroupDetail(result.result.data.id)
-          wx.hideLoading()
-          wx.showToast({
-            title: '保存成功',
-            icon: 'info'
-          })
-          this.addWordShowPopup = false
-        }
+        wx.showLoading({title: '加载中'})
+        let result = await getCollectionListByType(options)
+        this.allList = result.result.data.list
+        this.total = this.allList.length
+        this.currentWordGroup_id = this.allList[0].pro_id
+        wx.hideLoading()
+        console.log(this.allList)
       },
       // 收藏
       collect () {
@@ -706,101 +453,26 @@
           this.noteShowPopup = true
         } else if (type === 'viewlist') {
           this.showPopup = true
-        } else if (type === 'addWordGroup') {
-          if(this.user.isMember !== '1') {
-            if (this.customTotal > 0) {
-              Dialog.confirm({
-                message: '普通用户可以体验添加1个词组，开通会员任意添加',
-                confirmButtonText: '立即开通'
-              }).then(async () => {
-                this.addWordShowPopup = false
-                wx.navigateTo({
-                  url: `../member/pages/index`,
-                })
-              }).catch(() => {
-                this.addWordShowPopup = false
-              });
-            }
-          }
-          this.addWordShowPopup = true
-          if (this.listdata.length <= 0) {
-            this.getListData()
-          }
-        } else if (type === 'error') {
-          this.errorShowPopup = true
         }
       },
-      formatTitle(title, searchName) {
-				let reg = RegExp(searchName, "g")
-				return title.replace(reg, '<font style="color: #FFA124;">' + searchName + '</font>')
-			},
       // 获取单个词语
       async getWordGroupDetail(word_id) {
         let result = await getWordGroupDetail({
           user_id: this._id,
           word_group_id: word_id,
-          word_group_type: String(this.type)
+          word_group_type: this.type
         })
         this.wordGroupDetail = result.result
-        this.wordGroupDetail.connectiveList = this.wordGroupDetail.connectiveList.map(item => {
-          if(item.sentence) {
-            item.sentence.content = item.sentence.content ? "例句：" + this.formatTitle(item.sentence.content, item.name) : ''
-          }
-          return item
-        })
+        console.log(this.wordGroupDetail, 'details')
         this.notes = {}
-        this.getNote()
+        await this.getNote()
         this.currentWordGroup_id = this.wordGroupDetail._id
-        let index = this.allList.findIndex((item) => item._id == this.currentWordGroup_id)
+        let index = this.allList.findIndex((item) => item.pro_id == this.currentWordGroup_id)
         this.currentIndex = index + 1
-        this.allList[index].isStudyed = '1'
-        this.reflashWordGroupList(this.allList)
-        this.reflashGroupStudyCount(this.allList)
-        this.reflashWordGroupId(this.currentWordGroup_id)
-      },
-      reflashGroupStudyCount (arr) {
-        let count = 0
-        arr.map (item => {
-          if(item.isStudyed === '1') {
-            count += 1
-          }
-        })
-        if (this.type === '1') {
-          this.$store.commit('setIdiomGroupStudyCount', count)
-          wordGroup.setIdiomGroupStudyCount(count)
-        } else {
-          this.$store.commit('setNotionalGroupStudyCount', count)
-          wordGroup.setNotionalGroupStudyCount(count)
-        }
-      },
-      reflashWordGroupList (arr) {
-        if (this.type === '1') {
-          this.$store.commit('setIdiomGroupList', arr)
-          wordGroup.setIdiomGroupList(arr)
-        } else {
-          this.$store.commit('setNotionalGroupList', arr)
-          wordGroup.setNotionalGroupList(arr)
-        }
-      },
-      reflashWordGroupId (id) {
-        if (this.type === '1') {
-          // 成语
-          this.$store.commit('setIdiomGroupId', id)
-          wordGroup.setIdiomGroupId(id)
-        } else {
-          this.$store.commit('setNotionalGroupId', id)
-          wordGroup.setNotionalGroupId(id)
-        }
-      },
-      async reflashUserCount() {
-        await reflashUserCount({
-          user_id: this._id,
-          type: Number(this.type)
-        })
       },
       async nextWord () {
         let nextIndex = 0
-        let index = this.allList.findIndex((item) => item._id == this.currentWordGroup_id)
+        let index = this.allList.findIndex((item) => item.pro_id == this.currentWordGroup_id)
         nextIndex = index + 1
         if (nextIndex > (this.allList.length - 1)) {
           wx.showToast({
@@ -809,13 +481,13 @@
           })
         } else {
           wx.showLoading({title: '加载中'})
-          await this.getWordGroupDetail(this.allList[nextIndex]._id)
+          await this.getWordGroupDetail(this.allList[nextIndex].pro_id)
           wx.hideLoading()
         }
       },
       async previousWord () {
         let previousIndex = 0
-        let index = this.allList.findIndex((item) => item._id == this.currentWordGroup_id)
+        let index = this.allList.findIndex((item) => item.pro_id == this.currentWordGroup_id)
         previousIndex = index - 1
         if (previousIndex < 0) {
           wx.showToast({
@@ -824,7 +496,7 @@
           })
         } else {
           wx.showLoading({title: '加载中'})
-          await this.getWordGroupDetail(this.allList[previousIndex]._id)
+          await this.getWordGroupDetail(this.allList[previousIndex].pro_id)
           wx.hideLoading()
         }
       },
@@ -849,7 +521,6 @@
         this.currentNote = this.notes ? this.notes.content : ''
         wx.hideLoading()
       },
-      // 添加笔记
       async doNotes () {
         wx.showLoading({title: '加载中'})
         let options = {
@@ -877,43 +548,11 @@
       noteChange (e) {
         this.currentNote = e.$wx.detail
       },
-      // 点击错误类型
-      clickErrorType (type) {
-        this.errorType = type
-      },
-      // 添加报错信息
-      async addErrorBack () {
-        wx.showLoading({title: '加载中'})
-        let options = {
-          pro_id: this.wordGroupDetail._id,
-          user_id: this._id,
-          pro_type: '1',
-          type: this.errorType,
-          content: this.currentErrorText
-        }
-        if (!options.content) {
-          wx.showToast({ title: '具体描述不能为空' })
-          return
-        }
-        await addErrorBack(options)
-        this.errorShowPopup = false
-        wx.hideLoading()
-        wx.showToast({ title: '提交成功' })
-      },
-      errorTextChange (e) {
-        this.currentErrorText = e.$wx.detail
-      },
       showNotePopup () {
         this.noteShowPopup = !this.noteShowPopup
       },
       noteClickOverlay () {
         this.noteShowPopup = false
-      },
-      addWordClickOverlay () {
-        this.addWordShowPopup = false
-      },
-      errorClickOverlay () {
-        this.errorShowPopup = false
       }
     }
   })

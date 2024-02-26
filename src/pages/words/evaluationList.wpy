@@ -16,6 +16,7 @@
       padding: 10px 0;
       border-bottom: 1px solid #eee;
       .logic-index-list-index {
+        flex: 1;
         margin-right: 50px;
         color: #2fcebe;
       }
@@ -34,15 +35,14 @@
   <div class="page">
     <van-tabs :active="active" bind:change="onChange">
       <van-tab title="错误的"></van-tab>
-      <van-tab title="已学习"></van-tab>
-      <van-tab title="已掌握"></van-tab>
+      <van-tab title="正确的"></van-tab>
     </van-tabs>
     <div class="logic-index-list-list">
-      <div class="logic-index-list-item" v-for="(item, index) in wordsList" :key="index">
-        <div class="logic-index-list-index">{{index + 1}}</div>
-        <div class="logic-index-list-words" >{{item.word.name}}</div>
-        <van-tag v-if="active === 0" type="primary" size="medium">错误{{item.errCount}}次</van-tag>
-        <van-tag v-else type="primary" size="medium">正确{{item.rightCount}}次</van-tag>
+      <div class="logic-index-list-item" v-for="(item, index) in wordsList" :key="index" @click="viewDetail(item)">
+        <div class="logic-index-list-index">第{{index + 1}}组</div>
+        <!-- <div class="logic-index-list-words" >{{item.word.name}}</div> -->
+        <van-tag v-if="active === 0" type="primary" size="medium">错误</van-tag>
+        <van-tag v-else type="primary" size="medium">正确</van-tag>
       </div>
     </div>
     <div class="weui-loadmore weui-loadmore_line" v-if="noMoreData">
@@ -67,7 +67,7 @@
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
   import eventHub from '@/common/eventHub'
-  import { getEvaluationWordsQueryPage, getAlredyEvaluationWordsQueryPage, getErrEvaluationWordsQueryPage } from '@/api/words'
+  import { getEvaluationWordsQueryPage } from '@/api/wordGroup'
   wepy.page({
     store,
     computed: {
@@ -76,100 +76,47 @@
     },
     data: {
       active: 0,
-      currPage: 1,
-      pageSize: 20,
       wordsList: [],
-      noMoreData: false
+      noMoreData: false,
+      isAllRight: '2',
+      word_type: '1'
     },
-    async onLoad() {
-      await this.getErrEvaluationWordsList()
-    },
-    async onPullDownRefresh() {
-      this.currPage = 1
-      this.wordsList = []
-      this.noMoreData = false
-      if(this.active === 0) {
-        await this.getErrEvaluationWordsList()
-      } else if (this.active === 1) {
-        await this.getEvaluationWordsList()
-      } else {
-        await this.getAlredyEvaluationWordsList()
-      }
-      wx.stopPullDownRefresh()
-    },
-    async onReachBottom () {
-      if(!this.noMoreData) {
-        this.currPage = this.currPage + 1
-        if(this.active === 0) {
-          await this.getErrEvaluationWordsList()
-        } else if (this.active === 1) {
-          await this.getEvaluationWordsList()
-        } else {
-          await this.getAlredyEvaluationWordsList()
-        }
-      }
+    async onLoad(options) {
+      this.word_type = options.word_type
+      await this.getEvaluationWordsList()
     },
     methods: {
       async getEvaluationWordsList () {
         wx.showLoading({title: '加载中'})
         let result = await getEvaluationWordsQueryPage({
           user_id: this._id,
-          currPage: this.currPage,
-          pageSize: this.pageSize,
+          isAllRight: this.isAllRight,
+          word_type: this.word_type,
         })
-        let list = result.result.data.list
-        if (list.length > 0) {
-          this.wordsList = this.wordsList.length > 0 ? this.wordsList.concat(list) : list
+        this.wordsList = result.result.data.list
+        if (this.wordsList .length > 0) {
+          this.noMoreData = false
         } else {
           this.noMoreData = true
         }
         wx.hideLoading()
       },
-
-      async getAlredyEvaluationWordsList () {
-        wx.showLoading({title: '加载中'})
-        let result = await getAlredyEvaluationWordsQueryPage({
-          user_id: this._id,
-          currPage: this.currPage,
-          pageSize: this.pageSize,
+      viewDetail (obj) {
+        wx.navigateTo({
+          url: `/pages/words/newDetail?currentId=${obj.word_group_id}&type=${this.word_type}`,
         })
-        let list = result.result.data.list
-        if (list.length > 0) {
-          this.wordsList = this.wordsList.length > 0 ? this.wordsList.concat(list) : list
-        } else {
-          this.noMoreData = true
-        }
-        wx.hideLoading()
       },
-
-      async getErrEvaluationWordsList () {
-        wx.showLoading({title: '加载中'})
-        let result = await getErrEvaluationWordsQueryPage({
-          user_id: this._id,
-          currPage: this.currPage,
-          pageSize: this.pageSize,
-        })
-        let list = result.result.data.list
-        console.log(list, '=========')
-        if (list.length > 0) {
-          this.wordsList = this.wordsList.length > 0 ? this.wordsList.concat(list) : list
-        } else {
-          this.noMoreData = true
-        }
-        wx.hideLoading()
-      },
-
       async onChange (e) {
-        this.currPage = 1
+        // this.currPage = 1
         this.active = e.$wx.detail.index
         this.wordsList = []
         this.noMoreData = false
         if(e.$wx.detail.index === 0) {
-          await this.getErrEvaluationWordsList()
-        } else if (e.$wx.detail.index === 1) {
+          this.isAllRight = '2'
           await this.getEvaluationWordsList()
-        } else {
-          await this.getAlredyEvaluationWordsList()
+        } else if (e.$wx.detail.index === 1) {
+          this.isAllRight = '1'
+          await this.getEvaluationWordsList()
         }
       }
     }

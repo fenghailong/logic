@@ -1,0 +1,118 @@
+<style lang="less">
+.page{
+  background-color: #eee;
+  .logic-detail-box {
+    padding: 10px;
+  }
+  .logic-detail-content {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    .logic-detail-content-title {
+      flex: 1;
+      line-height: 1;
+      color: #333333;
+      font-weight: 500;
+    }
+    .logic-detail-content-count {
+      margin-right: 5px;
+      line-height: 1;
+      color: #666666;
+      font-weight: 400;
+    }
+    .logic-detail-content-icon {
+      line-height: 1;
+      color: #666666;
+      font-weight: 400;
+    }
+  }
+}
+</style>
+<template>
+  <div class="page">
+    <div class="logic-detail-box" v-if="collectList.length > 0" >
+      <div class="logic-detail-content" v-for="(item, index) in collectList" :key="index" @click="toList(item)">
+        <div class="logic-detail-content-title">{{item.name}}</div>
+        <div class="logic-detail-content-count">{{item.total}}</div>
+        <van-icon class="logic-detail-content-icon" name="arrow" />
+      </div>
+    </div>
+    <van-empty v-else description="你还没有收藏记录" />
+  </div>
+</template>
+<config>
+  {
+    navigationBarTitleText: '收藏记录',
+    enablePullDownRefresh: true,
+    backgroundColorContent: '#eeeeee',
+    backgroundColor: '#eeeeee',
+    usingComponents: {
+      "van-icon": "../../../libs/vant/icon/index",
+      "van-empty": "../../../libs/vant/empty/index"
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import subscribe from '@/mixins/subscribe.js'
+  import { mapGetters } from '@wepy/x'
+  import { getAllErrQuestionById } from '@/api/question'
+  import { getCollectionList } from '@/api/collect'
+  import eventHub from '@/common/eventHub'
+
+  wepy.page({
+    store,
+    mixins: [ subscribe ],
+    data: {
+      collectList: [],
+      typeOptions: {
+        '1': '成语',
+        '2': '实词',
+        '3': '金句'
+      }
+    },
+    // 计算的属性
+    computed: {
+      ...mapGetters(['_id']),
+    },
+    async onLoad() {
+      this.getCollectionList()
+    },
+    async onPullDownRefresh() {
+      await this.getCollectionList()
+      wx.stopPullDownRefresh()
+    },
+    methods: {
+      async getCollectionList() {
+        let params = {
+          user_id: this._id
+        }
+        wx.showLoading({title: '加载中'})
+        let result = await getCollectionList(params)
+        this.collectList = result.result.data.list.map(item => {
+          item.name = this.typeOptions[item._id]
+          return item
+        })
+        console.log(this.collectList)
+        wx.hideLoading()
+      },
+      toList (item) {
+        wx.navigateTo({
+          url: `/pages/collect/pages/detail?type=${item._id}`
+        })
+      },
+    },
+    onShareAppMessage () {
+      return {
+        // 标题是话题标题
+        title: '知识模块',
+        // 路径为话题详情路径
+        path: '/pages/errorquestion/index?id=' + this.moudleId,
+      }
+    },
+  })
+</script>

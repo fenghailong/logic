@@ -75,7 +75,7 @@
 </style>
 <template>
   <div class="page">
-    <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，在进行考点评测效果会更好哦" />
+    <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，再进行考点评测效果会更好哦" />
     <div class="logic-detail-box">
       <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content {{ user.isMember != '1' ? 'logic-detail-content-opticty' : ''}}" @click="{{ user.isMember != '1' ? toMember() : ''}}">
         <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->

@@ -67,7 +67,7 @@
 </style>
 <template>
   <div class="page">
-    <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，在进行刷题效果会更好哦" />
+    <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，再进行刷题效果会更好哦" />
     <div class="logic-detail-box">
       <div class="logic-detail-content">
         <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->

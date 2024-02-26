@@ -1,7 +1,7 @@
 <style lang="less">
 .logic-member {
   background-image: url('https://7072-prod-2gzhco766f4e1e27-1304834920.tcb.qcloud.la/index/member/page-member-bg.png?sign=5439a6ae9e50fe0977837c5d62dee475&t=1701420918');
-  background-repeat:no-repeat;
+  background-repeat: no-repeat;
   background-size: 100%;
   background-color: #232323;
   padding: 20px 20px 140px;
@@ -31,7 +31,7 @@
       flex-direction: column;
       justify-content: center;
       .logic-member-card-top {
-        color: #B56600;
+        color: #b56600;
         display: flex;
         flex-direction: column;
         align-items: flex-start;
@@ -71,7 +71,7 @@
             font-size: 12px;
             font-family: PingFangSC, PingFang SC;
             font-weight: 500;
-            color: #B56600;
+            color: #b56600;
             line-height: 12px;
             position: absolute;
             z-index: 1;
@@ -88,7 +88,7 @@
       }
     }
   }
-  .logic-member-input{
+  .logic-member-input {
     width: 100%;
     display: flex;
     align-items: center;
@@ -103,8 +103,8 @@
       overflow: hidden;
     }
     .van-button {
-      font-size: 14px !important;;
-      font-weight: 400 !important;;
+      font-size: 14px !important;
+      font-weight: 400 !important;
       color: #915800 !important;
       line-height: 14px !important;
     }
@@ -114,7 +114,7 @@
     display: flex;
     align-items: center;
     margin-top: 48px;
-    background: #2E2E2E;
+    background: #2e2e2e;
     border-radius: 15px;
     height: 214px;
     .logic-member-differ-left {
@@ -141,7 +141,7 @@
           font-size: 15px;
           font-family: PingFangSC, PingFang SC;
           font-weight: 600;
-          color: #F6D3A0;
+          color: #f6d3a0;
           line-height: 15px;
           padding: 34px 0 20px;
           line-height: 1;
@@ -153,7 +153,7 @@
           font-size: 13px;
           font-family: PingFangSC, PingFang SC;
           font-weight: 400;
-          color: #F6D3A0;
+          color: #f6d3a0;
           .logic-member-differ-left-item {
             display: flex;
             align-items: center;
@@ -178,7 +178,7 @@
         font-size: 13px;
         font-family: PingFangSC, PingFang SC;
         font-weight: 600;
-        color: #FFFFFF;
+        color: #ffffff;
         line-height: 13px;
         padding: 25px 0;
         padding-right: 10px;
@@ -187,7 +187,7 @@
         font-size: 12px;
         font-family: PingFangSC, PingFang SC;
         font-weight: 400;
-        color: #FFFFFF;
+        color: #ffffff;
         .logic-member-differ-right-item {
           line-height: 12px;
           margin-bottom: 20px;
@@ -200,7 +200,7 @@
     font-size: 18px;
     font-family: PingFangSC, PingFang SC;
     font-weight: 600;
-    color: #F6D3A0;
+    color: #f6d3a0;
     line-height: 18px;
     text-align: center;
     margin-top: 50px;
@@ -217,7 +217,7 @@
     display: flex;
     align-items: center;
     flex-direction: column;
-    background-color: #2E2E2E;
+    background-color: #2e2e2e;
     border-radius: 15px;
     padding: 25px 36px 0;
     .logic-member-userpower-list {
@@ -230,18 +230,22 @@
     .logic-member-userpower-item {
       flex: 1;
       margin: 0 0 25px 0; // 间隙为5px
-      width: calc((100% - 10px) / 3);  // 这里的10px = (分布个数3-1)*间隙5px, 可以根据实际的分布个数和间隙区调整
+      width: calc(
+        (100% - 10px) / 3
+      ); // 这里的10px = (分布个数3-1)*间隙5px, 可以根据实际的分布个数和间隙区调整
       min-width: calc((100% - 10px) / 3); // 加入这两个后每个item的宽度就生效了
       max-width: calc((100% - 10px) / 3); // 加入这两个后每个item的宽度就生效了
       font-size: 12px;
       font-family: PingFangSC, PingFang SC;
       font-weight: 400;
-      color: #F6D3A0;
+      color: #f6d3a0;
       line-height: 12px;
-      &:nth-child(3n) { // 去除第3n个的margin-right
+      &:nth-child(3n) {
+        // 去除第3n个的margin-right
         text-align: right;
       }
-      &:nth-child(3n+2) { // 去除第3n个的margin-right
+      &:nth-child(3n + 2) {
+        // 去除第3n个的margin-right
         text-align: center;
       }
     }
@@ -267,7 +271,7 @@
         font-size: 12px;
         font-family: PingFangSC, PingFang SC;
         font-weight: 400;
-        color: #F2BC6C;
+        color: #f2bc6c;
         margin-left: 10px;
         line-height: 1;
       }
@@ -338,186 +342,186 @@
 }
 </style>
 <template>
-  <page-meta page-font-size="system"></page-meta>
-  <div class="logic-member">
-    <div class="logic-member-card">
-      <image class="logic-member-card-bg" src="../images/page-member-card.png" />
-      <div class="logic-member-card-box">
-        <div v-if="isIOS" class="logic-member-card-top">
-          <div style="font-size: 14px;font-weight: 500;color: #B56600;margin-bottom: 14px;line-height: 1;">解锁终身会员</div>
-          <div style="font-size: 12px;font-weight: 400;color: #B56600;margin-bottom: 10px;line-height: 1;">活动期间，一次激活终身有效</div>
-          <div style="font-size: 12px;font-weight: 400;color: #B56600;line-height: 1;">获取激活码，请联系客服</div>
+<!-- <page-meta page-font-size="system"></page-meta> -->
+<div class="logic-member">
+  <div class="logic-member-card">
+    <image class="logic-member-card-bg" src="../images/page-member-card.png" />
+    <div class="logic-member-card-box">
+      <div v-if="isIOS" class="logic-member-card-top">
+        <div style="font-size: 14px;font-weight: 500;color: #B56600;margin-bottom: 14px;line-height: 1;">解锁终身会员</div>
+        <div style="font-size: 12px;font-weight: 400;color: #B56600;margin-bottom: 10px;line-height: 1;">活动期间，一次激活终身有效</div>
+        <div style="font-size: 12px;font-weight: 400;color: #B56600;line-height: 1;">获取激活码，请联系客服</div>
+      </div>
+      <div v-else class="logic-member-card-top">
+        <div style="font-size: 13px;">终生会员</div>
+        <div style="display: flex; align-items: center;align-items: flex-end;line-height: 1;margin: 10px 0;">
+          <div style="font-size: 18px;font-weight: bold;">￥</div>
+          <div style="font-size: 26px;font-weight: bold;margin-right: 10px;">19.9</div>
+          <div style="font-size: 12px;">(活动价)</div>
         </div>
-        <div v-else class="logic-member-card-top">
-          <div style="font-size: 13px;">终生会员</div>
-          <div style="display: flex; align-items: center;align-items: flex-end;line-height: 1;margin: 10px 0;">
-            <div style="font-size: 18px;font-weight: bold;">￥</div>
-            <div style="font-size: 26px;font-weight: bold;margin-right: 10px;">19.9</div>
-            <div style="font-size: 12px;">(活动价)</div>
-          </div>
-          <div style="font-size: 11px;">一次激活终身有效 解锁所有功能</div>
+        <div style="font-size: 11px;">一次激活终身有效 解锁所有功能</div>
+      </div>
+      <div v-if="isIOS" class="logic-member-card-bottom">
+        <div class="logic-member-card-button">
+          <van-button round type="info" color="linear-gradient(to right, #623C02, #DA9C3B)" @click="openCustomCode">获取激活码</van-button>
         </div>
-        <div v-if="isIOS" class="logic-member-card-bottom">
-          <div class="logic-member-card-button">
-            <van-button round type="info" color="linear-gradient(to right, #623C02, #DA9C3B)" @click="openCustomCode">获取激活码</van-button>
-          </div>
+      </div>
+      <div v-else class="logic-member-card-bottom">
+        <div class="logic-member-card-button">
+          <van-button v-if="user.phoneNumber" round type="info" color="linear-gradient(to right, #623C02, #DA9C3B)" @click="pay">开通会员</van-button>
+          <van-button v-else color="linear-gradient(to right, #623C02, #DA9C3B)" round type="info" @getphonenumber="handlePhoneNumber"  open-type="getPhoneNumber">开通会员</van-button>
         </div>
-        <div v-else class="logic-member-card-bottom">
-          <div class="logic-member-card-button">
-            <van-button v-if="user.phoneNumber" round type="info" color="linear-gradient(to right, #623C02, #DA9C3B)" @click="pay">开通会员</van-button>
-            <van-button v-else color="linear-gradient(to right, #623C02, #DA9C3B)" round type="info" @getphonenumber="handlePhoneNumber"  open-type="getPhoneNumber">开通会员</van-button>
-          </div>
-          <div class="logic-member-card-jihuo" @click="openAndrodCode">
-              <image class="logic-member-card-jihuo-bg" src="../images/android-jihuo-bg.png" />
-              <div class="logic-member-card-jihuo-text">
-                <div style="flex: 1;text-align: left;padding-left: 8px;">点击输入激活码</div>
-                <image class="logic-member-card-jihuo-icon" src="../images/right-icon.png" />
-              </div>
-          </div>
+        <div class="logic-member-card-jihuo" @click="openAndrodCode">
+            <image class="logic-member-card-jihuo-bg" src="../images/android-jihuo-bg.png" />
+            <div class="logic-member-card-jihuo-text">
+              <div style="flex: 1;text-align: left;padding-left: 8px;">点击输入激活码</div>
+              <image class="logic-member-card-jihuo-icon" src="../images/right-icon.png" />
+            </div>
         </div>
       </div>
     </div>
-    <div v-if="isIOS" class="logic-member-input">
+  </div>
+  <div v-if="isIOS" class="logic-member-input">
+    <van-field
+      :value="currentCode"
+      type="input"
+      placeholder="请输入激活码(可粘贴)"
+      @change="codeChange"
+      class="logic-member-active-field"
+    />
+      <van-button class="logic-member-active-button" color="#FFCB7C" v-if="user.phoneNumber" type="info" @click="doActivate">立刻激活</van-button>
+      <van-button class="logic-member-active-button" color="#FFCB7C" v-else type="info" @getphonenumber="handlePhoneNumber"  open-type="getPhoneNumber">立刻激活</van-button>
+  </div>
+  <div class="logic-member-differ">
+    <div class="logic-member-differ-left">
+      <image class="logic-member-differ-left-bg" src="../images/member-differ.png" />
+      <div class="logic-member-differ-left-box">
+        <div class="logic-member-differ-left-title">会员用户专享</div>
+        <div class="logic-member-differ-left-list">
+          <div class="logic-member-differ-left-item">
+            <div class="logic-member-differ-left-item-text">公基模块</div>
+            <image class="logic-member-differ-left-item-icon" src="../images/member-differ-icon.png" />
+          </div>
+          <div class="logic-member-differ-left-item">
+            <div class="logic-member-differ-left-item-text">时政模块</div>
+            <image class="logic-member-differ-left-item-icon" src="../images/member-differ-icon.png" />
+          </div>
+          <div class="logic-member-differ-left-item">
+            <div class="logic-member-differ-left-item-text">常识积累</div>
+            <image class="logic-member-differ-left-item-icon" src="../images/member-differ-icon.png" />
+          </div>
+          <div class="logic-member-differ-left-item">
+            <div class="logic-member-differ-left-item-text">百日刷题</div>
+            <image class="logic-member-differ-left-item-icon" src="../images/member-differ-icon.png" />
+          </div>
+          <div class="logic-member-differ-left-item">
+            <div class="logic-member-differ-left-item-text">申论积累</div>
+            <image class="logic-member-differ-left-item-icon" src="../images/member-differ-icon.png" />
+          </div>
+          <div class="logic-member-differ-left-item">
+            <div class="logic-member-differ-left-item-text">会员礼包</div>
+            <image class="logic-member-differ-left-item-icon" src="../images/member-differ-icon.png" />
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="logic-member-differ-right">
+      <div class="logic-member-differ-right-title">普通用户</div>
+      <div class="logic-member-differ-right-list">
+        <div class="logic-member-differ-right-item">高频成语</div>
+        <div class="logic-member-differ-right-item">行测模块</div>
+        <div class="logic-member-differ-right-item">人物素材</div>
+        <div class="logic-member-differ-right-item">其他体验</div>
+      </div>
+    </div>
+  </div>
+  <div class="logic-member-userpower-title">
+    <image class="logic-member-userpower-title-icon" src="../images/member-left-icon.png" />
+    <div style="margin: 0 10px;">尊享会员6大权益</div>
+    <image class="logic-member-userpower-title-icon" src="../images/member-right-icon.png" />
+  </div>
+  <div class="logic-member-userpower">
+    <div class="logic-member-userpower-list">
+      <div class="logic-member-userpower-item">
+        <image class="logic-member-userpower-icon" src="../images/power-icon1.png" />
+        <div class="logic-member-userpower-name">公基模块</div>
+      </div>
+      <div class="logic-member-userpower-item">
+        <image class="logic-member-userpower-icon" src="../images/power-icon2.png" />
+        <div class="logic-member-userpower-name">时事政治</div>
+      </div>
+      <div class="logic-member-userpower-item">
+        <image class="logic-member-userpower-icon" src="../images/power-icon3.png" />
+        <div class="logic-member-userpower-name">常识积累</div>
+      </div>
+      <div class="logic-member-userpower-item">
+        <image class="logic-member-userpower-icon" src="../images/power-icon4.png" />
+        <div class="logic-member-userpower-name">申论积累</div>
+      </div>
+      <div class="logic-member-userpower-item">
+        <image class="logic-member-userpower-icon" src="../images/power-icon5.png" />
+        <div class="logic-member-userpower-name">百日刷题</div>
+      </div>
+      <div class="logic-member-userpower-item">
+        <image class="logic-member-userpower-icon" src="../images/power-icon6.png" />
+        <div class="logic-member-userpower-name">会员礼包</div>
+      </div>
+    </div>
+  </div>
+  <div v-if="isIOS" class="logic-member-footer">
+    <div class="logic-member-footer-content">
+      <van-checkbox use-icon-slot value="{{ isChecked }}" bind:change="onChange">
+        <image v-if="isChecked" slot="icon" src="../images/member-selected.png" />
+        <image v-else slot="icon" src="../images/member-noselected.png" />
+      </van-checkbox>
+      <div class="logic-member-footer-text" @click="toAgreement">激活即代表并同意《会员协议》</div>
+    </div>
+    <div class="logic-member-footer-button">
+      <van-button color="linear-gradient(to right, #F2D2A1, #FFC977)" round type="info" block @click="openCustomCode">联系客服，获取激活码</van-button>
+    </div>
+  </div>
+  <div v-else class="logic-member-footer">
+    <div class="logic-member-footer-content">
+      <van-checkbox use-icon-slot value="{{ isChecked }}" bind:change="onChange">
+        <image v-if="isChecked" slot="icon" src="../images/member-selected.png" />
+        <image v-else slot="icon" src="../images/member-noselected.png" />
+      </van-checkbox>
+      <div class="logic-member-footer-text" @click="toAgreement">开通即代表并同意《会员协议》</div>
+    </div>
+    <div class="logic-member-footer-button">
+      <van-button v-if="user.phoneNumber" color="linear-gradient(to right, #F2D2A1, #FFC977)" round type="info" block @click="pay">开通会员</van-button>
+      <van-button v-else color="linear-gradient(to right, #F2D2A1, #FFC977)" round type="info" block @getphonenumber="handlePhoneNumber"  open-type="getPhoneNumber">开通会员</van-button>
+    </div>
+  </div>
+  <van-popup round closeable @click-overlay="closeCustomCode" @close="closeCustomCode" :show="customCodeShow">
+    <div class="logic-member-popup-box">
+      <div class="logic-member-popup-text">长按识别二维码</div>
+      <div class="logic-member-popup-icon">
+        <image 	show-menu-by-longpress src="cloud://prod-2gzhco766f4e1e27.7072-prod-2gzhco766f4e1e27-1304834920/customer/customer.jpeg" />
+      </div>
+      <div class="logic-member-popup-tips">联系客服获取激活码</div>
+    </div>
+  </van-popup>
+  <van-popup round closeable @click-overlay="closeAndrodCode" @close="closeAndrodCode" :show="androdCodeShow">
+    <div class="logic-member-popup-box logic-member-popup-box-androd">
+      <div class="logic-member-popup-text">激活码</div>
       <van-field
         :value="currentCode"
         type="input"
         placeholder="请输入激活码(可粘贴)"
         @change = "codeChange"
-        class="logic-member-active-field"
+        class="logic-member-popup-field"
       />
-        <van-button class="logic-member-active-button" color="#FFCB7C" v-if="user.phoneNumber" type="info" @click="doActivate">立刻激活</van-button>
-        <van-button class="logic-member-active-button" color="#FFCB7C" v-else type="info" @getphonenumber="handlePhoneNumber"  open-type="getPhoneNumber">立刻激活</van-button>
-    </div>
-    <div class="logic-member-differ">
-      <div class="logic-member-differ-left">
-        <image class="logic-member-differ-left-bg" src="../images/member-differ.png" />
-        <div class="logic-member-differ-left-box">
-          <div class="logic-member-differ-left-title">会员用户专享</div>
-          <div class="logic-member-differ-left-list">
-            <div class="logic-member-differ-left-item">
-              <div class="logic-member-differ-left-item-text">公基模块</div>
-              <image class="logic-member-differ-left-item-icon" src="../images/member-differ-icon.png" />
-            </div>
-            <div class="logic-member-differ-left-item">
-              <div class="logic-member-differ-left-item-text">时政模块</div>
-              <image class="logic-member-differ-left-item-icon" src="../images/member-differ-icon.png" />
-            </div>
-            <div class="logic-member-differ-left-item">
-              <div class="logic-member-differ-left-item-text">常识积累</div>
-              <image class="logic-member-differ-left-item-icon" src="../images/member-differ-icon.png" />
-            </div>
-            <div class="logic-member-differ-left-item">
-              <div class="logic-member-differ-left-item-text">百日刷题</div>
-              <image class="logic-member-differ-left-item-icon" src="../images/member-differ-icon.png" />
-            </div>
-            <div class="logic-member-differ-left-item">
-              <div class="logic-member-differ-left-item-text">申论积累</div>
-              <image class="logic-member-differ-left-item-icon" src="../images/member-differ-icon.png" />
-            </div>
-            <div class="logic-member-differ-left-item">
-              <div class="logic-member-differ-left-item-text">会员礼包</div>
-              <image class="logic-member-differ-left-item-icon" src="../images/member-differ-icon.png" />
-            </div>
-          </div>
-        </div>
+      <div class="logic-member-popup-button">
+        <van-button color="linear-gradient(to right, #F2D2A1, #FFC977)" block round v-if="user.phoneNumber" type="info" @click="doActivate">确定</van-button>
+        <van-button color="linear-gradient(to right, #F2D2A1, #FFC977)" block round v-else type="info" @getphonenumber="handlePhoneNumber"  open-type="getPhoneNumber">确定</van-button>
+      </div>
 
-      </div>
-      <div class="logic-member-differ-right">
-        <div class="logic-member-differ-right-title">普通用户</div>
-        <div class="logic-member-differ-right-list">
-          <div class="logic-member-differ-right-item">高频成语</div>
-          <div class="logic-member-differ-right-item">行测模块</div>
-          <div class="logic-member-differ-right-item">人物素材</div>
-          <div class="logic-member-differ-right-item">其他体验</div>
-        </div>
-      </div>
     </div>
-    <div class="logic-member-userpower-title">
-      <image class="logic-member-userpower-title-icon" src="../images/member-left-icon.png" />
-     <div style="margin: 0 10px;">尊享会员6大权益</div>
-      <image class="logic-member-userpower-title-icon" src="../images/member-right-icon.png" />
-    </div>
-    <div class="logic-member-userpower">
-      <div class="logic-member-userpower-list">
-        <div class="logic-member-userpower-item">
-          <image class="logic-member-userpower-icon" src="../images/power-icon1.png" />
-          <div class="logic-member-userpower-name">公基模块</div>
-        </div>
-        <div class="logic-member-userpower-item">
-          <image class="logic-member-userpower-icon" src="../images/power-icon2.png" />
-          <div class="logic-member-userpower-name">时事政治</div>
-        </div>
-        <div class="logic-member-userpower-item">
-          <image class="logic-member-userpower-icon" src="../images/power-icon3.png" />
-          <div class="logic-member-userpower-name">常识积累</div>
-        </div>
-        <div class="logic-member-userpower-item">
-          <image class="logic-member-userpower-icon" src="../images/power-icon4.png" />
-          <div class="logic-member-userpower-name">申论积累</div>
-        </div>
-        <div class="logic-member-userpower-item">
-          <image class="logic-member-userpower-icon" src="../images/power-icon5.png" />
-          <div class="logic-member-userpower-name">百日刷题</div>
-        </div>
-        <div class="logic-member-userpower-item">
-          <image class="logic-member-userpower-icon" src="../images/power-icon6.png" />
-          <div class="logic-member-userpower-name">会员礼包</div>
-        </div>
-      </div>
-    </div>
-    <div v-if="isIOS" class="logic-member-footer">
-      <div class="logic-member-footer-content">
-        <van-checkbox use-icon-slot value="{{ isChecked }}" bind:change="onChange">
-          <image v-if="isChecked" slot="icon" src="../images/member-selected.png" />
-          <image v-else slot="icon" src="../images/member-noselected.png" />
-        </van-checkbox>
-        <div class="logic-member-footer-text" @click="toAgreement">激活即代表并同意《会员协议》</div>
-      </div>
-      <div class="logic-member-footer-button">
-        <van-button color="linear-gradient(to right, #F2D2A1, #FFC977)" round type="info" block @click="openCustomCode">联系客服，获取激活码</van-button>
-      </div>
-    </div>
-    <div v-else class="logic-member-footer">
-      <div class="logic-member-footer-content">
-        <van-checkbox use-icon-slot value="{{ isChecked }}" bind:change="onChange">
-          <image v-if="isChecked" slot="icon" src="../images/member-selected.png" />
-          <image v-else slot="icon" src="../images/member-noselected.png" />
-        </van-checkbox>
-        <div class="logic-member-footer-text" @click="toAgreement">开通即代表并同意《会员协议》</div>
-      </div>
-      <div class="logic-member-footer-button">
-        <van-button v-if="user.phoneNumber" color="linear-gradient(to right, #F2D2A1, #FFC977)" round type="info" block @click="pay">开通会员</van-button>
-        <van-button v-else color="linear-gradient(to right, #F2D2A1, #FFC977)" round type="info" block @getphonenumber="handlePhoneNumber"  open-type="getPhoneNumber">开通会员</van-button>
-      </div>
-    </div>
-    <van-popup round closeable @click-overlay="closeCustomCode" @close="closeCustomCode" :show="customCodeShow">
-      <div class="logic-member-popup-box">
-        <div class="logic-member-popup-text">长按识别二维码</div>
-        <div class="logic-member-popup-icon">
-          <image 	show-menu-by-longpress src="cloud://prod-2gzhco766f4e1e27.7072-prod-2gzhco766f4e1e27-1304834920/customer/customer.jpeg" />
-        </div>
-        <div class="logic-member-popup-tips">联系客服获取激活码</div>
-      </div>
-    </van-popup>
-    <van-popup round closeable @click-overlay="closeAndrodCode" @close="closeAndrodCode" :show="androdCodeShow">
-      <div class="logic-member-popup-box logic-member-popup-box-androd">
-        <div class="logic-member-popup-text">激活码</div>
-        <van-field
-          :value="currentCode"
-          type="input"
-          placeholder="请输入激活码(可粘贴)"
-          @change = "codeChange"
-          class="logic-member-popup-field"
-        />
-        <div class="logic-member-popup-button">
-          <van-button color="linear-gradient(to right, #F2D2A1, #FFC977)" block round v-if="user.phoneNumber" type="info" @click="doActivate">确定</van-button>
-          <van-button color="linear-gradient(to right, #F2D2A1, #FFC977)" block round v-else type="info" @getphonenumber="handlePhoneNumber"  open-type="getPhoneNumber">确定</van-button>
-        </div>
-
-      </div>
-    </van-popup>
-    <privacy-dialog id="pay-tip-popup-7" wx:if="{{showPrivacy}}" />
-  </div>
+  </van-popup>
+  <privacy-dialog id="pay-tip-popup-7" wx:if="{{showPrivacy}}" />
+</div>
 </template>
 <config>
   {
@@ -533,169 +537,172 @@
   }
 </config>
 <script>
-  import wepy from '@wepy/core'
-  import store from '@/store'
-  import { mapGetters } from '@wepy/x'
-  import { addActivateRecord } from '@/api/activate'
-  import { getPhoneNum } from '@/api/auth'
-  import { doPay } from '@/api/pay'
+import wepy from '@wepy/core';
+import store from '@/store';
+import { mapGetters } from '@wepy/x';
+import { addActivateRecord } from '@/api/activate';
+import { getPhoneNum } from '@/api/auth';
+import { doPay } from '@/api/pay';
 
-  wepy.page({
-    store,
-    computed: {
-      // 用户信息
-      ...mapGetters(['_id', 'user'])
+wepy.page({
+  store,
+  computed: {
+    // 用户信息
+    ...mapGetters(['_id', 'user']),
+  },
+  data: {
+    currentCode: '',
+    isIOS: false,
+    isChecked: true,
+    customCodeShow: false,
+    showPrivacy: false,
+    androdCodeShow: false,
+  },
+  async onLoad() {
+    console.log(1);
+    await this.getSystemInfo();
+  },
+  onShow() {
+    console.log(2);
+    this.getSystemInfo();
+    this.showPrivacy = true;
+  },
+  onHide() {
+    this.showPrivacy = false;
+  },
+  methods: {
+    onChange(e) {
+      // console.log(e.$wx.detail)
+      this.isChecked = e.$wx.detail;
     },
-    data: {
-      currentCode: '',
-      isIOS: false,
-      isChecked: true,
-      customCodeShow: false,
-      showPrivacy: false,
-      androdCodeShow: false,
+    toAgreement() {
+      wx.navigateTo({
+        url: `../pages/agreement`,
+      });
     },
-    async onLoad () {
-      console.log(1)
-      await this.getSystemInfo()
+    getSystemInfo() {
+      let that = this;
+      wx.getSystemInfo({
+        success(res) {
+          console.log(res);
+          that.isIOS = res.platform === 'ios';
+          // that.isIOS = true
+        },
+      });
     },
-    onShow() {
-      console.log(2)
-      this.getSystemInfo()
-      this.showPrivacy = true
+    openCustomCode() {
+      this.customCodeShow = true;
     },
-    onHide() {
-      this.showPrivacy = false
+    closeCustomCode() {
+      this.customCodeShow = false;
     },
-    methods: {
-      onChange (e) {
-        // console.log(e.$wx.detail)
-        this.isChecked = e.$wx.detail
-      },
-      toAgreement () {
-        wx.navigateTo({
-          url: `../pages/agreement`,
-        })
-      },
-      getSystemInfo () {
-        let that = this
-        wx.getSystemInfo({
-          success (res) {
-            console.log(res)
-            that.isIOS = res.platform === 'ios'
-            // that.isIOS = true
-          }
-        })
-      },
-      openCustomCode () {
-        this.customCodeShow = true
-      },
-      closeCustomCode () {
-        this.customCodeShow = false
-      },
-      openAndrodCode () {
-        this.androdCodeShow = true
-      },
-      closeAndrodCode () {
-        this.androdCodeShow = false
-      },
-      async pay () {
-        if (!this.isChecked) {
-          wx.showToast({
-            title: '请勾选《会员服务协议》'
-          })
-          return
-        }
-        this.closePopup()
-        wx.showLoading({
-          title: '发起支付中',
-          mask: true
-        })
-        let res = await doPay({ totalFee: 1990 })
-        if(res.result && res.result.payment) {
-          let payment = res.result.payment
-          let that = this
-          wx.requestPayment({
+    openAndrodCode() {
+      this.androdCodeShow = true;
+    },
+    closeAndrodCode() {
+      this.androdCodeShow = false;
+    },
+    async pay() {
+      if (!this.isChecked) {
+        wx.showToast({
+          title: '请勾选《会员服务协议》',
+        });
+        return;
+      }
+      this.closePopup();
+      wx.showLoading({
+        title: '发起支付中',
+        mask: true,
+      });
+      let res = await doPay({ totalFee: 1990 });
+      if (res.result && res.result.payment) {
+        let payment = res.result.payment;
+        let that = this;
+        wx.requestPayment({
           ...payment,
-          async success (res) {
-            wx.hideLoading()
+          async success(res) {
+            wx.hideLoading();
             wx.showToast({
               title: '支付成功',
-              icon: 'success'
-            })
-            await that.$store.dispatch('login')
+              icon: 'success',
+            });
+            await that.$store.dispatch('login');
           },
-          fail (err) {
-            wx.hideLoading()
+          fail(err) {
+            wx.hideLoading();
             wx.showToast({
-              title: '支付失败，如有疑问，请联系客服'
-            })
-          }
-        })
-        }
-      },
-      closePopup() {
-        this.tipsShow = false
-        this.$emit("closePayPopup",this.tipsShow);
-      },
-      codeChange(e) {
-        this.currentCode = e.$wx.detail
-      },
-      async handlePhoneNumber (e) {
-        console.log(e)
-        let code = e.$wx.detail.code //开放数据ID
-        if (!code) {
-            wx.showToast({title: '用户未授权'})
-            return
-        }
-        wx.showLoading({
-          title: '加载中',
-          mask: true
-        })
-        let res = await getPhoneNum({ code: code })
-        wx.hideLoading()
-        wx.showToast({
-          title: '授权成功',
-          icon: 'success'
-        })
-        if (res.result === '用户手机号已经更新') {
-          await this.$store.dispatch('login')
-          if (this.isIOS || this.androdCodeShow) {
-            await this.doActivate()
-          } else {
-            await this.pay()
-          }
-        } else {
-          wx.showToast({
-            title: '手机号获取失败'
-          })
-        }
-      },
-      async doActivate () {
-        if(this.currentCode) {
-          this.closePopup()
-          wx.showLoading({title: '激活中'})
-          let result = await addActivateRecord({user_id: this._id, activate_code_id: this.currentCode})
-          wx.hideLoading()
-          if (result.result === '激活成功') {
-            wx.showToast({
-              title: '激活成功',
-              icon: 'success'
-            })
-            await this.$store.dispatch('login')
-            wx.navigateTo({
-              url: `/pages/index/index`,
-            })
-          } else {
-            wx.showToast({
-              title: '激活失败'
-            })
-          }
-        } else {
-          wx.showToast({
-            title: '请输入激活码'
-          })
-        }
+              title: '支付失败，如有疑问，请联系客服',
+            });
+          },
+        });
       }
-    }
-  })
+    },
+    closePopup() {
+      this.tipsShow = false;
+      this.$emit('closePayPopup', this.tipsShow);
+    },
+    codeChange(e) {
+      this.currentCode = e.$wx.detail;
+    },
+    async handlePhoneNumber(e) {
+      console.log(e);
+      let code = e.$wx.detail.code; //开放数据ID
+      if (!code) {
+        wx.showToast({ title: '用户未授权' });
+        return;
+      }
+      wx.showLoading({
+        title: '加载中',
+        mask: true,
+      });
+      let res = await getPhoneNum({ code: code });
+      wx.hideLoading();
+      wx.showToast({
+        title: '授权成功',
+        icon: 'success',
+      });
+      if (res.result === '用户手机号已经更新') {
+        await this.$store.dispatch('login');
+        if (this.isIOS || this.androdCodeShow) {
+          await this.doActivate();
+        } else {
+          await this.pay();
+        }
+      } else {
+        wx.showToast({
+          title: '手机号获取失败',
+        });
+      }
+    },
+    async doActivate() {
+      if (this.currentCode) {
+        this.closePopup();
+        wx.showLoading({ title: '激活中' });
+        let result = await addActivateRecord({
+          user_id: this._id,
+          activate_code_id: this.currentCode,
+        });
+        wx.hideLoading();
+        if (result.result === '激活成功') {
+          wx.showToast({
+            title: '激活成功',
+            icon: 'success',
+          });
+          await this.$store.dispatch('login');
+          wx.navigateTo({
+            url: `/pages/index/index`,
+          });
+        } else {
+          wx.showToast({
+            title: '激活失败',
+          });
+        }
+      } else {
+        wx.showToast({
+          title: '请输入激活码',
+        });
+      }
+    },
+  },
+});
 </script>

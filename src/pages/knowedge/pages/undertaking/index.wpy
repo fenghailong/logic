@@ -67,7 +67,7 @@
 </style>
 <template>
   <div class="page">
-    <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，在进行刷题效果会更好哦" />
+    <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，再进行刷题效果会更好哦" />
     <div class="logic-detail-box">
       <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content {{ index > 0 && user.isMember != '1' ? 'logic-detail-content-opticty' : ''}}" @click="{{ index > 0 && user.isMember != '1' ? toMember() : ''}}">
         <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->
@@ -143,12 +143,12 @@
           await this.onSubscribe()
         }
         wx.navigateTo({
-          url: `/pages/undertaking/list?id=${id}&name=${name}`,
+          url: `../../pages/undertaking/list?id=${id}&name=${name}`,
         })
       },
       toEvaluation (id, name) {
         wx.navigateTo({
-          url: `/pages/undertaking/evaluation?id=${id}&name=${name}`,
+          url: `../../pages/undertaking/evaluation?id=${id}&name=${name}`,
         })
       },
       formdate(date){
@@ -159,14 +159,6 @@
         var minutes = date.getMinutes();
         return year + "年" + month + "月" + date1 + "日 " + hour + ":" + minutes;
       }
-    },
-    onShareAppMessage () {
-      return {
-        // 标题是话题标题
-        title: '知识模块',
-        // 路径为话题详情路径
-        path: '/pages/undertaking/index?id=' + this.moudleId,
-      }
-    },
+    }
   })
 </script>

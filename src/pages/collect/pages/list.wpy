@@ -1,0 +1,116 @@
+<style lang="less">
+.page{
+  background-color: #eee;
+  .logic-collect-box {
+    padding: 10px;
+  }
+  .logic-collect-content {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    .logic-collect-content-title {
+      flex: 1;
+      line-height: 1;
+      color: #333333;
+      font-weight: 500;
+    }
+    .logic-collect-content-count {
+      margin-right: 5px;
+      line-height: 1;
+      color: #666666;
+      font-weight: 400;
+    }
+    .logic-collect-content-icon {
+      line-height: 1;
+      color: #666666;
+      font-weight: 400;
+    }
+  }
+}
+</style>
+<template>
+  <div class="page">
+    <div class="logic-collect-box">
+      <div v-if="collectList.length > 0" v-for="(item, index) in collectList" :key="index" class="logic-collect-content" @click="toList(item)">
+        <div class="logic-collect-content-title">{{item.pro_id}}</div>
+        <van-icon class="logic-collect-content-icon" name="arrow" />
+      </div>
+      <div class="weui-loadmore weui-loadmore_line" v-if="noMoreData">
+        <div class="weui-loadmore__tips weui-loadmore__tips_in-line">没有更多数据</div>
+      </div>
+    </div>
+    <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
+  </div>
+</template>
+<config>
+  {
+    navigationBarTitleText: '收藏列表',
+    enablePullDownRefresh: true,
+    usingComponents: {
+      "van-icon": "../../../libs/vant/icon/index"
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import { mapGetters } from '@wepy/x'
+  import eventHub from '@/common/eventHub'
+  import { getCollectionListByType } from '@/api/collect'
+  import Dialog from '../../../libs/vant/dialog/dialog';
+
+  wepy.page({
+    store,
+    computed: {
+      // 用户信息
+      ...mapGetters(['_id'])
+    },
+    data: {
+      type: '', //传入参数 收藏类型
+      collectList: [], //收藏列表
+      currPage: 1,
+      pageSize: 10,
+      noMoreData: false,
+    },
+    async onLoad(options) {
+      this.type = options.type
+      await this.getCollectionList()
+    },
+    async onPullDownRefresh() {
+      this.currPage = 1
+      this.collectList = []
+      await this.getCollectionList()
+      wx.stopPullDownRefresh()
+    },
+    async onReachBottom () {
+      if(!this.noMoreData) {
+        this.currPage = this.currPage + 1
+        await this.getCollectionList()
+      }
+    },
+    methods: {
+      async getCollectionList () {
+        let options = {
+          user_id: this._id,
+          type: this.type,
+          currPage: this.currPage,
+          pageSize: this.pageSize
+        }
+        this.noMoreData = false
+        wx.showLoading({title: '加载中'})
+        let result = await getCollectionListByType(options)
+        let list = result.result.data.list
+        wx.hideLoading()
+        if (list.length > 0) {
+          this.collectList = this.collectList.length > 0 ? this.collectList.concat(list) : list
+        } else {
+          this.noMoreData = true
+        }
+        console.log(this.collectList)
+      }
+    }
+  })
+</script>

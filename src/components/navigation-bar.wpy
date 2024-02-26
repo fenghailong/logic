@@ -44,6 +44,7 @@
   background-color: #FFFFFF;
   padding: 0 20px;
   width: 100%;
+  overflow-y: auto;
   z-index: 100;
   .logic-index-search-item {
     font-size: 16px;
@@ -63,10 +64,10 @@
         </div>
       </div>
       <div class="logic-index-search-list" style="top:{{navBarHeight}}px;">
-          <div class="logic-index-search-item" v-for="(item, index) in searchList" :key="index"  @click.stop="sureCompany(item._id)">
-              {{item.name}}
-          </div>
+        <div class="logic-index-search-item" v-for="(item, index) in searchList" :key="index"  @click.stop="sureCompany(item._id)">
+            {{item.name}}
         </div>
+      </div>
     </div>
     <div class="content" style="padding-top:{{navBarHeight}}px;"></div>
   </div>

@@ -336,7 +336,7 @@
       // 查看答案
       async viewAnswer () {
         wx.showLoading({title: '加载中'})
-        if(this.user.isMember === '2') {
+        if(this.user.isMember !== '1') {
           let result = await getEvaluationRecordCount({
             user_id: this._id,
             module_id: this.moudleId,

@@ -376,40 +376,13 @@ const getWordList= async (options) => {
     wordsRecordList: 1,
     isStudyed: $.size('$wordsRecordList')
   })
-  .group({
-    _id: '$type',
-    root: {
-      $push: "$$ROOT"
-    },
-    total: $.sum('$isStudyed')
-  })
   .limit(4000)
   .end()
-  let idiomList;
-  let studyIdiomCount;
-  let notionalList;
-  let studyNotionalCount;
-  console.log(result, '=======================')
-  result.list.map(item => {
-    if (item._id === 1) {
-      idiomList = item.root
-      studyIdiomCount = item.total
-    } else {
-      notionalList = item.root
-      studyNotionalCount = item.total
-    }
-  })
+  console.log(result, '========')
   return {
     code: "200",
     data: {
-      idiomList,
-      notionalList,
-      allIdiomCount: idiomList.length,
-      allNotionalCount: notionalList.length,
-      studyIdiomCount,
-      studyNotionalCount,
-      idiomStarValue: ( studyIdiomCount/idiomList.length * 5 ).toFixed(1),
-      notionalstarValue: ( studyNotionalCount/notionalList.length * 5 ).toFixed(1)
+      idiomList: result.list
     },
     message: "ok"
   }
@@ -418,9 +391,9 @@ const getWordList= async (options) => {
 // 获取用户当前学习成语或者词语的id
 const getCurrenStudyWordId = async (data) => {
   const resultIdiom = await reCollection.where({ user_id: data.user_id, word_type: '1' }).orderBy('_updateTime','desc').limit(1).get()
-  const resultNotional = await reCollection.where({ user_id: data.user_id, word_type: '2' }).orderBy('_updateTime','desc').limit(1).get()
+  // const resultNotional = await reCollection.where({ user_id: data.user_id, word_type: '2' }).orderBy('_updateTime','desc').limit(1).get()
   let idiomWordId = ''
-  let notionalWordId = ''
+  // let notionalWordId = ''
   console.log(resultIdiom, '?????????????')
   if (resultIdiom.data.length > 0) {
     idiomWordId = resultIdiom.data[0].words_id
@@ -428,17 +401,17 @@ const getCurrenStudyWordId = async (data) => {
     const idionWord = await collection.where({ type: 1, synonym: _.exists(true)}).orderBy('count','desc').limit(1).get()
     idiomWordId = idionWord.data.length > 0 ? idionWord.data[0]._id : ''
   }
-  if (resultNotional.data.length > 0) {
-    notionalWordId = resultNotional.data[0].words_id
-  } else {
-    const notionalWord = await collection.where({ type: 2, synonym: _.exists(true)}).orderBy('count','desc').limit(1).get()
-    notionalWordId = notionalWord.data.length > 0 ? notionalWord.data[0]._id : ''
-  }
+  // if (resultNotional.data.length > 0) {
+  //   notionalWordId = resultNotional.data[0].words_id
+  // } else {
+  //   const notionalWord = await collection.where({ type: 2, synonym: _.exists(true)}).orderBy('count','desc').limit(1).get()
+  //   notionalWordId = notionalWord.data.length > 0 ? notionalWord.data[0]._id : ''
+  // }
   return {
     code: "200",
     data: {
-      idiomWordId,
-      notionalWordId
+      idiomWordId
+      // notionalWordId
     },
     message: "ok"
   }

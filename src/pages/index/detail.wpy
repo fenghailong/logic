@@ -51,7 +51,7 @@
 </style>
 <template>
   <div class="page">
-    <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，在进行考点评测效果会更好哦" />
+    <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，再进行考点评测效果会更好哦" />
     <div class="logic-detail-box">
       <!-- <div class="logic-detail-content" v-if="detail.type === '国考高频成语'">
         <div class="logic-detail-content-title">{{detail.type}}</div>
