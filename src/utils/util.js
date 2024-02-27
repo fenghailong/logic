@@ -6,6 +6,11 @@ export function diffForHumans(date, format = 'YYYYMMDD H:mm:ss') {
   return moment(date).format(format)
 }
 
+export function diffTime(startTime,endTime, type = 'days') {
+  moment.locale('zh-cn')
+  return moment(endTime).diff(moment(startTime), type)
+}
+
 export function getSystemData (attr) {
   return new Promise((resolve, reject) => {
     wx.getSystemInfo({

@@ -11,20 +11,21 @@ const collectionUser = db.collection('user');
 
 // 激活模块
 const addActivateRecord = async (options) => {
-  let isCanUseCode = await checkActivateCode(options.activate_code_id);
-  if (isCanUseCode) {
+  let codeType = await checkActivateCode(options.activate_code_id);
+  if (codeType) {
     let hasRecord = await collectionRecord.where({ user_id: options.user_id, activate_code_id: options.activate_code_id}).get();
     if (Array.isArray(hasRecord.data) && hasRecord.data.length === 0) {
       let result = await collectionRecord.add({
         data: {
           user_id: options.user_id,
           activate_code_id: options.activate_code_id,
+          type: codeType,
           _createTime: Date.now(),
           _updateTime: Date.now()
         }
       })
       console.log(result, '增加记录')
-      await changeUserToMember(options.user_id);
+      await changeUserToMember(options.user_id, codeType);
       return '激活成功'
     } else {
       return '已激活'
@@ -51,25 +52,52 @@ const checkActivateCode = async (activate_code_id) => {
         }
       })
       console.log(hasCode, '激活码使用成功')
-      return true
+      return hasCode.data[0].type
     }
   }
 }
 // 改变用户成为会员
-const changeUserToMember = async (id) => {
+const changeUserToMember = async (id, codeType) => {
   let hasUser = await collectionUser.where({ _id: id }).get();
   if (Array.isArray(hasUser.data) && hasUser.data.length === 0) {
     return '用户不存在'
   } else {
-    let result = await collectionUser.doc(id).update({
-      // data 传入需要局部更新的数据
-      data: {
-        // 表示将 done 字段置为 true
-        isMember: '1'
+    if(codeType){
+      let openTime = Date.now()
+      let closeTime
+      if( codeType === '1') {
+        closeTime = Date.now() + 31 * 24 * 60 * 60 * 1000
+      }else if (codeType === '2') {
+        closeTime = Date.now() + 6 * 31 * 24 * 60 * 60 * 1000
+      }else if (codeType === '3') {
+        closeTime = Date.now() + 12 * 31 * 24 * 60 * 60 * 1000
+      }else if (codeType === '4') {
+        closeTime = Date.now() + 99 * 12 * 31 * 24 * 60 * 60 * 1000
       }
-    })
-    console.log(result, '用户已成为会员')
-    return '用户已成为会员'
+      console.log(openTime)
+      console.log(closeTime)
+      let result = await collectionUser.doc(id).update({
+        // data 传入需要局部更新的数据
+        data: {
+          // 表示将 done 字段置为 true
+          isMember: '1',
+          openTime,
+          closeTime
+        }
+      })
+      console.log(result, '用户已成为会员')
+      return '用户已成为会员'
+    } else {
+      let result = await collectionUser.doc(id).update({
+        // data 传入需要局部更新的数据
+        data: {
+          // 表示将 done 字段置为 true
+          isMember: '1'
+        }
+      })
+      console.log(result, '用户已成为会员')
+      return '用户已成为会员'
+    }
   }
 }
 

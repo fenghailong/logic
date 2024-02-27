@@ -20,9 +20,20 @@ const uuid = function () {
 }
 
 const doPay = async (event, context) => {
-  console.log(event)
+  console.log(event, '========')
   const wxContext = cloud.getWXContext();
-  let totalFee = 1990
+  let totalFee
+  if(event.data.totalFeeType === '1') {
+    totalFee = 590
+  }else if(event.data.totalFeeType === '2') {
+    totalFee = 1990
+  }else if(event.data.totalFeeType === '3') {
+    totalFee = 2990
+  }else if(event.data.totalFeeType === '4') {
+    totalFee = 4990
+  } else {
+    totalFee = 1990
+  }
 	let openId = wxContext.OPENID
 
 	// const uid = uuid();
@@ -54,6 +65,7 @@ const doPay = async (event, context) => {
 			body,
       outTradeNo,
 			totalFee,
+      totalFeeType: event.data.totalFeeType ? event.data.totalFeeType : '',
       status: 0,
       orderRes: res,
       _createTime: Date.now(),

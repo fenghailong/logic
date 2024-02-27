@@ -36,6 +36,21 @@
         flex-direction: column;
         align-items: flex-start;
       }
+      .logic-member-card-top-and {
+        color: #b56600;
+        display: flex;
+        .logic-member-card-top-and-item {
+          border: 1px solid #999;
+          padding: 6px;
+          text-align: center;
+          font-size: 14px;
+          border-radius: 10px;
+          margin-right: 10px;
+        }
+        .active {
+          border: 2px solid #b56600;
+        }
+      }
       .logic-member-card-bottom {
         display: flex;
         align-items: center;
@@ -348,18 +363,33 @@
     <image class="logic-member-card-bg" src="../images/page-member-card.png" />
     <div class="logic-member-card-box">
       <div v-if="isIOS" class="logic-member-card-top">
-        <div style="font-size: 14px;font-weight: 500;color: #B56600;margin-bottom: 14px;line-height: 1;">解锁终身会员</div>
-        <div style="font-size: 12px;font-weight: 400;color: #B56600;margin-bottom: 10px;line-height: 1;">活动期间，一次激活终身有效</div>
+        <div style="font-size: 14px;font-weight: 500;color: #B56600;margin-bottom: 14px;line-height: 1;">解锁会员</div>
+        <div style="font-size: 12px;font-weight: 400;color: #B56600;margin-bottom: 10px;line-height: 1;">解锁所有功能，一次全部解锁</div>
         <div style="font-size: 12px;font-weight: 400;color: #B56600;line-height: 1;">获取激活码，请联系客服</div>
       </div>
-      <div v-else class="logic-member-card-top">
-        <div style="font-size: 13px;">终生会员</div>
-        <div style="display: flex; align-items: center;align-items: flex-end;line-height: 1;margin: 10px 0;">
-          <div style="font-size: 18px;font-weight: bold;">￥</div>
-          <div style="font-size: 26px;font-weight: bold;margin-right: 10px;">19.9</div>
-          <div style="font-size: 12px;">(活动价)</div>
+      <div v-else class="logic-member-card-top-and">
+        <div class="logic-member-card-top-and-item {{chooseType === '1' ? 'active' : ''}}" @click="choosePayType('1')">
+          <div style="font-size: 12px">1个月</div>
+          <div style="font-weight: bold">￥5.9</div>
+          <div style="text-decoration:line-through;font-size: 12px">￥10</div>
         </div>
-        <div style="font-size: 11px;">一次激活终身有效 解锁所有功能</div>
+        <div class="logic-member-card-top-and-item {{chooseType === '2' ? 'active' : ''}}" @click="choosePayType('2')">
+          <div style="font-size: 12px">6个月</div>
+          <div style="font-weight: bold">￥19.9</div>
+          <div style="text-decoration:line-through;font-size: 12px">￥30</div>
+        </div>
+        <div class="logic-member-card-top-and-item {{chooseType === '3' ? 'active' : ''}}" @click="choosePayType('3')">
+          <div style="font-size: 12px">12个月</div>
+          <div style="font-weight: bold">￥29.9</div>
+          <div style="text-decoration:line-through;font-size: 12px">￥60</div>
+        </div>
+<!--        <div style="font-size: 13px;">终生会员</div>-->
+<!--        <div style="display: flex; align-items: center;align-items: flex-end;line-height: 1;margin: 10px 0;">-->
+<!--          <div style="font-size: 18px;font-weight: bold;">￥</div>-->
+<!--          <div style="font-size: 26px;font-weight: bold;margin-right: 10px;">19.9</div>-->
+<!--          <div style="font-size: 12px;">(活动价)</div>-->
+<!--        </div>-->
+<!--        <div style="font-size: 11px;">一次激活终身有效 解锁所有功能</div>-->
       </div>
       <div v-if="isIOS" class="logic-member-card-bottom">
         <div class="logic-member-card-button">
@@ -557,6 +587,7 @@ wepy.page({
     customCodeShow: false,
     showPrivacy: false,
     androdCodeShow: false,
+    chooseType: '1'
   },
   async onLoad() {
     console.log(1);
@@ -571,6 +602,9 @@ wepy.page({
     this.showPrivacy = false;
   },
   methods: {
+    choosePayType (type) {
+      this.chooseType = type
+    },
     onChange(e) {
       // console.log(e.$wx.detail)
       this.isChecked = e.$wx.detail;
@@ -609,12 +643,13 @@ wepy.page({
         });
         return;
       }
+
       this.closePopup();
       wx.showLoading({
         title: '发起支付中',
         mask: true,
       });
-      let res = await doPay({ totalFee: 1990 });
+      let res = await doPay({ totalFeeType: this.chooseType });
       if (res.result && res.result.payment) {
         let payment = res.result.payment;
         let that = this;
@@ -642,6 +677,7 @@ wepy.page({
       this.$emit('closePayPopup', this.tipsShow);
     },
     codeChange(e) {
+      console.log(e)
       this.currentCode = e.$wx.detail;
     },
     async handlePhoneNumber(e) {

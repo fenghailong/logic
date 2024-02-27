@@ -46,6 +46,13 @@
                 height: 100%;
               }
             }
+            .logic-index-box-user-member-time {
+              font-size: 14px;
+              font-weight: 400;
+              color: #b56600;
+              line-height: 1;
+              margin-left: 5px;
+            }
           }
           .logic-index-box-user-count {
             margin-top: 10px;
@@ -333,6 +340,7 @@
               <image v-if="user.isMember === '1'"  src="../../assets/images/member.png" />
               <image v-else src="../../assets/images/noMember.png" />
             </div>
+            <div v-if="isShowMemberDay" class="logic-index-box-user-member-time">{{memberDay}} 天</div>
           </div>
 <!--           <div>{{user.wechat_openid}}</div>-->
           <div class="logic-index-box-user-count">已有{{ userCount }}人加入学习</div>
@@ -494,6 +502,7 @@
   import { mapGetters } from '@wepy/x'
   // import syncBadge from '@/mixins/sync-badge'
   import { importData } from '@/utils/import'
+  import { diffTime } from '@/utils/util'
   wepy.page({
     store,
     // mixins: [ syncBadge ],
@@ -513,13 +522,16 @@
       undertaking: [],
       isIOS: false,
       // tipsShow: false,
-      showPrivacy: false
+      showPrivacy: false,
+      isShowMemberDay: false,
+      memberDay: 0
     },
     computed: {
       ...mapGetters([ 'isLoggedIn', 'user' ])
     },
     async onLoad() {
       await this.$store.dispatch('login')
+      this.diffMemberDay(Date.now(), this.user.closeTime)
       this.getSystemInfo()
       this.getUserCount()
       this.getAllModulesData()
@@ -540,9 +552,18 @@
           url: `../member/pages/index`,
         })
       },
-      // closePayPopup (e) {
-      //   this.tipsShow = e
-      // },
+      diffMemberDay (openTime, closeTime) {
+        if(this.user.isMember !== '1') {
+          this.isShowMemberDay = false
+        } else {
+          if(openTime && closeTime) {
+            this.isShowMemberDay = true
+            let day = diffTime(openTime, closeTime, 'days')
+            this.memberDay = day
+          }
+        }
+
+      },
       getSystemInfo () {
         let that = this
         wx.getSystemInfo({

@@ -228,7 +228,7 @@ methods: {
         isNotional: '1'
       })
       this.idiomUserCount = isIdiomData.result.data.count + 52378
-      this.notionalUserCount = isNotionalData.result.data.count + 987
+      this.notionalUserCount = isNotionalData.result.data.count + 34987
     },
     async toidiomDetail () {
         if (this.user.messageCount < 1) {
