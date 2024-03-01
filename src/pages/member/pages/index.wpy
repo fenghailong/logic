@@ -41,11 +41,11 @@
         display: flex;
         .logic-member-card-top-and-item {
           border: 1px solid #999;
-          padding: 6px;
+          padding: 4px;
           text-align: center;
-          font-size: 14px;
+          font-size: 12px;
           border-radius: 10px;
-          margin-right: 10px;
+          margin-right: 5px;
         }
         .active {
           border: 2px solid #b56600;
@@ -363,8 +363,8 @@
     <image class="logic-member-card-bg" src="../images/page-member-card.png" />
     <div class="logic-member-card-box">
       <div v-if="isIOS" class="logic-member-card-top">
-        <div style="font-size: 14px;font-weight: 500;color: #B56600;margin-bottom: 14px;line-height: 1;">解锁会员</div>
-        <div style="font-size: 12px;font-weight: 400;color: #B56600;margin-bottom: 10px;line-height: 1;">解锁所有功能，一次全部解锁</div>
+        <div style="font-size: 14px;font-weight: 500;color: #B56600;margin-bottom: 14px;line-height: 1;">激活会员</div>
+        <div style="font-size: 12px;font-weight: 400;color: #B56600;margin-bottom: 10px;line-height: 1;">一次激活终身有效 解锁所有功能</div>
         <div style="font-size: 12px;font-weight: 400;color: #B56600;line-height: 1;">获取激活码，请联系客服</div>
       </div>
       <div v-else class="logic-member-card-top-and">
@@ -382,6 +382,11 @@
           <div style="font-size: 12px">12个月</div>
           <div style="font-weight: bold">￥29.9</div>
           <div style="text-decoration:line-through;font-size: 12px">￥60</div>
+        </div>
+        <div class="logic-member-card-top-and-item {{chooseType === '4' ? 'active' : ''}}" @click="choosePayType('4')">
+          <div style="font-size: 12px">永久</div>
+          <div style="font-weight: bold">￥39.9</div>
+          <div style="text-decoration:line-through;font-size: 12px">￥99</div>
         </div>
 <!--        <div style="font-size: 13px;">终生会员</div>-->
 <!--        <div style="display: flex; align-items: center;align-items: flex-end;line-height: 1;margin: 10px 0;">-->
