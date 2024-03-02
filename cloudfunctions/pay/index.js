@@ -30,7 +30,7 @@ const doPay = async (event, context) => {
   }else if(event.data.totalFeeType === '3') {
     totalFee = 2990
   }else if(event.data.totalFeeType === '4') {
-    totalFee = 4990
+    totalFee = 3990
   } else {
     totalFee = 1990
   }
