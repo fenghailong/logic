@@ -8,6 +8,7 @@ const collection = db.collection('user');
 
 const login = async (_openid) => {
   console.log(_openid)
+  // _openid = 'oDr_s0Pyv1Zy9FivV2Ud2l8fnz18'
   let user;
   let hasUser = await collection.where({ wechat_openid: _openid }).get();
   let hasMessage = await db.collection('messages').where({ wechat_openid: _openid, isUse: '2' }).count();

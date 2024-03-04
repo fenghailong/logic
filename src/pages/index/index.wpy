@@ -220,7 +220,6 @@
           justify-content: space-between;
           font-size: 14px;
           font-weight: 800;
-          font-weight: middle;
           margin-left: 10px;
           color: #FFFFFF;
           .logic-index-box-middle-right-item {
@@ -415,13 +414,17 @@
         </div>
       </div>
       <div class="logic-index-box-hot">
-        <div class="logic-index-box-hot-item" @click="toGeneral()">
+        <div class="logic-index-box-hot-item" @click="toExpoundQuestion()">
           <image src="../../assets/images/realpolitics.png" />
-          <div class="logic-index-box-hot-item-text">常识积累</div>
+          <div class="logic-index-box-hot-item-text">申论题库</div>
         </div>
         <div class="logic-index-box-hot-item" @click="toExpound()">
           <image src="../../assets/images/changshi.png" />
-          <div class="logic-index-box-hot-item-text">申论学习</div>
+          <div class="logic-index-box-hot-item-text">申论积累</div>
+        </div>
+        <div class="logic-index-box-hot-item" @click="toGeneral()">
+          <image src="../../assets/images/realpolitics.png" />
+          <div class="logic-index-box-hot-item-text">常识积累</div>
         </div>
         <div class="logic-index-box-hot-item" @click="toDetail('人物素材', personCount)">
           <image src="../../assets/images/person.png" />
@@ -442,10 +445,6 @@
         <div class="logic-index-box-hot-item" @click="toErrquestion()">
           <image src="../../assets/images/person.png" />
           <div class="logic-index-box-hot-item-text">我的错题</div>
-        </div>
-        <div class="logic-index-box-hot-item"  @click="toReportError()">
-          <image src="../../assets/images/dataany.png"/>
-          <div class="logic-index-box-hot-item-text">报错修复</div>
         </div>
         <div class="logic-index-box-hot-item"  @click="toPayAttention()">
           <image src="../../assets/images/person.png"/>
@@ -607,9 +606,9 @@
           url: `/pages/customer/index`,
         })
       },
-      toReportError () {
+      toExpoundQuestion () {
         wx.navigateTo({
-          url: `/pages/reporterror/index`,
+          url: `/pages/expoundquestion/index`,
         })
       },
       toPayAttention () {

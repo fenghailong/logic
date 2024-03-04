@@ -1,0 +1,100 @@
+<style lang="less">
+.page {
+  background-image: url('https://7072-prod-2gzhco766f4e1e27-1304834920.tcb.qcloud.la/index/index-bg.png?sign=c0a04d439d28057eae72424de5b43242&t=1684489430');
+  background-repeat:no-repeat;
+  background-size: 100% 100%;
+  min-height:100%;
+  background-color: #F5F7FB;
+  .logic-index-box {
+    .van-dropdown-menu {
+      background-color: transparent;
+    }
+    .logic-index-content {
+      padding: 0 15px;
+    }
+    .logic-index-content-item {
+      margin-bottom: 10px;
+      font-size: 14px;
+      background-color: #FFFFFF;
+      color: #333333;
+      border-radius: 10px;
+      padding: 15px 10px;
+      font-weight: bold;
+    }
+  }
+}
+
+</style>
+<template>
+  <div class="page">
+    <div class="logic-index-box">
+      <van-dropdown-menu>
+        <van-dropdown-item value="{{ curentArea }}" options="{{ areaList }}" />
+      </van-dropdown-menu>
+      <div class="logic-index-content">
+        <div v-for="item in examinationList" class="logic-index-content-item" @click="toDetail(item._id)">
+          {{item.name}}
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<config>
+  {
+    navigationBarTitleText: '全部试卷',
+    navigationBarBackgroundColor: '#ffffff',
+    navigationBarTextStyle: 'black',
+    usingComponents: {
+      "van-dropdown-menu": "../../libs/vant/dropdown-menu/index",
+      "van-dropdown-item": "../../libs/vant/dropdown-item/index"
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import { mapGetters } from '@wepy/x'
+  import { getAllExpoundExaminationArea } from '@/api/expound'
+  wepy.page({
+    store,
+    data: {
+      areaList: [
+        { text: '国考', value: 0 }
+      ],
+      curentArea: 0,
+      examinationList: []
+
+    },
+    computed: {
+      ...mapGetters([ '_id', 'user' ])
+    },
+    async onLoad() {
+      await this.getAllExpoundExaminationArea()
+    },
+    methods: {
+      // 获取所有地区
+      async getAllExpoundExaminationArea() {
+        wx.showLoading({title: '加载中'})
+        let result = await getAllExpoundExaminationArea()
+        let arr = []
+        result.result.map((item, index) => {
+          arr.push({
+            text: item.province,
+            value: index
+          })
+        })
+        this.areaList = arr
+        const targetArea = this.areaList.find(item => item.value === this.curentArea);
+        const target = result.result.find(item => item.province === targetArea.text);
+        this.examinationList = target.list.sort((a, b) => a.sort - b.sort);
+        console.log(this.examinationList)
+        wx.hideLoading()
+      },
+      toDetail(_id) {
+        wx.navigateTo({
+          url: `/pages/expoundquestion/detail?id=${_id}`,
+        })
+      }
+    }
+  })
+</script>
