@@ -1,0 +1,285 @@
+<style lang="less">
+.page {
+  //background-image: url('https://7072-prod-2gzhco766f4e1e27-1304834920.tcb.qcloud.la/index/index-bg.png?sign=c0a04d439d28057eae72424de5b43242&t=1684489430');
+  //background-repeat:no-repeat;
+  //background-size: 100% 100%;
+  min-height:100%;
+  background-color: #F5F7FB;
+  .logic-index-box {
+    background-color: #fff;
+    .logic-index-box-material {
+      padding: 20px;
+      font-weight: 500;
+      color: #333333;
+      padding-bottom: 60px;
+      background-color: #ebeef3;
+    }
+    .logic-index-box-question {
+      padding: 15px 15px 0 15px;
+      font-weight: bold;
+      color: #333333;
+    }
+    .logic-index-box-demand {
+      padding: 0 15px 15px 15px;
+      font-weight: 500;
+      color: #333333;
+    }
+    .logic-index-box-swatch {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 15px;
+      .logic-index-box-swatch-text {
+        font-size: 14px;
+        font-weight: 500;
+        color: #333333;
+        margin-right: 10px;
+        padding-bottom: 5px;
+      }
+    }
+  }
+  .logic-index-box-other {
+    position: sticky;
+    top: 0;
+    z-index: 99;
+  }
+  .logic-index-answer {
+    margin-top: 10px;
+    padding-bottom: 60px;
+    .logic-index-answer-item {
+      padding: 15px;
+      background-color: #FFFFFF;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      position: relative;
+      padding-top: 20px;
+      .logic-index-answer-item-tag {
+        position: absolute;
+        top: 0;
+        left: 0;
+        line-height: 1;
+      }
+    }
+  }
+  .logic-index-footer {
+    position: fixed;
+    bottom: 0;
+    background-color: #FFFFFF;
+    padding: 10px 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    .logic-index-footer-button {
+      display: flex;
+      align-items: center;
+      padding: 3px;
+      border-radius: 50px;
+      background-color: #d6dcde;
+      .logic-index-footer-button-item {
+        padding: 5px 20px;
+        color: #2e2e2e;
+        border-radius: 50px;
+        font-size: 14px;
+      }
+      .active {
+        color: #FFFFFF;
+        background-color: #3C7CFC;
+      }
+    }
+  }
+}
+
+</style>
+<template>
+  <div class="page">
+    <div v-if="showType === '1'" class="logic-index-box">
+      <van-tabs v-if="materialList.length > 0" active="{{ materialActive }}" sticky>
+        <van-tab v-for="(item, index) in materialList" :title="'材料' + (index+1)" :name="index">
+          <div class="logic-index-box-material"><mp-html content="{{ item.content }}" /></div>
+        </van-tab>
+      </van-tabs>
+    </div>
+    <div v-else class="logic-index-box logic-index-box-other">
+      <van-tabs v-if="questionList.length > 0" active="{{ questionActive }}" sticky @change="questionOnChange">
+        <van-tab v-for="(item, index) in questionList" :title="'问题' + (index+1)" :name="index">
+          <div class="logic-index-box-question">{{item.title}}</div>
+          <div class="logic-index-box-demand">{{item.demand}}</div>
+          <div class="logic-index-box-swatch">
+            <div class="logic-index-box-swatch-text">参考答案</div>
+            <van-switch checked="{{ isChecked }}" @change="onAnswerChange" size="14px" />
+          </div>
+        </van-tab>
+      </van-tabs>
+    </div>
+    <div v-if="showType === '2' && isChecked" class="logic-index-answer">
+<!--      <van-tabs active="{{ answerActive }}" bind:change="onAnswerTypeChange">-->
+<!--        <van-tab title="参考答案" :name="0">-->
+          <block v-if="answerList.length > 0">
+            <div class="logic-index-answer-item" v-for="(item, index) in answerList">
+              <mp-html content="{{ item.content }}" />
+              <!--          <div class="logic-index-answer-item-tag"><van-tag type="primary" size="medium">{{index + 1}}</van-tag></div>-->
+              <div class="logic-index-answer-item-tag"><van-tag type="primary" size="medium">{{item.from_name}}</van-tag></div>
+            </div>
+          </block>
+          <div class="weui-loadmore weui-loadmore_line" v-if="noMoreData">
+            <div class="weui-loadmore__tips weui-loadmore__tips_in-line">没有更多数据</div>
+          </div>
+<!--        </van-tab>-->
+<!--        <van-tab title="我的积累" :name="1">-->
+<!--          aaa-->
+<!--        </van-tab>-->
+<!--      </van-tabs>-->
+    </div>
+    <div class="logic-index-footer">
+      <div class="logic-index-footer-button">
+        <div class="logic-index-footer-button-item {{showType === '1' ? 'active' : ''}}" @click="changeOption('1')">材料</div>
+        <div class="logic-index-footer-button-item {{showType === '2' ? 'active' : ''}}" @click="changeOption('2')">问题</div>
+      </div>
+    </div>
+  </div>
+</template>
+<config>
+  {
+    navigationBarTitleText: '全部试卷',
+    navigationBarBackgroundColor: '#ffffff',
+    enablePullDownRefresh: true,
+    navigationBarTextStyle: 'black',
+    usingComponents: {
+      "van-tabs": "../../libs/vant/tabs/index",
+      "van-tab": "../../libs/vant/tab/index",
+      "van-tag": "../../libs/vant/tag/index",
+      "van-switch": "../../libs/vant/switch/index",
+      "mp-html": "~@/components/mp-html/index"
+    }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import { mapGetters } from '@wepy/x'
+  import { getExpoundMaterialById, getExpoundQuestionById, getExpoundAnswerById } from '@/api/expound';
+  wepy.page({
+    store,
+    data: {
+      materialList: [],
+      questionList: [],
+      materialActive: 0,
+      questionActive: 0,
+      showType: '2',
+      isChecked: false,
+      answerLoading: false,
+      answerList: [],
+      noMoreData: false,
+      expound_question_id: '',
+      currPage: 1,
+      pageSize: 10,
+      answerActive: 0
+    },
+    computed: {
+      ...mapGetters([ '_id', 'user' ])
+    },
+    async onLoad(options) {
+      await this.getExpoundMaterialById(options.id)
+      await this.getExpoundQuestionById(options.id)
+    },
+    async onPullDownRefresh() {
+      if(this.showType === '2' && this.isChecked) {
+        this.currPage = 1
+        this.answerList = []
+        await this.getExpoundAnswerById()
+      }
+      wx.stopPullDownRefresh()
+    },
+    async onReachBottom () {
+      if(this.showType === '2' && !this.noMoreData && this.isChecked) {
+        this.currPage = this.currPage + 1
+        await this.getExpoundAnswerById()
+      }
+    },
+    methods: {
+      // 获取材料
+      async getExpoundMaterialById(id) {
+        wx.showLoading({title: '加载中'})
+        let result = await getExpoundMaterialById({
+          examination_id: id
+        })
+        console.log(result,'=====')
+        this.materialList = result.result
+        wx.hideLoading()
+      },
+      // 获取问题
+      async getExpoundQuestionById(id) {
+        wx.showLoading({title: '加载中'})
+        let result = await getExpoundQuestionById({
+          examination_id: id
+        })
+        console.log(result,'=====')
+        this.questionList = result.result
+        this.expound_question_id = this.questionList[0]._id
+        await this.getExpoundAnswerById()
+        wx.hideLoading()
+      },
+      // 切换问题和材料
+      changeOption (type) {
+        this.showType = type
+      },
+      async questionOnChange (e) {
+        this.currPage = 1
+        this.answerList = []
+        let index = e.$wx.detail.index
+        this.expound_question_id = this.questionList[index]._id
+        await this.getExpoundAnswerById()
+      },
+      onAnswerTypeChange () {
+
+      },
+      // 获取答案
+      async getExpoundAnswerById() {
+        this.noMoreData = false
+        wx.showLoading({title: '加载中'})
+        let result = await getExpoundAnswerById({
+          expound_question_id: this.expound_question_id,
+          currPage: this.currPage,
+          pageSize: this.pageSize
+        })
+        if (result.result.data.length > 0) {
+          this.answerList = this.answerList.length > 0 ? this.answerList.concat(result.result.data) : result.result.data
+        } else {
+          this.noMoreData = true
+        }
+        console.log(result,'=====')
+        wx.hideLoading()
+      },
+      async onAnswerChange () {
+        this.isChecked = !this.isChecked
+      },
+      /**
+       * 处理富文本里的图片宽度自适应
+       * 1.去掉img标签里的style、width、height属性
+       * 2.img标签添加style属性：max-width:100%;height:auto
+       * 3.修改所有style里的width属性为max-width:100%
+       * 4.p，code标签添加class
+       * 5.去掉<br/>标签
+       * @param html
+       * @returns {void|string|*}
+       */
+      formatRichText(html){
+        let newContent= html.replace(/<img[^>]*>/gi,function(match,capture){
+          match = match.replace(/style="[^"]+"/gi, '').replace(/style='[^']+'/gi, '');
+          match = match.replace(/width="[^"]+"/gi, '').replace(/width='[^']+'/gi, '');
+          match = match.replace(/height="[^"]+"/gi, '').replace(/height='[^']+'/gi, '');
+          return match;
+        });
+        newContent = newContent.replace(/style="[^"]+"/gi,function(match,capture){
+          match = match.replace(/width:[^;]+;/gi, 'width:100%;').replace(/width:[^;]+;/gi, 'width:100%;');
+          return match;
+        });
+        newContent = newContent.replace(/<br[^>]*\/>/gi, '');
+        newContent = newContent.replace(/\<p/gi, '<p class="logic-p"');
+        newContent = newContent.replace(/\<code/gi, '<p class="logic-code"');
+        newContent = newContent.replace(/\<img/gi, '<img style="width:100%;height:auto;display:block;margin:10px 0;"');
+        return newContent;
+      },
+    }
+  })
+</script>

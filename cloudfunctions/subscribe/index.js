@@ -32,7 +32,7 @@ const getAllMessages = async (data) => {
 const sendMessage = async () => {
   let result = await getAllMessages();
   let messageList = result.data.filter(function(item,index,self){
-    return self.findIndex(el=>(el.wechat_openid==item.wechat_openid && item.isUse === '2' && item._createTime < 1700668312097))===index
+    return self.findIndex(el=>(el.wechat_openid==item.wechat_openid && item.isUse === '2' && item._createTime < 1702871322290))===index
     // return self.findIndex(el=>(el.wechat_openid==item.wechat_openid && item.isUse === '2'))===index
   })
   // messageList=messageList.slice(0,100)
@@ -51,13 +51,13 @@ const sendMessageItem = async (item) => {
       "lang": 'zh_CN',
       "data": {
         "thing1": {
-          "value": '实词辨析、实词测评等新功能'
+          "value": '现活动期间最低5.9元开通会员'
         },
         "thing2": {
-          "value": '2024年1月时政已更新'
+          "value": '48元网盘10T大礼包联系客服'
         },
         "thing5": {
-          "value": '网课大礼包2024已更新'
+          "value": '成语（测评）、实词（测评）已上线'
         }
       },
       "templateId": item.templateId,
