@@ -88,7 +88,7 @@
         <div class="logic-detail-content-describe">总结{{item.name}}模块的知识点，需要掌握熟记，学习完后最好配合对应的刷题模块。</div>
         <div v-if="item.module_type != '2'" class="logic-detail-content-footer">
           <van-button class="logic-detail-content-button" color="#4755EB" round @click="{{index != 1 && user.isMember != '1' ? '' : toList(item._id, item.name)}}">开始学习</van-button>
-          <van-button v-if="index != 0" class="logic-detail-content-button" color="#54BBCB" round @click="{{index != 1 && user.isMember != '1' ? '' : toEvaluation(item._id, item.name)}}">考点评测</van-button>
+          <van-button v-if="index != 0 && index != 2" class="logic-detail-content-button" color="#54BBCB" round @click="{{index != 1 && user.isMember != '1' ? '' : toEvaluation(item._id, item.name)}}">考点评测</van-button>
         </div>
         <div v-if="index != 1 && user.isMember != '1'">
           <image class="logic-detail-content-locked" src="../../assets/images/locked.png" />

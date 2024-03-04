@@ -72,7 +72,7 @@
       <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content {{ index > 0 && user.isMember != '1' ? 'logic-detail-content-opticty' : ''}}" @click="{{ index > 0 && user.isMember != '1' ? toMember() : ''}}">
         <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->
         <div class="logic-detail-content-title">{{item.name}}</div>
-        <div class="logic-detail-content-describe">总结{{item.name}}模块的知识点，需要掌握熟记，学习完后最好配合FB对应的刷题模块。</div>
+        <div class="logic-detail-content-describe">总结{{item.name}}模块的知识点，需要掌握熟记，学习完后最好配合对应的刷题模块。</div>
         <!-- <div class="logic-detail-content-message">
           <div class="logic-detail-content-message-practice">已练习 {{studyCount}}/{{detail.count}}</div>
           <van-rate readonly value="{{ starValue }}" allow-half/>

@@ -71,7 +71,7 @@
     <div class="logic-detail-box">
       <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content">
         <div class="logic-detail-content-title">{{item.name}}</div>
-        <div class="logic-detail-content-describe">总结{{item.name}}模块的知识点，需要掌握熟记，学习完后最好配合FB对应的刷题模块。</div>
+        <div class="logic-detail-content-describe">总结{{item.name}}模块的知识点，需要掌握熟记，学习完后最好配合对应的刷题模块。</div>
         <div class="logic-detail-content-footer">
           <van-button class="logic-detail-content-button" color="#4755EB" round @click="toList(item._id, item.name)">开始学习</van-button>
         </div>
