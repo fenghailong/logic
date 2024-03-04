@@ -170,7 +170,7 @@
         if (this.user.messageCount < 1) {
           await this.onSubscribe()
         }
-        if(id == 'e039cb5d64995bfb0000076d5b56ed17') { //时政专题
+        if(id == 'e039cb5d64995bfb0000076d5b56ed17' || id == '40fc38da65e565f1000aa3a7574b9150') { //时政专题
           wx.navigateTo({
             url: `/pages/realpolitics/list?id=${id}&name=${name}`,
           })
