@@ -588,7 +588,7 @@ wepy.page({
   data: {
     currentCode: '',
     isIOS: false,
-    isChecked: true,
+    isChecked: false,
     customCodeShow: false,
     showPrivacy: false,
     androdCodeShow: false,

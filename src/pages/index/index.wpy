@@ -414,10 +414,10 @@
         </div>
       </div>
       <div class="logic-index-box-hot">
-        <div class="logic-index-box-hot-item" @click="toExpoundQuestion()">
+        <!-- <div class="logic-index-box-hot-item" @click="toExpoundQuestion()">
           <image src="../../assets/images/realpolitics.png" />
           <div class="logic-index-box-hot-item-text">申论题库</div>
-        </div>
+        </div> -->
         <div class="logic-index-box-hot-item" @click="toExpound()">
           <image src="../../assets/images/changshi.png" />
           <div class="logic-index-box-hot-item-text">申论积累</div>

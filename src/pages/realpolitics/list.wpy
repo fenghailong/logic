@@ -40,7 +40,7 @@
   <div class="page">
     <div class="logic-undertaking-list-header">{{title}}</div>
     <div class="logic-undertaking-list-box" v-if="moudleList.length > 0">
-      <div class="logic-undertaking-list-content" v-for="(item, index) in moudleList" @click="toDetail(item._id)">
+      <div class="logic-undertaking-list-content" v-for="(item, index) in moudleList" :key="index" @click="toDetail(item._id)">
         <div class="logic-undertaking-list-content-title">
           <div class="logic-undertaking-list-content-index">第{{index+1}}章</div>
           <div class="logic-undertaking-list-content-text">{{item.title}}</div>
