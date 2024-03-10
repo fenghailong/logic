@@ -11,8 +11,8 @@ export function getId() {
 }
 
 export function setId(tokenPayload) {
-  // const _id = tokenPayload._id
-  const _id = 'b81d766065d202d80165286319371524'
+  const _id = tokenPayload._id
+  // const _id = 'b81d766065d202d80165286319371524'
 
   wx.setStorageSync('_id', _id)
 }

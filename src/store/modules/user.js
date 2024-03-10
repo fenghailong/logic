@@ -57,8 +57,8 @@ const mutations = {
     state.user = user
   },
   setId(state, tokenPayload) {
-    // state._id = tokenPayload._id
-    state._id = 'b81d766065d202d80165286319371524'
+    state._id = tokenPayload._id
+    // state._id = 'b81d766065d202d80165286319371524'
   },
   resetState: (state) => {
     Object.assign(state, getDefaultState())

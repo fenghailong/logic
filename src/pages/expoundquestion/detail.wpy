@@ -117,8 +117,8 @@
           <block v-if="answerList.length > 0">
             <div class="logic-index-answer-item" v-for="(item, index) in answerList">
               <mp-html content="{{ item.content }}" />
-              <!--          <div class="logic-index-answer-item-tag"><van-tag type="primary" size="medium">{{index + 1}}</van-tag></div>-->
-              <div class="logic-index-answer-item-tag"><van-tag type="primary" size="medium">{{item.from_name}}</van-tag></div>
+              <div class="logic-index-answer-item-tag"><van-tag type="primary" size="medium">答案{{index + 1}}</van-tag></div>
+<!--              <div class="logic-index-answer-item-tag"><van-tag type="primary" size="medium">{{item.from_name}}</van-tag></div>-->
             </div>
           </block>
           <div class="weui-loadmore weui-loadmore_line" v-if="noMoreData">
