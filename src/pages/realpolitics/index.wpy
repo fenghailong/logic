@@ -77,7 +77,7 @@
 <template>
   <div class="page">
     <van-notice-bar left-icon="volume-o" text="提示：先进行知识学习，再进行考点评测效果会更好哦" />
-    <div class="logic-detail-box">
+    <div v-if="moudleList.length > 0" class="logic-detail-box">
       <div v-for="(item, index) in moudleList" :key="index" class="logic-detail-content {{ index != 1 && user.isMember != '1' ? 'logic-detail-content-opticty' : ''}}" @click="{{ index != 1 && user.isMember != '1' ? toMember() : ''}}">
         <!-- <div class="logic-detail-content-people">25624人正在学习</div> -->
         <div class="logic-detail-content-title">
@@ -95,6 +95,7 @@
         </div>
       </div>
     </div>
+    <van-empty v-else description="更新中，敬请期待" />
     <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
   </div>
 </template>

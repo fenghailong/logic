@@ -407,8 +407,8 @@
             <div class="item-name">高频成语</div>
             <div class="item-tips">不积跬步，无以至千里</div>
           </div>
-          <div class="logic-index-box-middle-right-item logic-index-box-middle-right-item-other" @click="toRealpolitics">
-            <div class="item-name">时事政治</div>
+          <div v-if="isClose === 'close'" class="logic-index-box-middle-right-item logic-index-box-middle-right-item-other" @click="toRealpolitics">
+            <div class="item-name">时事刷题</div>
             <div class="item-tips">不积小流，无以成江海</div>
           </div>
         </div>
@@ -523,7 +523,8 @@
       // tipsShow: false,
       showPrivacy: false,
       isShowMemberDay: false,
-      memberDay: 0
+      memberDay: 0,
+      isClose: 'close'
     },
     computed: {
       ...mapGetters([ 'isLoggedIn', 'user' ])
@@ -575,6 +576,7 @@
       async getUserCount () {
         let result = await getUserCount()
         this.userCount = result.result.total
+        this.isClose = result.result.isClose
         console.log(result, '=============')
       },
       toLogin () {

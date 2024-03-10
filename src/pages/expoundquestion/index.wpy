@@ -32,11 +32,12 @@
         <van-dropdown-item value="{{ curentArea }}" options="{{ areaList }}" />
       </van-dropdown-menu>
       <div class="logic-index-content">
-        <div v-for="item in examinationList" class="logic-index-content-item" @click="toDetail(item._id)">
+        <div v-for="(item, index) in examinationList" class="logic-index-content-item" @click="toDetail(item._id, index)">
           {{item.name}}
         </div>
       </div>
     </div>
+    <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
   </div>
 </template>
 <config>
@@ -46,7 +47,8 @@
     navigationBarTextStyle: 'black',
     usingComponents: {
       "van-dropdown-menu": "../../libs/vant/dropdown-menu/index",
-      "van-dropdown-item": "../../libs/vant/dropdown-item/index"
+      "van-dropdown-item": "../../libs/vant/dropdown-item/index",
+      "van-dialog": "../../libs/vant/dialog/index"
     }
   }
 </config>
@@ -55,6 +57,8 @@
   import store from '@/store'
   import { mapGetters } from '@wepy/x'
   import { getAllExpoundExaminationArea } from '@/api/expound'
+  import Dialog from '../../libs/vant/dialog/dialog';
+
   wepy.page({
     store,
     data: {
@@ -90,7 +94,20 @@
         console.log(this.examinationList)
         wx.hideLoading()
       },
-      toDetail(_id) {
+      toDetail(_id, index) {
+        console.log(index)
+        if(index > 2 && this.user.isMember !== '1') {
+            Dialog.confirm({
+              message: '普通用户可以体验10个实词词组，开通会员任意使用',
+              confirmButtonText: '立即开通'
+            }).then(async () => {
+              wx.navigateTo({
+                url: `../member/pages/index`,
+              })
+            }).catch(() => {
+            });
+            return
+        }
         wx.navigateTo({
           url: `/pages/expoundquestion/detail?id=${_id}`,
         })
