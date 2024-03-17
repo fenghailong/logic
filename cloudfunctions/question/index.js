@@ -238,28 +238,35 @@ const getPractiseList = async (options) => {
   const countResult = await practiseCollection.where({ user_id: options.user_id}).count();
   const totalCount = countResult.total
   const totalPage = totalCount === 0 ? 0 : totalCount <= options.pageSize ? 1 : parseInt(totalCount / options.pageSize) + 1
-  const aggregateInstance = practiseCollection.aggregate()
-  .lookup({
-    from: 'knowledgeModule',
-    localField: 'module_id',
-    foreignField: '_id',
-    as: 'moduleList',
-  })
-  const data = await aggregateInstance
-  .match({
-    user_id: options.user_id
-  })
-  .addFields({
-    module: $.arrayElemAt(['$moduleList', 0]),
-  })
-  .project({
-    moduleList: 0
-  })
-  .sort({'_updateTime': -1})
-  .skip(skipCount)
-  .limit(options.pageSize)
-  .end()
-  return {currPage: options.currPage, pageSize: options.pageSize, totalPage, totalCount, data}
+  let hasRecord = await practiseCollection.where({
+    user_id: options.user_id,
+  }).get();
+  console.log(hasRecord)
+  // const aggregateInstance = practiseCollection.aggregate()
+  // // .match({
+  // //   user_id: options.user_id
+  // // })
+  // // .lookup({
+  // //   from: 'knowledgeModule',
+  // //   localField: 'module_id',
+  // //   foreignField: '_id',
+  // //   as: 'moduleList',
+  // // })
+  // const data = await aggregateInstance
+  // .match({
+  //   user_id: options.user_id
+  // })
+  // // .addFields({
+  // //   module: $.arrayElemAt(['$moduleList', 0]),
+  // // })
+  // // .project({
+  // //   moduleList: 0
+  // // })
+  // .sort({'_updateTime': -1})
+  // .skip(skipCount)
+  // .limit(options.pageSize)
+  // .end()
+  // return {currPage: options.currPage, pageSize: options.pageSize, totalPage, totalCount, data}
 }
 
 // 获取一个模版的刷题练习记录 （排名使用）

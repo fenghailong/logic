@@ -163,8 +163,8 @@ const getModulesById = async (id) => {
 // 获取单个模块下面的子集
 const getModulesNewById = async (id) => {
   const result = await collection.where({
-    parent_id: id,
-    isCanUse: '1'
+    parent_id: id
+    // isCanUse: '1'
   }).orderBy('sort', 'desc').get();
   return result
 }

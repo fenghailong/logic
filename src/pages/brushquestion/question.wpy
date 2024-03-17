@@ -54,8 +54,19 @@
       }
     }
   }
+  .logic-index-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 90vh;
+  }
+  .logic-index-canvas-close {
+    left: 5000px;
+  }
   .canvas {
     width: 100%;
+    height: 100%;
     flex: 1;
     box-sizing: border-box;
     margin-top: 10rpx;
@@ -138,16 +149,16 @@
       </div>
 <!--    <canvas  class="canvas" id="canvas" type="2d" disable-scroll="true" bindtouchstart="canvasStart" bindtouchmove="canvasMove" bindtouchend="touchEnd" touchcancel="touchEnd" binderror="canvasIdErrorCallback" ></canvas>-->
 
-    <div class="logic-index-box">
-        <div v-if="questionList.length > 0" v-for="(item, index) in questionList" :key="index" class="logic-index-question-list">
-          <van-tag v-if="item.exa_type === '1'" type="primary" size="large" style="margin-bottom: 5px">{{index+1}}.单选题</van-tag>
-          <van-tag v-else-if="item.exa_type === '2'" type="primary" size="large" style="margin-bottom: 5px">{{index+1}}.多选题</van-tag>
-          <question-item style="flex:1;" :questionItem="item" :questionIndex="index" @onChange="onChange" @onMoreChange="onMoreChange" @imgtapTitle="imgtapTitle"></question-item>
-        </div>
+      <div class="logic-index-box">
+          <div v-if="questionList.length > 0" v-for="(item, index) in questionList" :key="index" class="logic-index-question-list">
+            <van-tag v-if="item.exa_type === '1'" type="primary" size="large" style="margin-bottom: 5px">{{index+1}}.单选题</van-tag>
+            <van-tag v-else-if="item.exa_type === '2'" type="primary" size="large" style="margin-bottom: 5px">{{index+1}}.多选题</van-tag>
+            <question-item style="flex:1;" :questionItem="item" :questionIndex="index" @onChange="onChange" @onMoreChange="onMoreChange" @imgtapTitle="imgtapTitle"></question-item>
+          </div>
       </div>
-<!--      <div v-if="disableScroll" class="logic-index-complete" @click="closeCanvasPen">关</div>-->
-<!--      <div v-if="disableScroll" class="logic-index-pen" @click="clearCanvasPen">清</div>-->
-<!--      <div v-if="!disableScroll" class="logic-index-pen" @click="openCanvasPen">笔</div>-->
+      <div v-if="disableScroll" class="logic-index-complete" @click="closeCanvasPen">关</div>
+      <div v-if="disableScroll" class="logic-index-pen" @click="clearCanvasPen">清</div>
+      <div v-if="!disableScroll" class="logic-index-pen" @click="openCanvasPen">笔</div>
       <div v-if="!disableScroll" class="logic-index-complete" @click="openCompletePopup">交卷</div>
       <van-popup get-container="#app" @click-overlay="closeCompletePopup" :show="isCompleteShow" position="bottom">
         <div class="logic-index-popup-box" :style="{ height: '30vh' }">
@@ -164,10 +175,11 @@
           </div>
         </div>
       </van-popup>
-<!--      <canvas  class="canvas" id="canvas" type="2d" disable-scroll="true" bindtouchstart="canvasStart" bindtouchmove="canvasMove" bindtouchend="touchEnd" touchcancel="touchEnd" binderror="canvasIdErrorCallback" ></canvas>-->
+      <view class="logic-index-canvas {{disableScroll ? '' : 'logic-index-canvas-close'}}">
+        <canvas  class="canvas" id="canvas" type="2d" bindtouchstart="canvasStart" bindtouchmove="canvasMove" bindtouchend="touchEnd"></canvas>
+      </view>
 
-
-    <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
+      <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
   </div>
 </template>
 <config>
@@ -214,7 +226,6 @@
       seconds: 0,
       disableScroll: false, //默认没有画
       isPreview: false, // 是否预览图片
-      canvasOffsetX: 0, // Canvas 横向偏移量
       canvasOffsetY: 0, // Canvas 纵向偏移量
     },
     async onLoad(options) {
@@ -275,6 +286,10 @@
       }
       clearInterval(this.timer2)
     },
+    onPageScroll(e) {
+      this.canvasOffsetY = e.scrollTop
+      console.log(e.scrollTop)
+    },
     methods: {
       imgtapTitle () {
         this.isPreview = true
@@ -303,10 +318,10 @@
             canvas.width = width * dpr
             canvas.height = height * dpr
             context.scale(dpr, dpr)
-            //绘制背景
-            context.fillStyle = '#ddd'
-            context.clearRect(0, 0, canvas.width, canvas.height)
-            context.fillRect(0, 0, canvas.width, canvas.height)
+            // //绘制背景
+            // context.fillStyle = '#ddd'
+            // context.clearRect(0, 0, canvas.width, canvas.height)
+            // context.fillRect(0, 0, canvas.width, canvas.height)
           })
         // wx.setPageStyle({
         //   style: {
@@ -319,7 +334,7 @@
         context.fillStyle = '#ddd'
         context.clearRect(0, 0, mCanvas.width, mCanvas.height); //清除画布
         context.beginPath() //清空画笔
-        context.fillRect(0, 0, mCanvas.width, mCanvas.height)
+        // context.fillRect(0, 0, mCanvas.width, mCanvas.height)
         // context.clearRect(0, 0, mCanvas.width, mCanvas.height); //清除画布
         // context.beginPath() //清空画笔
       },
@@ -336,17 +351,19 @@
       // 画布绘制
       canvasStart (event) {
         console.log(event)
+        if(!this.disableScroll)return
         context.beginPath();
-        context.moveTo(event.touches[0].clientX, event.touches[0].clientY);
+        context.moveTo(event.touches[0].clientX, event.touches[0].pageY-this.canvasOffsetY);
       },
       // 阻止背景滑动
       stopScroll () {
       },
       //过程
       canvasMove (event) {
+        if(!this.disableScroll)return
         console.log(event)
         var x = event.touches[0].clientX;
-        var y = event.touches[0].clientY;
+        var y = event.touches[0].pageY-this.canvasOffsetY;
         context.lineWidth = 2
         context.lineCap = 'round'
         context.lineJoin = 'round'

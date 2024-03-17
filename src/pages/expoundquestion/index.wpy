@@ -98,7 +98,7 @@
         console.log(index)
         if(index > 2 && this.user.isMember !== '1') {
             Dialog.confirm({
-              message: '普通用户可以体验10个实词词组，开通会员任意使用',
+              message: '普通用户可以体验最新一年的申论题库，开通会员任意使用',
               confirmButtonText: '立即开通'
             }).then(async () => {
               wx.navigateTo({
