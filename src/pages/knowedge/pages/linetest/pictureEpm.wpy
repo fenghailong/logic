@@ -1,0 +1,291 @@
+<style lang="less">
+  .page{
+    background-color: #eee;
+    .logic-index-box {
+      padding: 20px 20px;
+      .logic-index-item {
+        background-color: #fff;
+        max-height: 70vh;
+        border-radius: 10px;
+        padding: 0 10px 20px;
+        overflow: auto;
+        .logic-index-item-name {
+          padding: 10px;
+          font-size: 20px;
+          text-align: center;
+        }
+        .logic-index-item-introduce-article {
+          max-height: 70vh;
+          overflow: auto;
+          font-size: 14px;
+          padding: 0 10px;
+          margin-top: 10px;
+          color: #666;
+          .code {
+            background-color: #eee;
+            display: block;
+            padding: 10px 10px;
+          }
+          .p {
+            padding: 5px 0;
+            max-width: 100%;
+            text-align: justify;
+            white-space: normal;
+          }
+        }
+      }
+      .logic-index-note-title {
+        font-size: 20px;
+        padding: 20px 0 0;
+        text-align: center;
+        font-weight: bold;
+      }
+      .logic-index-note-list {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+        background-color: #fff;
+        // border-radius: 5px;
+        padding: 10px 20px;
+        .logic-index-note-text {
+          max-width: 100%;
+          text-align: justify;
+          white-space: normal;
+          flex: 1;
+        }
+        .van-icon {
+          margin-left: 5px;
+        }
+      }
+      .logic-index-note-delete{
+        background-color: red;
+        width: 60px;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: white;
+      }
+      .logic-index-note-input {
+        margin-top: 20px;
+      }
+      .logic-index-content-button {
+        margin-top: 20px;
+        .van-button {
+          width: 100%;
+        }
+      }
+      .logic-index-content-dialog {
+        width: 300px;
+      }
+      .logic-index-question-list {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+        background-color: #fff;
+        font-size: 16px;
+        padding: 20px;
+        transition: all 2s ease-in-out;
+        .van-radio {
+          padding: 5px 0;
+          .van-radio__label {
+            line-height: 26px;
+          }
+        }
+      }
+      .logic-index-question-list-an {
+        height: auto;
+      }
+    }
+  }
+</style>
+<template>
+  <div class="page">
+    <div class="logic-index-box">
+      <div v-if="detail.title" class="logic-index-item">
+        <div class="logic-index-item-introduce-article">
+          <rich-text nodes="{{ detail.content }}"></rich-text>
+        </div>
+      </div>
+      <van-empty v-else description="每日更新，敬请期待" />
+      <div v-if="questionList.length > 0" class="logic-index-note-title">例题</div>
+      <div v-if="questionList.length > 0" v-for="(item, index) in questionList" :key="index" class="logic-index-question-list {{item.isShowAnswer ? 'logic-index-question-list-an' : ''}}">
+        <question-item :questionItem="item" :questionIndex="index" @onChange="onChange"></question-item>
+      </div>
+
+      <div v-if="notesList.length > 0" class="logic-index-note-title">我的笔记积累</div>
+      <van-swipe-cell
+        v-for="(item, index) in notesList"
+        :key="index"
+        id="store{{item._id}}"
+        right-width="60"
+        async-close
+      >
+        <div class="logic-index-note-list">
+          <div class="logic-index-note-text">{{item.content}}</div>
+          <van-icon name="ellipsis" @click="showMore(item._id)"></van-icon>
+        </div>
+        <view class="logic-index-note-delete" slot="right" @click="deNotes(item._id)">删除</view>
+      </van-swipe-cell>
+      <div class="logic-index-note-input">
+        <van-field
+          :value="currentNote "
+          type="textarea"
+          placeholder="请输入笔记"
+          autosize
+          maxlength="200"
+          show-word-limit
+          :border="false"
+          @change = "noteChange"
+        />
+      </div>
+      <div class="logic-index-content-button">
+        <van-button color="#4755EB" round @click="doNotes">记笔记</van-button>
+      </div>
+    </div>
+    <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
+  </div>
+</template>
+<config>
+  {
+  navigationBarTitleText: '知识点',
+  usingComponents: {
+  "van-button": "../../../../libs/vant/button/index",
+  "van-empty": "../../../../libs/vant/empty/index",
+  "van-field": "../../../../libs/vant/field/index",
+  "van-swipe-cell": "../../../../libs/vant/swipe-cell/index",
+  "van-icon": "../../../../libs/vant/icon/index",
+  "van-dialog": "../../../../libs/vant/dialog/index",
+  "van-radio": "../../../../libs/vant/radio/index",
+  "van-radio-group": "../../../../libs/vant/radio-group/index",
+  "question-item": "~@/components/question-item"
+  }
+  }
+</config>
+<script>
+  import wepy from '@wepy/core'
+  import store from '@/store'
+  import { mapGetters } from '@wepy/x'
+  import eventHub from '@/common/eventHub'
+  import { getKnowledgeDetail, addNotes, getNotes, deleteNotes, getQuestions } from '@/api/knowledgeModule'
+  import Dialog from '../../../../libs/vant/dialog/dialog';
+
+  wepy.page({
+    store,
+    computed: {
+      // 用户信息
+      ...mapGetters(['_id'])
+    },
+    data: {
+      moudleId: '',
+      detail: {},
+      currentNote: '',
+      notesList: [],
+      questionList: []
+    },
+    async onLoad(options) {
+      wx.showLoading({title: '加载中'})
+      await this.getKnowledgeDetailData(options.id)
+      await this.getQuestionsList()
+      await this.getNoteList()
+      wx.hideLoading()
+      wx.setNavigationBarTitle({title: this.detail.title})
+    },
+    methods: {
+      // // 选中题目
+      // onChange(event,item,index) {
+      //   this.questionList[index].youAnswer = event.$wx.detail
+      //   this.questionList[index].isShowAnswer = true
+      // },
+      // 选中题目
+      onChange(item,key,index) {
+        this.$set(this.questionList[index], 'youAnswer', key)
+        this.$set(this.questionList[index], 'isShowAnswer', true)
+        this.$set(this.questionList[index], 'isRight', key === item.answer)
+        // this.questionList[index].youAnswer = event.$wx.detail
+        // this.questionList[index].isRight = event.$wx.detail === item.answer
+        // this.checkAnswer(this.questionList)
+        console.log(this.questionList)
+      },
+      // 获取模块词语列表
+      async getKnowledgeDetailData(options) {
+        let result = await getKnowledgeDetail(options)
+        this.detail = result.result.data[0]
+        this.detail.content =this.detail.content.replace(/\<code/gi,'<code class="code"')
+        this.detail.content =this.detail.content.replace(/\<p/gi,'<p class="p"')
+        this.moudleId = this.detail._id
+      },
+      noteChange (e) {
+        this.currentNote = e.$wx.detail
+      },
+      async getQuestionsList () {
+        let options = {
+          knowledge_id: this.moudleId,
+        }
+        let data = await getQuestions(options)
+        this.questionList = data.result.data.map(item => {
+          item.title =item.title.replace(/\<code/gi,'<code class="logic-code"')
+          item.title =item.title.replace(/\<p/gi,'<p class="logic-p"')
+          item.analysis =item.analysis.replace(/\<code/gi,'<code class="logic-code"')
+          item.analysis =item.analysis.replace(/\<p/gi,'<p class="logic-p"')
+          item.youAnswer = ''
+          item.isShowAnswer = false
+          return item
+        })
+        console.log(this.questionList, '========')
+      },
+      async getNoteList () {
+        let options = {
+          module_id: this.moudleId,
+          user_id: this._id
+        }
+        let data = await getNotes(options)
+        this.notesList = data.result.data
+      },
+      showMore(id){
+        // 关闭其他swipeCell
+        console.log(this)
+        for (const item of this.notesList) {
+          if (item._id === id) continue;
+          this.$wx.selectComponent("#store"+item._id).close();
+        }
+        this.$wx.selectComponent("#store"+id).open({position: "right"});
+      },
+      deNotes(id) {
+        Dialog.confirm({
+          message: '确定删除吗？'
+        }).then(async () => {
+          wx.showLoading({title: '加载中'})
+          await deleteNotes(id)
+          await this.getNoteList()
+          wx.hideLoading()
+        });
+      },
+      async doNotes () {
+        wx.showLoading({title: '加载中'})
+        let options = {
+          module_id: this.moudleId,
+          user_id: this._id,
+          content: this.currentNote
+        }
+        if (!options.content) {
+          wx.showToast({ title: '笔记不能为空' })
+          return
+        }
+        await addNotes(options)
+        await this.getNoteList()
+        this.currentNote = ''
+        wx.hideLoading()
+      }
+    },
+    onShareAppMessage () {
+      return {
+        // 标题是话题标题
+        title: '知识要点',
+        // 路径为话题详情路径
+        path: '/pages/undertaking/detail?id=' + this.moudleId,
+      }
+    },
+  })
+</script>

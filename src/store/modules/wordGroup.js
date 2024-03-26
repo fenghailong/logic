@@ -44,7 +44,7 @@ const actions = {
     const result = await getAllWordGroup(params)
     const resultRecord = await getAllWordGroupRecord(params)
     const resultEvaluation = await getAllWordGroupEvaluation(params)
-    
+
     console.log(resultRecord)
     const wordGroupList = result.result.length == 0 ? [] : result.result.data
     const wordGroupRecordList = resultRecord.result.length == 0 ? [] : resultRecord.result.data
@@ -63,12 +63,12 @@ const actions = {
       element.isStudyed = '2'
       element.isEvaluation = '2'
       idiomGroupRecordList.forEach(item => {
-        if (item.word_group_id == element._id) {
+        if (item.word_group_id === element._id) {
           element.isStudyed = '1';
         }
       })
       idiomGroupEvaluationList.forEach(item => {
-        if (item.word_group_id == element._id) {
+        if (item.word_group_id === element._id) {
           element.isEvaluation = '1';
         }
       })
@@ -91,7 +91,7 @@ const actions = {
       element.isStudyed = '2'
       element.isEvaluation = '2'
       notionalGroupRecordList.forEach(item => {
-        if (item.word_group_id == element._id) {
+        if (item.word_group_id === element._id) {
           element.isStudyed = '1';
         }
       })
@@ -132,7 +132,7 @@ const mutations = {
   },
   setIdiomGroupStudyCount (state, idiomGroupStudyCount) {
     state.idiomGroupStudyCount = idiomGroupStudyCount
-  }, 
+  },
   setNotionalGroupList(state, notionalGroupList) {
     state.notionalGroupList = notionalGroupList
   },
@@ -141,7 +141,7 @@ const mutations = {
   },
   setNotionalGroupStudyCount (state, notionalGroupStudyCount) {
     state.notionalGroupStudyCount = notionalGroupStudyCount
-  }, 
+  },
 }
 
 export default {

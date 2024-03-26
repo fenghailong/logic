@@ -74,6 +74,7 @@
         <div class="logic-detail-content-describe">总结{{item.name}}模块的知识点，需要掌握熟记，学习完后最好配合对应的刷题模块。</div>
         <div class="logic-detail-content-footer">
           <van-button class="logic-detail-content-button" color="#4755EB" round @click="toList(item._id, item.name)">开始学习</van-button>
+          <van-button v-if="item._id === '4f9a71986465cb7a0014febe34a586f3'" class="logic-detail-content-button" color="#4755EB" round @click="toList(item._id, item.name)">百大图推</van-button>
         </div>
       </div>
     </div>

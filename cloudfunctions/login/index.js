@@ -34,6 +34,11 @@ const login = async (_openid) => {
     user = hasUser.data;
   } else {
     hasUser.data[0].messageCount = hasMessage.total
+    if(hasUser.data[0].closeTime && hasUser.data[0].openTime) {
+      if(hasUser.data[0].closeTime < Date.now()) {
+        hasUser.data[0].isMember = '2'
+      }
+    }
     user = hasUser.data;
   }
   return user;

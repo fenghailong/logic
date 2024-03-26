@@ -485,8 +485,7 @@
       "van-tag": "../../libs/vant/tag/index",
       "van-icon": "../../libs/vant/icon/index",
       "van-button": "../../libs/vant/button/index",
-      "navigation-bar": "~@/components/navigation-bar",
-      "pay-tip-popup": "~@/components/pay-tip-popup"
+      "navigation-bar": "~@/components/navigation-bar"
     }
   }
 </config>

@@ -43,7 +43,7 @@
           border: 1px solid #999;
           padding: 4px;
           text-align: center;
-          font-size: 12px;
+          font-size: 14px;
           border-radius: 10px;
           margin-right: 5px;
         }
@@ -378,14 +378,9 @@
           <div style="font-weight: bold">￥19.9</div>
           <div style="text-decoration:line-through;font-size: 12px">￥30</div>
         </div>
-        <div class="logic-member-card-top-and-item {{chooseType === '3' ? 'active' : ''}}" @click="choosePayType('3')">
-          <div style="font-size: 12px">12个月</div>
-          <div style="font-weight: bold">￥29.9</div>
-          <div style="text-decoration:line-through;font-size: 12px">￥60</div>
-        </div>
         <div class="logic-member-card-top-and-item {{chooseType === '4' ? 'active' : ''}}" @click="choosePayType('4')">
           <div style="font-size: 12px">永久</div>
-          <div style="font-weight: bold">￥39.9</div>
+          <div style="font-weight: bold">￥29.9</div>
           <div style="text-decoration:line-through;font-size: 12px">￥99</div>
         </div>
 <!--        <div style="font-size: 13px;">终生会员</div>-->

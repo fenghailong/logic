@@ -135,7 +135,7 @@
 }
 </style>
 <template>
-  <page-meta page-style="overflow: {{disableScroll ? 'hidden' : 'visible'}}" />
+<!--  <page-meta page-style="overflow: {{disableScroll ? 'hidden' : 'visible'}}" />-->
   <div class="page">
       <div class="logic-index-header">
         <div class="logic-index-header-box">
@@ -176,7 +176,7 @@
         </div>
       </van-popup>
       <view class="logic-index-canvas {{disableScroll ? '' : 'logic-index-canvas-close'}}">
-        <canvas  class="canvas" id="canvas" type="2d" bindtouchstart="canvasStart" bindtouchmove="canvasMove" bindtouchend="touchEnd"></canvas>
+        <canvas  class="canvas" id="canvas" type="2d" disable-scroll="true" bindtouchstart="canvasStart" bindtouchmove="canvasMove" bindtouchend="touchEnd"></canvas>
       </view>
 
       <van-dialog id="van-dialog" custom-class="logic-index-content-dialog"/>
